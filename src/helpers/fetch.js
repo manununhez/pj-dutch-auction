@@ -1,0 +1,660 @@
+// Fetch.js
+import * as constant from '../helpers/constants';
+
+const _apiHost = 'https://api.swps-pjatk-experiment.pl/v1';
+const url_get = '/v4-get';
+const url_post = '/v4-post';
+
+
+async function request(url, params, method = 'GET') {
+
+    const options = {
+        method,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+
+    if (params) {
+        if (method === 'GET') {
+            url += '?' + objectToQueryString(params);
+        } else {
+            options.body = JSON.stringify(params);
+        }
+    }
+
+    const response = await fetch(_apiHost + url, options);
+
+    if (response.status !== 200) {
+        return generateErrorResponse('The server responded with an unexpected status.');
+    }
+
+    const result = await response.json();
+
+    return result;
+
+}
+
+function objectToQueryString(obj) {
+    return Object.keys(obj).map(key => key + '=' + obj[key]).join('&');
+}
+
+function generateErrorResponse(message) {
+    return {
+        status: 'error',
+        message
+    };
+}
+
+export function get(url, params) {
+    return request(url, params);
+}
+
+export function create(url, params) {
+    return request(url, params, 'POST');
+}
+
+//  function update(url, params) {
+//   return request(url, params, 'PUT');
+// }
+
+// function remove(url, params) {
+//   return request(url, params, 'DELETE');
+// }
+
+function save(spreadSheetName, row, column, data, callback) {
+    create(url_post, {
+        spreadSheetName: spreadSheetName,
+        column: row,
+        row: column,
+        submissionValues: data
+    }).then((response) => {
+        callback({ response });
+    }, function (reason) {
+        callback(false, reason.result.error);
+    });
+}
+
+
+/**
+ * Load app versions from the spreadsheet
+ * @param {*} callback 
+ */
+export function fetchVersions(callback) {
+
+    let spreadsheetName = constant.VERSIONS_SHEETNAME;
+    let row = "A2";
+    let column = "B";
+
+    get(url_get, { spreadSheetName: spreadsheetName, column: row, row: column })
+        .then((response) => {
+            const data = response.rows;
+            let versions = data.map((versions) => {
+                return { version: versions[0], url: versions[1] };
+            });
+
+            callback({ versions });
+        }, (response) => {
+            callback(false, response);
+        });
+}
+
+
+/**
+ * Load the input for the firs task as well as the first task demo from the spreadsheet
+ * @param {*} callback 
+ */
+export function fetchInputFirstTask(spreadsheetName, column, row, callback) {
+
+    get(url_get, { spreadSheetName: spreadsheetName, column: row, row: column })
+        .then((response) => {
+            const data = response.rows;
+
+            let tasks = data.map((version, i) => {
+                return {
+                    id: version[0],
+                    atributeId: version[1],
+                    p1: version[2],
+                    p2: version[3],
+                    p3: version[4],
+                    property: version[5],
+                    pralka1: version[6],
+                    pralka2: version[7],
+                    pralka3: version[8],
+                    correctAnswer: version[9],
+                    showFeedback: version[10]
+                };
+            });
+
+            callback({ tasks });
+        }, (response) => {
+            callback(false, response.result.error);
+        });
+}
+
+/**
+ * Load all the necessary Text structure for the app from the spreadsheet
+ * @param {*} callback 
+ */
+export function fetchAppTextFemale(callback) {
+    let spreadsheetName = constant.APP_TEXT_FEMALE_SHEETNAME;
+    let row = "A2";
+    let column = "C";
+
+    get(url_get, { spreadSheetName: spreadsheetName, column: row, row: column })
+        .then((response) => {
+            const data = response.rows;
+
+            let appText = data.map((version, i) => {
+                return { screen: version[0], size: version[1], text: version[2] };
+            });
+
+            callback({ appText });
+        }, (response) => {
+            callback(false, response.result.error);
+        });
+}
+
+/**
+ * Load all the necessary Text structure for the app from the spreadsheet
+ * @param {*} callback 
+ */
+export function fetchAppTextMale(callback) {
+    let spreadsheetName = constant.APP_TEXT_MALE_SHEETNAME;
+    let row = "A2";
+    let column = "C";
+
+    get(url_get, { spreadSheetName: spreadsheetName, column: row, row: column })
+        .then((response) => {
+            const data = response.rows;
+
+            let appText = data.map((version, i) => {
+                return { screen: version[0], size: version[1], text: version[2] };
+            });
+
+            callback({ appText });
+        }, (response) => {
+            callback(false, response.result.error);
+        });
+}
+
+/**
+ * Load screen navigation structure from the spreadsheet
+ * @param {*} spreadsheetName 
+ * @param {*} callback 
+ */
+export function fetchNavScreens(spreadsheetName, callback) {
+
+    let row = "A2";
+    let column = "B";
+
+    get(url_get, { spreadSheetName: spreadsheetName, column: row, row: column })
+        .then((response) => {
+            const data = response.rows;
+            let screens = data.map((version, i) => {
+                return { pageId: version[0], screen: version[1] };
+            });
+
+            callback({ screens });
+        }, (response) => {
+            callback(false, response.result.error);
+        });
+}
+
+/**
+ * Load the current amount of participants of the experiment from the spreadsheet
+ * @param {*} callback 
+ */
+export function fetchParticipantsCounter(callback) {
+
+    let spreadsheetName = constant.USER_PARTICIPANTS_COUNTER_SHEETNAME;
+    let row = "B2";
+    let column = "D";
+
+    get(url_get, { spreadSheetName: spreadsheetName, column: row, row: column })
+        .then((response) => {
+            const data = response.rows;
+
+            let participants = data.map((group, i) => {
+                return { firstGroup: group[0], secondGroup: group[1], thirdGroup: group[2] }
+            });
+
+            callback({ participants });
+        }, (response) => {
+            callback(false, response.result.error);
+        });
+}
+
+
+/**
+ * Write results to GSheets
+ * @param {*} data 
+ * @param {*} callback 
+ */
+export function saveGeneralData(data, ariadnaUserID, callback) {
+    let userdata = usergeneraldata(data, ariadnaUserID);
+    let spreadSheetName = constant.USER_GENERAL_DATA_SHEETNAME;
+    let row = "A2";
+    let column = "Z";
+
+    save(spreadSheetName, row, column, userdata, callback)
+}
+
+/**
+ * Write results to GSheets
+ * @param {*} data 
+ * @param {*} callback 
+ */
+export function saveUserBrands(data, callback) {
+    let userdata = userbrands(data);
+    let spreadSheetName = constant.USER_BRANDS_SHEETNAME;
+    let row = "A2";
+    let column = "D";
+
+    save(spreadSheetName, row, column, userdata, callback)
+}
+
+
+/**
+ * Write results to GSheets
+ * @param {*} data 
+ * @param {*} callback 
+ */
+export function saveUserPralkaRating(data, callback) {
+    let userData = userpralkarating(data);
+    let spreadSheetName = constant.USER_PRALKA_RATING_SHEETNAME;
+    let row = "A2";
+    let column = "D";
+
+    save(spreadSheetName, row, column, userData, callback)
+}
+
+/**
+ * Write results to GSheets
+ * @param {*} data 
+ * @param {*} callback 
+ */
+export function saveUserPralkaSelections(data, callback) {
+    let userData = userpralkaselection(data);
+    let spreadSheetName = constant.USER_PRALKA_SELECTIONS_SHEETNAME;
+    let row = "A2";
+    let column = "D";
+
+    save(spreadSheetName, row, column, userData, callback)
+}
+
+/**
+ * Write results to GSheets
+ * @param {*} data 
+ * @param {*} callback 
+ */
+export function saveUserMobileTelephone(data, callback) {
+    let userData = usermobiletelephone(data);
+    let spreadSheetName = constant.USER_MOBILE_TELEPHONE_SHEETNAME;
+    let row = "A2";
+    let column = "D";
+
+    save(spreadSheetName, row, column, userData, callback)
+}
+
+/**
+ * Write results to GSheets
+ * @param {*} data 
+ * @param {*} callback 
+ */
+export function saveUserInfo(data, callback) {
+    let userInfo = userinfo(data);
+    let spreadSheetName = constant.USER_INFO_SHEETNAME;
+    let row = "A2";
+    let column = "L";
+
+    save(spreadSheetName, row, column, userInfo, callback)
+}
+
+/**
+ * Write results to GSheets
+ * @param {*} data 
+ * @param {*} callback 
+ */
+export function saveUserProperties(data, callback) {
+    let userProperties = userproperties(data);
+    let spreadSheetName = constant.USER_PROPERTIES_SHEETNAME;
+    let row = "A2";
+    let column = "G";
+
+    save(spreadSheetName, row, column, userProperties, callback)
+}
+
+
+/**
+ * Write results to GSheets
+ * @param {*} data 
+ * @param {*} callback 
+ */
+export function saveUserForm(data, callback) {
+    let userForm = userform(data);
+    let spreadSheetName = constant.USER_FORM_SHEETNAME;
+    let row = "A2";
+    let column = "I";
+
+    save(spreadSheetName, row, column, userForm, callback)
+}
+
+/**
+ * Write results to GSheets
+ * @param {*} data 
+ * @param {*} callback 
+ */
+export function saveUserLogTime(data, callback) {
+    let userLogtime = userlogtime(data);
+    let spreadSheetName = constant.USER_LOGTIME_SHEETNAME;
+    let row = "A2";
+    let column = "F";
+
+    save(spreadSheetName, row, column, userLogtime, callback)
+}
+
+
+/**
+ * Helpers to format the data in the correct outputvalue
+ * for a specific sheet
+ */
+const usergeneraldata = (data, ariadnaUserID) => {
+
+    let result = [];
+    for (let j = 0; j < data.length; j++) {
+        let output = data[j];
+        if (output.task === constant.USER_FORM_SCREEN) {
+            result.push([
+                output.userID,
+                ariadnaUserID,
+                output.task,
+                output.timestamp, //created
+                output.data.sex,
+                output.data.age,
+                output.data.yearsEduc,
+                output.data.levelEduc,
+                output.data.profession
+            ]);
+        } else if (output.task === constant.FIRST_TASK_DEMO_SCREEN) {
+            result.push([
+                output.userID,
+                ariadnaUserID,
+                output.task,
+                output.timestamp, //created
+                output.data[0],
+                output.data[1],
+                output.data[2],
+                output.data[3]
+            ]);
+        } else if (output.task === constant.FIRST_TASK_SCREEN) {
+            result.push([
+                output.userID,
+                ariadnaUserID,
+                output.task,
+                output.timestamp, //created
+                output.data[0],
+                output.data[1],
+                output.data[2],
+                output.data[3]
+            ]);
+        } else if (output.task === constant.SECOND_TASK_SCREEN) {
+            for (let i = 0; i < output.data.length; i++) {
+                result.push([
+                    output.userID,
+                    ariadnaUserID,
+                    output.task,
+                    output.timestamp, //created
+                    constant.ATTRIBUTE_CUSTOM.data.id[i],
+                    output.data[i]
+                ]);
+            }
+        } else if (output.task === constant.THIRD_TASK_SCREEN) {
+            for (let i = 0; i < output.data.length; i++) {
+                result.push([
+                    output.userID,
+                    ariadnaUserID,
+                    output.task,
+                    output.timestamp, //created
+                    output.data[i]
+                ])
+            }
+        } else if (output.task === constant.FOURTH_TASK_SCREEN) {
+            for (let i = 0; i < output.data.length; i++) {
+                result.push([
+                    output.userID,
+                    ariadnaUserID,
+                    output.task,
+                    output.timestamp, //created
+                    constant.ATTRIBUTE_FOURTH_TASK.data.id[i],
+                    output.data[i]
+                ]);
+            }
+        } else if (output.task === constant.FIFTH_TASK_SCREEN) {
+            result.push([
+                output.userID,
+                ariadnaUserID,
+                output.task,
+                output.timestamp, //created
+                output.data
+            ]);
+        } else if (output.task === constant.FINAL_TASK_SCREEN) {
+            result.push([
+                output.userID,
+                ariadnaUserID,
+                output.task,
+                output.timestamp, //created
+                constant.ATTRIBUTE.data.id[output.data[0]],
+                output.data[1]
+            ]);
+        } else if (output.task === constant.USER_INFO_SCREEN) {
+            result.push([
+                output.userID,
+                ariadnaUserID,
+                output.task,
+                output.timestamp,
+                output.data[0],
+                output.data[1],
+                output.data[2],
+                output.data[3],
+                output.data[4],
+                output.data[5],
+                output.data[6],
+                output.data[7],
+                output.data[8],
+                output.data[9]
+            ]);
+        }
+    }
+
+    return result;
+}
+
+function userbrands(data) {
+    const { outputFormData, outputThirdTask, outputFifthTask } = data;
+    const now = Date.now();
+    const userID = outputFormData.numer;
+
+    let result = outputThirdTask.map((output) => {
+        return [
+            userID,
+            constant.THIRD_TASK_SCREEN,
+            output,
+            now //created
+        ];
+    });
+
+    result.push([
+        userID,
+        constant.FIFTH_TASK_SCREEN,
+        outputFifthTask,
+        now //created
+    ])
+
+    return result;
+}
+
+function userinfo(data) {
+    let result = [];
+
+    const { userInfo, outputFormData } = data;
+    const now = Date.now();
+    const userID = outputFormData.numer;
+
+    result.push([
+        userID,
+        userInfo.os.name,
+        userInfo.os.version,
+        userInfo.browser.name,
+        userInfo.browser.version,
+        userInfo.browser.major,
+        userInfo.browser.language,
+        userInfo.engine.name,
+        userInfo.engine.version,
+        userInfo.screen.width,
+        userInfo.screen.height,
+        now //created
+    ]);
+
+
+    return result;
+}
+
+function userform(data) {
+    let result = [];
+    // let data = this.props.data;
+    const { outputFormData, typeTask, ariadnaUserID } = data;
+    const now = Date.now();
+
+    result.push([
+        outputFormData.numer,
+        ariadnaUserID,
+        outputFormData.sex,
+        outputFormData.age,
+        outputFormData.profession,
+        outputFormData.yearsEduc,
+        outputFormData.levelEduc,
+        typeTask,
+        true, //experimentCompleted,
+        now //created
+    ]);
+
+    return result;
+}
+
+function userpralkarating(data) {
+    let result = [];
+    // let data = this.props.data;
+    const { outputSecondTask, outputFormData } = data;
+    const outputFormDataNumer = outputFormData.numer;
+    const now = Date.now();
+
+    for (let i = 0; i < constant.ATTRIBUTE_CUSTOM.data.id.length; i++) {
+        result.push([
+            outputFormDataNumer,
+            constant.ATTRIBUTE_CUSTOM.data.id[i],
+            outputSecondTask[i],
+            now //created
+        ]);
+    }
+
+    return result;
+}
+
+function usermobiletelephone(data) {
+    let result = [];
+    // let data = this.props.data;
+    const { outputFourthTask, outputFormData } = data;
+    const outputFormDataNumer = outputFormData.numer;
+    const now = Date.now();
+
+    for (let i = 0; i < constant.ATTRIBUTE_FOURTH_TASK.data.id.length; i++) {
+        result.push([
+            outputFormDataNumer,
+            constant.ATTRIBUTE_FOURTH_TASK.data.id[i],
+            outputFourthTask[i],
+            now //created
+        ]);
+    }
+
+    return result;
+}
+
+function userpralkaselection(data) {
+    let result = [];
+    // let data = this.props.data;
+    const { outputFinalTask, outputFormData } = data;
+    const outputFormDataNumer = outputFormData.numer;
+    const now = Date.now();
+
+    for (let i = 0; i < constant.ATTRIBUTE.data.id.length; i++) {
+        result.push([
+            outputFormDataNumer,
+            constant.ATTRIBUTE.data.id[i],
+            outputFinalTask[i],
+            now //created
+        ]);
+    }
+
+    return result;
+}
+
+function userproperties(data) {
+    // UserID	QuestionID	QuestionNumber	SelectedAnswer
+    let result = [];
+    // let data = this.props.data;
+    const { outputFirstTask, outputFirstTaskDemo, outputFormData } = data;
+    const outputFormDataNumer = outputFormData.numer;
+    const now = Date.now();
+
+    for (let i = 0; i < outputFirstTaskDemo.questionID.length; i++) {
+        result.push([
+            outputFormDataNumer,
+            constant.FIRST_TASK_DEMO_SCREEN,
+            outputFirstTaskDemo.questionID[i],
+            outputFirstTaskDemo.questionNumber[i],
+            outputFirstTaskDemo.selectedAnswer[i],
+            outputFirstTaskDemo.isCorrectAnswer[i],
+            now
+        ]);
+    }
+
+    for (let i = 0; i < outputFirstTask.questionID.length; i++) {
+        result.push([
+            outputFormDataNumer,
+            constant.FIRST_TASK_SCREEN,
+            outputFirstTask.questionID[i],
+            outputFirstTask.questionNumber[i],
+            outputFirstTask.selectedAnswer[i],
+            outputFirstTask.isCorrectAnswer[i],
+            now
+        ]);
+    }
+
+    return result;
+
+}
+
+function userlogtime(data) {
+    // UserID	QuestionID	QuestionNumber	SelectedAnswer
+    let result = [];
+
+    const { logTimestamp, outputFormData } = data;
+    const { screen, timestamp } = logTimestamp;
+    const outputFormDataNumer = outputFormData.numer;
+    const now = Date.now();
+
+    for (let i = 0; i < screen.length; i++) {
+        result.push([
+            outputFormDataNumer,
+            screen[i],
+            timestamp[i],
+            Math.floor((((i + 1) < screen.length) ? (timestamp[i + 1] - timestamp[i]) : 0) / 1000),
+            now //created
+        ]);
+    }
+
+    return result;
+
+}
+
