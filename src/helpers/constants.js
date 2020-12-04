@@ -125,6 +125,8 @@ export const FIFTH_TASK_SCREEN = "FifthTask";
 export const FINAL_TASK_SCREEN = "FinalTask";
 export const INSTRUCTION_SCREEN = "Instruction";
 export const SECOND_INSTRUCTION_SCREEN = "SecondInstruction";
+export const AUCTION_TASK_SCREEN = "AuctionTask";
+export const AUCTION_TASK_DEMO_SCREEN = "AuctionDemoTask";
 
 
 //Sheetnames
@@ -161,3 +163,8 @@ export const ERROR_12 = "Przepraszamy, ale niestety nie spełniasz wszystkich wa
 export const ERROR_13 = "Proszę najpierw wybrać conajmniej jedną opcję.";//Please rate all the options first!
 export const REWARD_BONUS_MESSAGE = "W nagrodę otrzymasz dodatkowo 70 punktów. Dodatkowe punkty zostaną doliczone do Twojego konta za kilka tygodni po zakończeniu cyklu badań.";
 export const REWARD_RESULT_MESSAGE = (result) => { return `Udało Ci się poprawnie rozwiązać ${result}% zadań dotyczących wyboru pralek.` } //`You’ve solved ${result}% decision tasks correctly.`
+export const AUCTION_FOOTER_TEXT = "Naciśnij SPACJĘ, aby rozpocząć aukcję."
+export const AUCTION_GAIN_TEXT = (value) => { return `Brawo, udało Ci się zarezerwować ten pokój.<br><br>Zaoszczędziłeś ${value} zł. <br><br> Naciśnij ENTER, aby przejść do następnej aukcji.`};
+export const AUCTION_LOSE_TEXT = (value) => { return `Ktoś inny zarezerwował ten pokój. Musisz zapłacić pełną cenę:  ${value} zł. <br><br> Naciśnij ENTER, aby przejść do następnej aukcji.`};
+export const AUCTION_REWARD_RESULT_MESSAGE_FEMALE = (result) => { return `Dziękujemy, to już koniec tego zadania. W sumie zaoszczędziłaś ${result} zł.<br><br> Pozostań proszę na miejscu, eksperymentator zaraz do Ciebie podejdzie.` }
+export const AUCTION_REWARD_RESULT_MESSAGE_MALE = (result) => { return `Dziękujemy, to już koniec tego zadania. W sumie zaoszczędziłeś ${result} zł.<br><br> Pozostań proszę na miejscu, eksperymentator zaraz do Ciebie podejdzie.` }

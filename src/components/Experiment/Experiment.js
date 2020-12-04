@@ -27,6 +27,8 @@ import FifthTask from "../Tasks/FifthTask";
 import FinalTask from "../Tasks/FinalTask";
 import Instruction from "../Tasks/Instruction"
 import UserForm from "../Tasks/UserForm/UserForm";
+import AuctionTask from "../Tasks/AuctionTask";
+
 
 // helpers
 import * as request from '../../helpers/fetch';
@@ -188,8 +190,14 @@ class Experiment extends Component {
     * fetchPSForm
      */
     _fetchExperimentInputData() {
+        request.fetchHotels(this._onLoadHotelsCallBack.bind(this))
         if (DEBUG) console.log("Fetch navigationScreens");
         request.fetchNavScreens(this.state.typeTask, this._onLoadNavScreenCallBack.bind(this))
+    }
+
+    _onLoadHotelsCallBack(data, error) {
+        if (DEBUG) console.log(data)
+        if (DEBUG) console.log(error)
     }
 
     /**
@@ -1346,6 +1354,30 @@ class Experiment extends Component {
                     }
                 });
             }
+        } else if (currentScreen === constant.AUCTION_TASK_DEMO_SCREEN) {
+            let data = {isValid: true}//this.validateFinalTask();
+            if (data.isValid) this.goToNextPage();
+            else {
+                //Show errors!
+                this.setState({
+                    error: {
+                        showError: data.showError,
+                        textError: data.textError
+                    }
+                });
+            }
+        } else if (currentScreen === constant.AUCTION_TASK_SCREEN) {
+            let data = {isValid: true}//this.validateFinalTask();
+            if (data.isValid) this.goToNextPage();
+            else {
+                //Show errors!
+                this.setState({
+                    error: {
+                        showError: data.showError,
+                        textError: data.textError
+                    }
+                });
+            }
         }
     }
 
@@ -1644,6 +1676,10 @@ function changePages(state, formHandler, firstTaskHandler, firstTaskDemoHandler,
                     counter={pageID}
                     error={error}
                 />;//pageID goes from 1 to n, so we need to discount 1 to get the value in the array
+            } else if (currentScreen === constant.AUCTION_TASK_SCREEN) {
+                return <AuctionTask />;
+            } else if (currentScreen === constant.AUCTION_TASK_DEMO_SCREEN) {
+                return <AuctionTask />;
             }
         }
     }
