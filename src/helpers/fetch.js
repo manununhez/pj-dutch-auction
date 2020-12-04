@@ -82,7 +82,7 @@ function save(spreadSheetName, row, column, data, callback) {
  * 
  * @param {*} callback 
  */
-export function fetchHotels(callback) {
+export function fetchAuctionHotels(callback) {
 
     get(fetch_hotels_url, {})
         .then((response) => {
@@ -111,7 +111,7 @@ export function fetchHotels(callback) {
  * 
  * @param {*} callback 
  */
-export function fetchHotelsTutorial(callback) {
+export function fetchAuctionHotelsTutorial(callback) {
     get(fetch_hotels_tutorial_url, {})
         .then((response) => {
             // const data = response.rows;
@@ -139,7 +139,7 @@ export function fetchHotelsTutorial(callback) {
  * 
  * @param {*} callback 
  */
-export function fetchHotelsRev(callback) {
+export function fetchAuctionHotelsRev(callback) {
     get(fetch_hotels_rev_url, {})
         .then((response) => {
             // const data = response.rows;

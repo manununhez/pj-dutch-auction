@@ -60,6 +60,8 @@ class Experiment extends Component {
             //Variables for input data
             inputNavigation: [],
             inputTextInstructions: [],
+            inputAuctionTask: [],
+            inputAuctionTaskDemo: [],
             inputFirstTask: [],
             inputFirstTaskDemo: [],
             inputParticipants: [],
@@ -120,6 +122,7 @@ class Experiment extends Component {
             loading: false,
             loadingSyncData: false,
             showFooter: true,
+            showFooterAuction: false,
             progressBarNow: 1,
             showPagination: false,
             page: constant.TEXT_EMPTY,
@@ -190,17 +193,55 @@ class Experiment extends Component {
     * fetchPSForm
      */
     _fetchExperimentInputData() {
-        request.fetchHotels(this._onLoadHotelsCallBack.bind(this))
-        request.fetchHotelsTutorial(this._onLoadHotelsCallBack.bind(this))
-        request.fetchHotelsRev(this._onLoadHotelsCallBack.bind(this))
+        request.fetchAuctionHotels(this._onLoadAuctionHotelsCallBack.bind(this))
+        request.fetchAuctionHotelsTutorial(this._onLoadAuctionHotelsDemoCallBack.bind(this))
+        // request.fetchAuctionHotelsRev(this._onLoadAuctionHotelsCallBack.bind(this))
         if (DEBUG) console.log("Fetch navigationScreens");
         request.fetchNavScreens(this.state.typeTask, this._onLoadNavScreenCallBack.bind(this))
     }
 
-    _onLoadHotelsCallBack(data, error) {
-        if (DEBUG) console.log(data)
-        if (DEBUG) console.log(error)
+    _onLoadAuctionHotelsCallBack(data, error) {
+        if (data) {
+            //Loggin the first screen of the navigation
+            this.setState({
+                // loading: false, //Hide loading
+                inputAuctionTask: data.hotels
+            })
+
+            if (DEBUG) console.log(data)
+        } else {
+            this.setState({
+                loading: false,
+                error: {
+                    showError: true,
+                    textError: `${error}. Please refresh page.`
+                }
+            })
+            if (DEBUG) console.log(error)
+        }
     }
+
+    _onLoadAuctionHotelsDemoCallBack(data, error) {
+        if (data) {
+            //Loggin the first screen of the navigation
+            this.setState({
+                // loading: false, //Hide loading
+                inputAuctionTaskDemo: data.hotels
+            })
+
+            if (DEBUG) console.log(data)
+        } else {
+            this.setState({
+                loading: false,
+                error: {
+                    showError: true,
+                    textError: `${error}. Please refresh page.`
+                }
+            })
+            if (DEBUG) console.log(error)
+        }
+    }
+
 
     /**
     * Save Data - Synchronously
@@ -350,7 +391,6 @@ class Experiment extends Component {
                 }
             })
             if (DEBUG) console.log(error)
-
         }
     }
 
@@ -1397,6 +1437,7 @@ class Experiment extends Component {
         let timestamps = logTimestamp.timestamp;
         let showPagination = false; //default
         let showFooter = true; //default
+        let showFooterAuction = false; //default
         let totalLength = inputNavigation.length;
         let firsTaskTotalLength = inputFirstTask.length / constant.FIRST_TASK_PROPERTIES_TOTAL;
         let firsTaskDemoTotalLength = inputFirstTaskDemo.length / constant.FIRST_TASK_PROPERTIES_TOTAL;
@@ -1420,6 +1461,12 @@ class Experiment extends Component {
                 showPagination = true;
                 page = `${pageID}/${firsTaskDemoTotalLength}`;
                 showFooter = false;
+            } else if (nextScreen === constant.AUCTION_TASK_SCREEN) {
+                showFooter = false;
+                showFooterAuction = true;
+            } else if (nextScreen === constant.AUCTION_TASK_DEMO_SCREEN) {
+                showFooter = false;
+                showFooterAuction = true;
             } else if (nextScreenNumber === (totalLength - 1)) { //Last screen!
                 // SYNC DATA
                 showAlertWindowsClosingTmp = false
@@ -1443,6 +1490,7 @@ class Experiment extends Component {
                 page: page,
                 loading: loading,
                 showFooter: showFooter,
+                showFooterAuction: showFooterAuction,
                 modalOpen: false,
                 progressBarNow: progressBarNow
             }, () => {
@@ -1542,8 +1590,9 @@ class Experiment extends Component {
     }
 
     render() {
-        const { progressBarNow, loading, loadingSyncData, showPagination, page, showFooter } = this.state;
+        const { progressBarNow, loading, loadingSyncData, showPagination, page, showFooter, showFooterAuction } = this.state;
         const timeout = 1000 * 60 * (60 * 3); //3horas
+        const footerText = (showFooter) ? constant.TEXT_FOOTER : (showFooterAuction ? constant.AUCTION_FOOTER_TEXT : constant.TEXT_EMPTY)
         return (
             <main ref="main">
                 <div>
@@ -1582,7 +1631,7 @@ class Experiment extends Component {
                     />
                 </div>
                 {showPagination ? <div style={{ textAlign: "end", marginRight: "5em" }}>{page}</div> : <></>}
-                {showFooter ? <FooterV1 /> : <></>}
+                { (showFooter || showFooterAuction) ? <FooterV1 text={footerText}/> : <></>}
             </main>
         )
     }
@@ -1600,9 +1649,20 @@ class Experiment extends Component {
 function changePages(state, formHandler, firstTaskHandler, firstTaskDemoHandler,
     secondTaskHandler, thirdTaskHandler, fourthTaskHandler, fifthTaskHandler, finalTaskHandler) {
 
-    const { currentScreenNumber, inputNavigation, inputTextInstructions,
-        outputFormData, error, inputFirstTask, inputFirstTaskDemo, outputFirstTask, outputFirstTaskDemo, modalOpen } = state;
+    const { currentScreenNumber, 
+        inputNavigation, 
+        inputTextInstructions,
+        outputFormData, 
+        error, 
+        inputFirstTask, 
+        inputFirstTaskDemo,
+        inputAuctionTask,
+        inputAuctionTaskDemo, 
+        outputFirstTask, 
+        outputFirstTaskDemo, 
+        modalOpen } = state;
     const totalLength = inputNavigation.length;
+    const counterAuction = 1
 
     if (totalLength > 0) { //If input navigation has been called
         document.body.style.backgroundColor = LIGHT_GRAY;
@@ -1679,9 +1739,9 @@ function changePages(state, formHandler, firstTaskHandler, firstTaskDemoHandler,
                     error={error}
                 />;//pageID goes from 1 to n, so we need to discount 1 to get the value in the array
             } else if (currentScreen === constant.AUCTION_TASK_SCREEN) {
-                return <AuctionTask />;
+                return <AuctionTask counter={counterAuction} data={inputAuctionTask[0]}/>;
             } else if (currentScreen === constant.AUCTION_TASK_DEMO_SCREEN) {
-                return <AuctionTask />;
+                return <AuctionTask counter={30+counterAuction} data={inputAuctionTaskDemo[0]}/>;
             }
         }
     }
