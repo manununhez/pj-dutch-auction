@@ -191,6 +191,8 @@ class Experiment extends Component {
      */
     _fetchExperimentInputData() {
         request.fetchHotels(this._onLoadHotelsCallBack.bind(this))
+        request.fetchHotelsTutorial(this._onLoadHotelsCallBack.bind(this))
+        request.fetchHotelsRev(this._onLoadHotelsCallBack.bind(this))
         if (DEBUG) console.log("Fetch navigationScreens");
         request.fetchNavScreens(this.state.typeTask, this._onLoadNavScreenCallBack.bind(this))
     }

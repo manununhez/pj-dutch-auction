@@ -1,17 +1,20 @@
 // Fetch.js
 import * as constant from '../helpers/constants';
 
-const _apiHost = 'https://api.swps-pjatk-experiment.pl/v1';
-const url_get = '/v4-get';
-const url_post = '/v4-post';
-
+const _apiHost = 'http://localhost:5000';
+const fetch_sheet_url = '/v4-get';
+const save_sheet_url = '/v4-post';
+const fetch_hotels_url = '/hotels';
+const fetch_hotels_tutorial_url = '/hotels-tutorial';
+const fetch_hotels_rev_url = '/hotels-rev';
 
 async function request(url, params, method = 'GET') {
 
     const options = {
         method,
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
         }
     };
 
@@ -63,7 +66,7 @@ export function create(url, params) {
 // }
 
 function save(spreadSheetName, row, column, data, callback) {
-    create(url_post, {
+    create(save_sheet_url, {
         spreadSheetName: spreadSheetName,
         column: row,
         row: column,
@@ -75,6 +78,90 @@ function save(spreadSheetName, row, column, data, callback) {
     });
 }
 
+/**
+ * 
+ * @param {*} callback 
+ */
+export function fetchHotels(callback) {
+
+    get(fetch_hotels_url, {})
+        .then((response) => {
+            // const data = response.rows;
+            // let hotels = response.map((hotel, i) => {
+            //     return { hotel };
+            // });
+
+            let hotels = [];
+
+            // response.forEach(element => {
+            //     hotels.push(element);
+            // });
+            
+            for (let [key, value] of Object.entries(response)) {
+                hotels.push(value);
+              }      
+              console.log(response)
+              callback({ hotels });      
+        }, (response) => {
+            callback(false, response);
+        });
+}
+
+/**
+ * 
+ * @param {*} callback 
+ */
+export function fetchHotelsTutorial(callback) {
+    get(fetch_hotels_tutorial_url, {})
+        .then((response) => {
+            // const data = response.rows;
+            // let hotels = response.map((hotel, i) => {
+            //     return { hotel };
+            // });
+
+            let hotels = [];
+
+            // response.forEach(element => {
+            //     hotels.push(element);
+            // });
+            
+            for (let [key, value] of Object.entries(response)) {
+                hotels.push(value);
+              }      
+              console.log(response)
+              callback({ hotels });      
+        }, (response) => {
+            callback(false, response);
+        });
+}
+
+/**
+ * 
+ * @param {*} callback 
+ */
+export function fetchHotelsRev(callback) {
+    get(fetch_hotels_rev_url, {})
+        .then((response) => {
+            // const data = response.rows;
+            // let hotels = response.map((hotel, i) => {
+            //     return { hotel };
+            // });
+
+            let hotels = [];
+
+            // response.forEach(element => {
+            //     hotels.push(element);
+            // });
+            
+            for (let [key, value] of Object.entries(response)) {
+                hotels.push(value);
+              }      
+              console.log(response)
+              callback({ hotels });      
+        }, (response) => {
+            callback(false, response);
+        });
+}
 
 /**
  * Load app versions from the spreadsheet
@@ -86,7 +173,7 @@ export function fetchVersions(callback) {
     let row = "A2";
     let column = "B";
 
-    get(url_get, { spreadSheetName: spreadsheetName, column: row, row: column })
+    get(fetch_sheet_url, { spreadSheetName: spreadsheetName, column: row, row: column })
         .then((response) => {
             const data = response.rows;
             let versions = data.map((versions) => {
@@ -106,7 +193,7 @@ export function fetchVersions(callback) {
  */
 export function fetchInputFirstTask(spreadsheetName, column, row, callback) {
 
-    get(url_get, { spreadSheetName: spreadsheetName, column: row, row: column })
+    get(fetch_sheet_url, { spreadSheetName: spreadsheetName, column: row, row: column })
         .then((response) => {
             const data = response.rows;
 
@@ -141,7 +228,7 @@ export function fetchAppTextFemale(callback) {
     let row = "A2";
     let column = "C";
 
-    get(url_get, { spreadSheetName: spreadsheetName, column: row, row: column })
+    get(fetch_sheet_url, { spreadSheetName: spreadsheetName, column: row, row: column })
         .then((response) => {
             const data = response.rows;
 
@@ -164,7 +251,7 @@ export function fetchAppTextMale(callback) {
     let row = "A2";
     let column = "C";
 
-    get(url_get, { spreadSheetName: spreadsheetName, column: row, row: column })
+    get(fetch_sheet_url, { spreadSheetName: spreadsheetName, column: row, row: column })
         .then((response) => {
             const data = response.rows;
 
@@ -188,7 +275,7 @@ export function fetchNavScreens(spreadsheetName, callback) {
     let row = "A2";
     let column = "B";
 
-    get(url_get, { spreadSheetName: spreadsheetName, column: row, row: column })
+    get(fetch_sheet_url, { spreadSheetName: spreadsheetName, column: row, row: column })
         .then((response) => {
             const data = response.rows;
             let screens = data.map((version, i) => {
@@ -211,7 +298,7 @@ export function fetchParticipantsCounter(callback) {
     let row = "B2";
     let column = "D";
 
-    get(url_get, { spreadSheetName: spreadsheetName, column: row, row: column })
+    get(fetch_sheet_url, { spreadSheetName: spreadsheetName, column: row, row: column })
         .then((response) => {
             const data = response.rows;
 
