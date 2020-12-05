@@ -61,7 +61,7 @@ class Experiment extends Component {
             inputNavigation: [],
             inputTextInstructions: [],
             inputAuctionTask: [],
-            inputAuctionTaskDemo: [],
+            inputAuctionDemoTask: [],
             inputFirstTask: [],
             inputFirstTaskDemo: [],
             inputParticipants: [],
@@ -116,6 +116,8 @@ class Experiment extends Component {
                 screen: [],
                 timestamp: []
             },
+            outputAuctionTask: [],
+            outputAuctionDemoTask: [],
             typeTask: this.props.match.params.version,
             showAlertWindowsClosing: true,
             currentScreenNumber: 0,
@@ -157,6 +159,8 @@ class Experiment extends Component {
         this.fourthTaskHandler = this._fourthTaskHandler.bind(this)
         this.fifthTaskHandler = this._fifthTaskHandler.bind(this)
         this.finalTaskHandler = this._finalTaskHandler.bind(this)
+        this.auctionTaskHandler = this._auctionTaskHandler.bind(this)
+        this.auctionTaskDemoHandler = this._auctionTaskDemoHandler.bind(this)
 
         if (DEBUG) console.log(`ARIADNA_REDIRECT_REJECT:${ARIADNA_REDIRECT_REJECT}`);
         if (DEBUG) console.log(`ARIADNA_REDIRECT_ACCEPTED:${ARIADNA_REDIRECT_ACCEPTED}`);
@@ -226,7 +230,7 @@ class Experiment extends Component {
             //Loggin the first screen of the navigation
             this.setState({
                 // loading: false, //Hide loading
-                inputAuctionTaskDemo: data.hotels
+                inputAuctionDemoTask: data.hotels
             })
 
             if (DEBUG) console.log(data)
@@ -1047,6 +1051,54 @@ class Experiment extends Component {
         });
     }
 
+    _auctionTaskHandler(results) {
+        if (DEBUG) console.log(results)
+        const { generalOutput, outputFormData } = this.state;
+        const now = Date.now();
+
+        generalOutput.push({
+            userID: outputFormData.numer,
+            task: constant.AUCTION_TASK_SCREEN,
+            data: results,
+            timestamp: now,
+            sync: constant.STATE_NOT_SYNC
+        })
+
+        //save results
+        this.setState({
+            outputAuctionTask: results,
+            generalOutput: generalOutput,
+            showFooter: true
+        }, () => {
+            //we simulate a space btn pressed because Auction task already finishes with a space btn pressed
+            this.validatePressedButtonToNextPage()
+        })
+    }
+
+    _auctionTaskDemoHandler(results) {
+        if (DEBUG) console.log(results)
+        const { generalOutput, outputFormData } = this.state;
+        const now = Date.now();
+
+        generalOutput.push({
+            userID: outputFormData.numer,
+            task: constant.AUCTION_TASK_DEMO_SCREEN,
+            data: results,
+            timestamp: now,
+            sync: constant.STATE_NOT_SYNC
+        })
+
+        //save results
+        this.setState({
+            outputAuctionDemoTask: results,
+            generalOutput: generalOutput,
+            showFooter: true
+        }, () => {
+            //we simulate a space btn pressed because Auction task already finishes with a space btn pressed
+            this.validatePressedButtonToNextPage()
+        })
+    }
+
     /*********************************************************
      * VALIDATE DATA OF EACH COMPONENT BEFORE GOING TO NEXT PAGE
      **********************************************************/
@@ -1270,6 +1322,53 @@ class Experiment extends Component {
     }
 
     /**
+     * Validate Auction task results
+     */
+
+    validateAuctionTask() {
+        const { outputAuctionTask, inputAuctionTask } = this.state;
+
+        let data = {
+            isValid: false,
+            textError: constant.TEXT_EMPTY,
+            showError: false
+        }
+
+        if (outputAuctionTask.length > 0 && outputAuctionTask.length === inputAuctionTask.length) {
+            data.isValid = true;
+        } else {
+            data.textError = "Finish the task first!";
+            data.showError = true;
+        }
+
+        return data;
+    }
+
+    /**
+   * Validate Auction task results
+   */
+
+    validateAuctionDemoTask() {
+        const { outputAuctionDemoTask, inputAuctionDemoTask } = this.state;
+
+        let data = {
+            isValid: false,
+            textError: constant.TEXT_EMPTY,
+            showError: false
+        }
+
+        console.log(outputAuctionDemoTask)
+        if (outputAuctionDemoTask.length > 0 && outputAuctionDemoTask.length === inputAuctionDemoTask.length) {
+            data.isValid = true;
+        } else {
+            data.textError = "Finish the task first!";
+            data.showError = true;
+        }
+
+        return data;
+    }
+
+    /**
      * Validate components before navigating between pages. 
      */
     validatePressedButtonToNextPage() {
@@ -1397,7 +1496,7 @@ class Experiment extends Component {
                 });
             }
         } else if (currentScreen === constant.AUCTION_TASK_DEMO_SCREEN) {
-            let data = {isValid: true}//this.validateFinalTask();
+            let data = this.validateAuctionDemoTask();
             if (data.isValid) this.goToNextPage();
             else {
                 //Show errors!
@@ -1409,7 +1508,7 @@ class Experiment extends Component {
                 });
             }
         } else if (currentScreen === constant.AUCTION_TASK_SCREEN) {
-            let data = {isValid: true}//this.validateFinalTask();
+            let data = this.validateAuctionTask();
             if (data.isValid) this.goToNextPage();
             else {
                 //Show errors!
@@ -1601,7 +1700,7 @@ class Experiment extends Component {
                 <section className="section-sm  section-hero section-shaped">
                     {changePages(this.state, this.formHandler, this.firstTaskHandler, this.firstTaskDemoHandler,
                         this.secondTaskHandler, this.thirdTaskHandler, this.fourthTaskHandler, this.fifthTaskHandler,
-                        this.finalTaskHandler)}
+                        this.finalTaskHandler, this.auctionTaskHandler, this.auctionTaskDemoHandler)}
                 </section>
                 <div>
                     <IdleTimer
@@ -1631,7 +1730,7 @@ class Experiment extends Component {
                     />
                 </div>
                 {showPagination ? <div style={{ textAlign: "end", marginRight: "5em" }}>{page}</div> : <></>}
-                { (showFooter || showFooterAuction) ? <FooterV1 text={footerText}/> : <></>}
+                { (showFooter || showFooterAuction) ? <FooterV1 text={footerText} /> : <></>}
             </main>
         )
     }
@@ -1647,22 +1746,22 @@ class Experiment extends Component {
  * @param {*} finalTaskHandler 
  */
 function changePages(state, formHandler, firstTaskHandler, firstTaskDemoHandler,
-    secondTaskHandler, thirdTaskHandler, fourthTaskHandler, fifthTaskHandler, finalTaskHandler) {
+    secondTaskHandler, thirdTaskHandler, fourthTaskHandler, fifthTaskHandler, finalTaskHandler,
+    auctionTaskHandler, auctionTaskDemoHandler) {
 
-    const { currentScreenNumber, 
-        inputNavigation, 
+    const { currentScreenNumber,
+        inputNavigation,
         inputTextInstructions,
-        outputFormData, 
-        error, 
-        inputFirstTask, 
+        outputFormData,
+        error,
+        inputFirstTask,
         inputFirstTaskDemo,
         inputAuctionTask,
-        inputAuctionTaskDemo, 
-        outputFirstTask, 
-        outputFirstTaskDemo, 
+        inputAuctionDemoTask,
+        outputFirstTask,
+        outputFirstTaskDemo,
         modalOpen } = state;
     const totalLength = inputNavigation.length;
-    const counterAuction = 1
 
     if (totalLength > 0) { //If input navigation has been called
         document.body.style.backgroundColor = LIGHT_GRAY;
@@ -1739,9 +1838,9 @@ function changePages(state, formHandler, firstTaskHandler, firstTaskDemoHandler,
                     error={error}
                 />;//pageID goes from 1 to n, so we need to discount 1 to get the value in the array
             } else if (currentScreen === constant.AUCTION_TASK_SCREEN) {
-                return <AuctionTask counter={counterAuction} data={inputAuctionTask[0]}/>;
+                return <AuctionTask imageIndex={0} data={inputAuctionTask} action={auctionTaskHandler} />;
             } else if (currentScreen === constant.AUCTION_TASK_DEMO_SCREEN) {
-                return <AuctionTask counter={30+counterAuction} data={inputAuctionTaskDemo[0]}/>;
+                return <AuctionTask imageIndex={30} data={inputAuctionDemoTask} action={auctionTaskDemoHandler} />;
             }
         }
     }
