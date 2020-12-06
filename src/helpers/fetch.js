@@ -1,7 +1,7 @@
 // Fetch.js
 import * as constant from '../helpers/constants';
 
-const _apiHost = 'https://api.swps-pjatk-experiment.pl/v1';
+const _apiHost = 'https://api.swps-pjatk-experiment.pl/v2';
 const fetch_sheet_url = '/v4-get';
 const save_sheet_url = '/v4-post';
 const fetch_hotels_url = '/hotels';
