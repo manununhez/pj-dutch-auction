@@ -7,6 +7,7 @@ import "./AuctionTask.css";
 
 import {
     SPACE_KEY_CODE,
+    ENTER_KEY_CODE,
     EVENT_KEY_DOWN,
     FREQ_CHANGE_MS,
     PRICE_STEP,
@@ -109,9 +110,10 @@ class AuctionTask extends React.Component {
     }
 
     _handleKeyDownEvent(event) {
+        const { bidState, counterAuction, isBidGain, bid, priceStart } = this.state
+
         if (event.keyCode === SPACE_KEY_CODE) { //Transition between screens
             if (DEBUG) console.log("SPACE_KEY")
-            const { bidState, counterAuction, isBidGain, bid, priceStart } = this.state
 
             if (bidState === BID_STATE_NOT_STARTED) { //bid not started yet
                 this.setState(({
@@ -121,7 +123,11 @@ class AuctionTask extends React.Component {
                 });
             } else if (bidState === BID_STATE_RUNNING) { //bid currently running
                 this._finishBidAndSaveData(true)
-            } else if (bidState === BID_STATE_FINISHED) { //Se cierra el modal y se pasa al siguiente hotel
+            }
+
+            if (DEBUG) console.log(this.state)
+        } else if (event.keyCode === ENTER_KEY_CODE) {
+            if (bidState === BID_STATE_FINISHED) { //Se cierra el modal y se pasa al siguiente hotel
                 //Cycle between the hotels (30)
                 if (counterAuction < (this.props.data.length - 1)) {
                     //save results
@@ -144,8 +150,6 @@ class AuctionTask extends React.Component {
                 })
             }
 
-
-            if (DEBUG) console.log(this.state)
         }
     }
 

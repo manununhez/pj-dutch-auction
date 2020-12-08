@@ -115,6 +115,7 @@ export const ATTRIBUTE_FOURTH_TASK = {
 
 //keyboard related
 export const SPACE_KEY_CODE = 32;
+export const ENTER_KEY_CODE = 13;
 export const EVENT_KEY_DOWN = "keydown";
 export const EVENT_BEFORE_UNLOAD = "beforeunload";
 export const EVENT_UNLOAD = "unload";
@@ -173,7 +174,7 @@ export const ERROR_13 = "Proszę najpierw wybrać conajmniej jedną opcję.";//P
 export const REWARD_BONUS_MESSAGE = "W nagrodę otrzymasz dodatkowo 70 punktów. Dodatkowe punkty zostaną doliczone do Twojego konta za kilka tygodni po zakończeniu cyklu badań.";
 export const REWARD_RESULT_MESSAGE = (result) => { return `Udało Ci się poprawnie rozwiązać ${result}% zadań dotyczących wyboru pralek.` } //`You’ve solved ${result}% decision tasks correctly.`
 export const AUCTION_FOOTER_TEXT = "Naciśnij SPACJĘ, aby rozpocząć aukcję."
-export const AUCTION_GAIN_TEXT = (value) => { return `Brawo, udało Ci się zarezerwować ten pokój.<br><br>Zaoszczędziłeś ${value} zł. <br><br> Naciśnij SPACE, aby przejść do następnej aukcji.`};
-export const AUCTION_LOSE_TEXT = (value) => { return `Ktoś inny zarezerwował ten pokój. Musisz zapłacić pełną cenę:  ${value} zł. <br><br> Naciśnij SPACE, aby przejść do następnej aukcji.`};
+export const AUCTION_GAIN_TEXT = (value) => { return `Brawo, udało Ci się zarezerwować ten pokój.<br><br>Zaoszczędziłeś ${value} zł. <br><br> Naciśnij ENTER, aby przejść do następnej aukcji.`};
+export const AUCTION_LOSE_TEXT = (value) => { return `Ktoś inny zarezerwował ten pokój. Musisz zapłacić pełną cenę:  ${value} zł. <br><br> Naciśnij ENTER, aby przejść do następnej aukcji.`};
 export const AUCTION_REWARD_RESULT_MESSAGE_FEMALE = (result) => { return `Dziękujemy, to już koniec tego zadania. W sumie zaoszczędziłaś ${result} zł.<br><br> Pozostań proszę na miejscu, eksperymentator zaraz do Ciebie podejdzie.` }
 export const AUCTION_REWARD_RESULT_MESSAGE_MALE = (result) => { return `Dziękujemy, to już koniec tego zadania. W sumie zaoszczędziłeś ${result} zł.<br><br> Pozostań proszę na miejscu, eksperymentator zaraz do Ciebie podejdzie.` }
