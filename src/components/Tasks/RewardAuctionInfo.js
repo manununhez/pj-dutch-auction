@@ -10,8 +10,6 @@ import {
     AUCTION_REWARD_RESULT_MESSAGE_MALE
 } from '../../helpers/constants';
 
-const DEBUG = (process.env.REACT_APP_DEBUG_LOG === "true") ? true : false;
-
 class RewardAuctionInfo extends React.Component {
     render() {
         return (
@@ -32,30 +30,6 @@ function totalReward(data, sex) {
         getFormattedText(AUCTION_REWARD_RESULT_MESSAGE_MALE(savedMoney))
     return (<div style={{ textAlign: "justify" }}>
         {textToDisplay}
-    </div>);
-}
-
-function parserResults(data) {
-    const totalTasks = parseFloat(data.isCorrectAnswer.length);
-    const totalCorrect = parseFloat(data.isCorrectAnswer.filter(item => item).length)
-    let result = (totalCorrect / totalTasks) * 100;
-    if (DEBUG) console.log("result Before: " + result)
-    result = result.toFixed(2);
-    if (DEBUG) console.log("result After: " + result)
-
-    let textToDisplay = REWARD_RESULT_MESSAGE(result);
-    let textBonus = "";
-
-    if (DEBUG) console.log("TotalTasks: " + totalTasks)
-    if (DEBUG) console.log("TotalCorrect: " + totalCorrect)
-    if (DEBUG) console.log("result: " + result)
-
-    if (result >= 40.0)
-        textBonus = textBonus + REWARD_BONUS_MESSAGE;
-
-    return (<div style={{ textAlign: "justify" }}>
-        <h2>{textToDisplay}</h2><br />
-        <h2>{textBonus}</h2><br />
     </div>);
 }
 
