@@ -19,6 +19,7 @@ import SyncLoader from "react-spinners/SyncLoader";
 // Views
 import FooterV1 from "../Footers/FooterV1.0";
 import RewardInfo from "../Tasks/RewardInfo";
+import RewardAuctionInfo from "../Tasks/RewardAuctionInfo";
 import FirstTask from "../Tasks/FirstTask";
 import SecondTask from "../Tasks/SecondTask";
 import ThirdTask from "../Tasks/ThirdTask";
@@ -123,7 +124,6 @@ class Experiment extends Component {
             loading: false,
             loadingSyncData: false,
             showFooter: true,
-            showFooterAuction: false,
             progressBarNow: 1,
             showPagination: false,
             page: constant.TEXT_EMPTY,
@@ -1088,8 +1088,7 @@ class Experiment extends Component {
         //save results
         this.setState({
             outputAuctionTask: outputAuctionTask,
-            generalOutput: generalOutput,
-            showFooter: true
+            generalOutput: generalOutput
         }, () => {
             this._checkSyncGeneralData()
 
@@ -1121,8 +1120,7 @@ class Experiment extends Component {
         //save results
         this.setState({
             outputAuctionDemoTask: outputAuctionDemoTask,
-            generalOutput: generalOutput,
-            showFooter: true
+            generalOutput: generalOutput
         }, () => {
             this._checkSyncGeneralData()
 
@@ -1357,6 +1355,7 @@ class Experiment extends Component {
      */
 
     validateAuctionTask() {
+        console.log("validateAuctionTask")
         const { outputAuctionTask, inputAuctionTask } = this.state;
 
         let data = {
@@ -1380,6 +1379,8 @@ class Experiment extends Component {
    */
 
     validateAuctionDemoTask() {
+        console.log("validateAuctionDemoTask")
+
         const { outputAuctionDemoTask, inputAuctionDemoTask } = this.state;
 
         let data = {
@@ -1395,6 +1396,8 @@ class Experiment extends Component {
             data.textError = "Finish the task first!";
             data.showError = true;
         }
+
+        console.log(data)
 
         return data;
     }
@@ -1422,7 +1425,7 @@ class Experiment extends Component {
                         request.fetchAppTextMale(this._onLoadAppTextCallBack.bind(this));
 
 
-                    this._goToNextTask();
+                    this._goToNextTaskInInputNavigation();
                 } else {
                     if (data.showError) {
                         //Show errors!
@@ -1443,7 +1446,7 @@ class Experiment extends Component {
 
             } else if (currentScreen === constant.FIRST_TASK_DEMO_SCREEN) {
                 let data = this.validateFirstTaskDemo();
-                if (data.isValid) this._goToNextTask();
+                if (data.isValid) this._goToNextTaskInInputNavigation();
                 else {
                     //Show errors!
                     this.setState({
@@ -1455,7 +1458,7 @@ class Experiment extends Component {
                 }
             } else if (currentScreen === constant.FIRST_TASK_SCREEN) {
                 let data = this.validateFirstTask();
-                if (data.isValid) this._goToNextTask();
+                if (data.isValid) this._goToNextTaskInInputNavigation();
                 else {
                     //Show errors!
                     this.setState({
@@ -1466,12 +1469,14 @@ class Experiment extends Component {
                     });
                 }
             } else if (currentScreen === constant.REWARD_INFO_SCREEN) {
-                this._goToNextTask();
+                this._goToNextTaskInInputNavigation();
+            } else if (currentScreen === constant.REWARD_AUCTION_INFO_SCREEN) {
+                this._goToNextTaskInInputNavigation();
             } else if (currentScreen.includes(constant.INSTRUCTION_SCREEN)) {
-                this._goToNextTask();
+                this._goToNextTaskInInputNavigation();
             } else if (currentScreen === constant.SECOND_TASK_SCREEN) {
                 let data = this.validateSecondTask();
-                if (data.isValid) this._goToNextTask();
+                if (data.isValid) this._goToNextTaskInInputNavigation();
                 else {
                     //Show errors!
                     this.setState({
@@ -1483,7 +1488,7 @@ class Experiment extends Component {
                 }
             } else if (currentScreen === constant.THIRD_TASK_SCREEN) {
                 let data = this.validateThirdTask();
-                if (data.isValid) this._goToNextTask();
+                if (data.isValid) this._goToNextTaskInInputNavigation();
                 else {
                     //Show errors!
                     this.setState({
@@ -1495,7 +1500,7 @@ class Experiment extends Component {
                 }
             } else if (currentScreen === constant.FOURTH_TASK_SCREEN) {
                 let data = this.validateFourthTask();
-                if (data.isValid) this._goToNextTask();
+                if (data.isValid) this._goToNextTaskInInputNavigation();
                 else {
                     //Show errors!
                     this.setState({
@@ -1507,7 +1512,7 @@ class Experiment extends Component {
                 }
             } else if (currentScreen === constant.FIFTH_TASK_SCREEN) {
                 let data = this.validateFifthTask();
-                if (data.isValid) this._goToNextTask();
+                if (data.isValid) this._goToNextTaskInInputNavigation();
                 else {
                     //Show errors!
                     this.setState({
@@ -1519,7 +1524,7 @@ class Experiment extends Component {
                 }
             } else if (currentScreen === constant.FINAL_TASK_SCREEN) {
                 let data = this.validateFinalTask();
-                if (data.isValid) this._goToNextTask();
+                if (data.isValid) this._goToNextTaskInInputNavigation();
                 else {
                     //Show errors!
                     this.setState({
@@ -1531,7 +1536,7 @@ class Experiment extends Component {
                 }
             } else if (currentScreen === constant.AUCTION_TASK_DEMO_SCREEN) {
                 let data = this.validateAuctionDemoTask();
-                if (data.isValid) this._goToNextTask();
+                if (data.isValid) this._goToNextTaskInInputNavigation();
                 else {
                     //Show errors!
                     this.setState({
@@ -1543,7 +1548,7 @@ class Experiment extends Component {
                 }
             } else if (currentScreen === constant.AUCTION_TASK_SCREEN) {
                 let data = this.validateAuctionTask();
-                if (data.isValid) this._goToNextTask();
+                if (data.isValid) this._goToNextTaskInInputNavigation();
                 else {
                     //Show errors!
                     this.setState({
@@ -1560,7 +1565,7 @@ class Experiment extends Component {
     /**
      * We move to next page, according to inputNavigation input data
      */
-    _goToNextTask() {
+    _goToNextTaskInInputNavigation() {
         const { currentScreenNumber, inputNavigation, logTimestamp, inputFirstTask,
             inputFirstTaskDemo, showAlertWindowsClosing } = this.state;
 
@@ -1571,7 +1576,6 @@ class Experiment extends Component {
         let timestamps = logTimestamp.timestamp;
         let showPagination = false; //default
         let showFooter = true; //default
-        let showFooterAuction = false; //default
         let totalLength = inputNavigation.length;
         let firsTaskTotalLength = inputFirstTask.length / constant.FIRST_TASK_PROPERTIES_TOTAL;
         let firsTaskDemoTotalLength = inputFirstTaskDemo.length / constant.FIRST_TASK_PROPERTIES_TOTAL;
@@ -1597,10 +1601,8 @@ class Experiment extends Component {
                 showFooter = false;
             } else if (nextScreen === constant.AUCTION_TASK_SCREEN) {
                 showFooter = false;
-                showFooterAuction = true;
             } else if (nextScreen === constant.AUCTION_TASK_DEMO_SCREEN) {
                 showFooter = false;
-                showFooterAuction = true;
             } else if (nextScreenNumber === (totalLength - 1)) { //Last screen!
                 // SYNC DATA
                 showAlertWindowsClosingTmp = false
@@ -1624,7 +1626,6 @@ class Experiment extends Component {
                 page: page,
                 loading: loading,
                 showFooter: showFooter,
-                showFooterAuction: showFooterAuction,
                 modalOpen: false,
                 progressBarNow: progressBarNow
             }, () => {
@@ -1708,15 +1709,14 @@ class Experiment extends Component {
     }
 
     render() {
-        const { progressBarNow, loading, loadingSyncData, showPagination, page, showFooter, showFooterAuction } = this.state;
+        const { progressBarNow, loading, loadingSyncData, showPagination, page, showFooter } = this.state;
         const timeout = 1000 * 60 * (60 * 3); //3horas
-        const footerText = (showFooter) ? constant.TEXT_FOOTER : (showFooterAuction ? constant.AUCTION_FOOTER_TEXT : constant.TEXT_EMPTY)
         return (
             <main ref="main">
                 <div>
                     <Progress value={progressBarNow} />
                 </div>
-                <section className="section-sm ">
+                <section className="section-sm" style={{ minHeight: "500px" }}>
                     {changePages(this.state, this.formHandler, this.firstTaskHandler, this.firstTaskDemoHandler,
                         this.secondTaskHandler, this.thirdTaskHandler, this.fourthTaskHandler, this.fifthTaskHandler,
                         this.finalTaskHandler, this.auctionTaskHandler, this.auctionTaskDemoHandler)}
@@ -1749,7 +1749,7 @@ class Experiment extends Component {
                     />
                 </div>
                 {showPagination ? <div style={{ textAlign: "end", marginRight: "5em" }}>{page}</div> : <></>}
-                { (showFooter || showFooterAuction) ? <FooterV1 text={footerText} /> : <></>}
+                { showFooter ? <FooterV1 text={constant.TEXT_FOOTER} /> : <></>}
             </main>
         )
     }
@@ -1777,6 +1777,8 @@ function changePages(state, formHandler, firstTaskHandler, firstTaskDemoHandler,
         inputFirstTaskDemo,
         inputAuctionTask,
         inputAuctionDemoTask,
+        outputAuctionTask,
+        outputAuctionDemoTask,
         outputFirstTask,
         outputFirstTaskDemo,
         modalOpen } = state;
@@ -1867,6 +1869,11 @@ function changePages(state, formHandler, firstTaskHandler, firstTaskDemoHandler,
                     imageIndex={inputAuctionTask.length} //demo image index starts in 30, after the real auctions
                     data={inputAuctionDemoTask}
                     action={auctionTaskDemoHandler}
+                />;
+            } else if (currentScreen === constant.REWARD_AUCTION_INFO_SCREEN) {
+                return <RewardAuctionInfo
+                    sex={outputFormData.sex}
+                    data={outputAuctionDemoTask}
                 />;
             }
         }

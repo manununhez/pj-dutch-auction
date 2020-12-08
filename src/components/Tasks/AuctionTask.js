@@ -15,8 +15,11 @@ import {
     ONE_SECOND_MS,
     BID_STATE_NOT_STARTED,
     BID_STATE_RUNNING,
-    BID_STATE_FINISHED
+    BID_STATE_FINISHED,
+    AUCTION_FOOTER_TEXT
 } from '../../helpers/constants';
+
+import FooterV1 from "../Footers/FooterV1.0";
 
 const DEBUG = (process.env.REACT_APP_DEBUG_LOG === "true") ? true : false;
 
@@ -75,8 +78,7 @@ class AuctionTask extends React.Component {
     _finishBidAndSaveData(isBidGain) {
         //Aca el usuario para la apuesta. Se guarda el bid actual y se muestra el dialogo
         const { bid, priceStart, counterAuction } = this.state
-        let bidTmp = isBidGain ? bid : priceStart
-
+        
         //showModal()
         this.setState(({
             bidState: BID_STATE_FINISHED,
@@ -84,11 +86,7 @@ class AuctionTask extends React.Component {
             isBidGain: isBidGain
         }), () => {
             this._clearTimer(); //stop timer
-            this.props.action({
-                priceStart: priceStart,
-                bid: bidTmp,
-                hotelName: this.props.data[counterAuction].hotelName
-            })
+            
         });
     }
 
@@ -113,7 +111,7 @@ class AuctionTask extends React.Component {
     _handleKeyDownEvent(event) {
         if (event.keyCode === SPACE_KEY_CODE) { //Transition between screens
             if (DEBUG) console.log("SPACE_KEY")
-            const { bidState, counterAuction } = this.state
+            const { bidState, counterAuction, isBidGain, bid, priceStart } = this.state
 
             if (bidState === BID_STATE_NOT_STARTED) { //bid not started yet
                 this.setState(({
@@ -137,6 +135,13 @@ class AuctionTask extends React.Component {
                         modalOpen: false
                     }));
                 }
+
+                let bidTmp = isBidGain ? bid : priceStart
+                this.props.action({
+                    priceStart: priceStart,
+                    bid: bidTmp,
+                    hotelName: this.props.data[counterAuction].hotelName
+                })
             }
 
 
@@ -145,7 +150,7 @@ class AuctionTask extends React.Component {
     }
 
     render() {
-        const { counterAuction, bid, modalOpen, isBidGain, priceStart } = this.state
+        const { counterAuction, bid, modalOpen, isBidGain, priceStart, bidState } = this.state
         const counterHotel = counterAuction + 1 + this.props.imageIndex
         const imgA = `http://nielek.home.pl/psychology/pictures/h${counterHotel}a.jpg`
         const imgB = `http://nielek.home.pl/psychology/pictures/h${counterHotel}b.jpg`
@@ -187,6 +192,9 @@ class AuctionTask extends React.Component {
                             </div>
                         </Row>
                     </Col>
+                </Row>
+                <Row>
+                { (bidState === BID_STATE_NOT_STARTED) ? <FooterV1 text={AUCTION_FOOTER_TEXT} /> : <></>}
                 </Row>
             </Container>
         );

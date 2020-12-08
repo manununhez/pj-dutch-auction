@@ -123,6 +123,7 @@ export const EVENT_UNLOAD = "unload";
 export const USER_INFO_SCREEN = "UserInfo";
 export const USER_FORM_SCREEN = "UserForm";
 export const REWARD_INFO_SCREEN = "RewardScreen";
+export const REWARD_AUCTION_INFO_SCREEN = "RewardAuctionScreen";
 export const FIRST_TASK_SCREEN = "FirstTask";
 export const FIRST_TASK_DEMO_SCREEN = "FirstTask Demo";
 export const SECOND_TASK_SCREEN = "SecondTask";
