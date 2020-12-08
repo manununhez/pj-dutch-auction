@@ -86,21 +86,11 @@ export function fetchAuctionHotels(callback) {
 
     get(fetch_hotels_url, {})
         .then((response) => {
-            // const data = response.rows;
-            // let hotels = response.map((hotel, i) => {
-            //     return { hotel };
-            // });
-
             let hotels = [];
-
-            // response.forEach(element => {
-            //     hotels.push(element);
-            // });
 
             for (let [key, value] of Object.entries(response)) {
                 hotels.push(value);
             }
-            console.log(response)
             callback({ hotels });
         }, (response) => {
             callback(false, response);
@@ -114,21 +104,11 @@ export function fetchAuctionHotels(callback) {
 export function fetchAuctionHotelsTutorial(callback) {
     get(fetch_hotels_tutorial_url, {})
         .then((response) => {
-            // const data = response.rows;
-            // let hotels = response.map((hotel, i) => {
-            //     return { hotel };
-            // });
-
             let hotels = [];
-
-            // response.forEach(element => {
-            //     hotels.push(element);
-            // });
 
             for (let [key, value] of Object.entries(response)) {
                 hotels.push(value);
             }
-            console.log(response)
             callback({ hotels });
         }, (response) => {
             callback(false, response);
@@ -142,21 +122,11 @@ export function fetchAuctionHotelsTutorial(callback) {
 export function fetchAuctionHotelsRev(callback) {
     get(fetch_hotels_rev_url, {})
         .then((response) => {
-            // const data = response.rows;
-            // let hotels = response.map((hotel, i) => {
-            //     return { hotel };
-            // });
-
             let hotels = [];
-
-            // response.forEach(element => {
-            //     hotels.push(element);
-            // });
 
             for (let [key, value] of Object.entries(response)) {
                 hotels.push(value);
             }
-            console.log(response)
             callback({ hotels });
         }, (response) => {
             callback(false, response);
@@ -566,25 +536,25 @@ const usergeneraldata = (data, ariadnaUserID) => {
                 output.data[9]
             ]);
         } else if (output.task === constant.AUCTION_TASK_SCREEN) {
-                result.push([
-                    output.userID,
-                    ariadnaUserID,
-                    output.task,
-                    output.timestamp, //created
-                    output.data.hotelName,
-                    output.data.priceStart,
-                    output.data.bid
-                ]);
+            result.push([
+                output.userID,
+                ariadnaUserID,
+                output.task,
+                output.timestamp, //created
+                output.data.hotelName,
+                output.data.priceStart,
+                output.data.bid
+            ]);
         } else if (output.task === constant.AUCTION_TASK_DEMO_SCREEN) {
-                result.push([
-                    output.userID,
-                    ariadnaUserID,
-                    output.task,
-                    output.timestamp, //created
-                    output.data.hotelName,
-                    output.data.priceStart,
-                    output.data.bid
-                ]);
+            result.push([
+                output.userID,
+                ariadnaUserID,
+                output.task,
+                output.timestamp, //created
+                output.data.hotelName,
+                output.data.priceStart,
+                output.data.bid
+            ]);
         }
     }
 

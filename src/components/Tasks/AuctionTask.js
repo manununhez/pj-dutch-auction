@@ -18,6 +18,8 @@ import {
     BID_STATE_FINISHED
 } from '../../helpers/constants';
 
+const DEBUG = (process.env.REACT_APP_DEBUG_LOG === "true") ? true : false;
+
 class AuctionTask extends React.Component {
     constructor(props) {
         super(props);
@@ -62,7 +64,7 @@ class AuctionTask extends React.Component {
             }), () => {
                 const { timeCount, auctionLength } = this.state
 
-                console.log(`timeCount: ${timeCount}`)
+                if (DEBUG) console.log(`timeCount: ${timeCount}`)
                 if (timeCount >= auctionLength) {
                     this._finishBidAndSaveData(false)
                 }
@@ -110,7 +112,7 @@ class AuctionTask extends React.Component {
 
     _handleKeyDownEvent(event) {
         if (event.keyCode === SPACE_KEY_CODE) { //Transition between screens
-            console.log("SPACE_KEY")
+            if (DEBUG) console.log("SPACE_KEY")
             const { bidState, counterAuction } = this.state
 
             if (bidState === BID_STATE_NOT_STARTED) { //bid not started yet
@@ -138,7 +140,7 @@ class AuctionTask extends React.Component {
             }
 
 
-            console.log(this.state)
+            if (DEBUG) console.log(this.state)
         }
     }
 

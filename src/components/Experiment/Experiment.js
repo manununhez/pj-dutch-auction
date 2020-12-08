@@ -1,11 +1,10 @@
 import React, { Component } from "react";
 
 // core components
-import FooterV1 from "../Footers/FooterV1.0.js";
+import { Progress } from 'reactstrap';
 
 //UUID
 import { v4 as uuidv4 } from 'uuid'; // For version 4
-import { Progress } from 'reactstrap';
 
 //SessionTimer
 import IdleTimer from 'react-idle-timer'
@@ -18,6 +17,7 @@ import FadeLoader from "react-spinners/FadeLoader";
 import SyncLoader from "react-spinners/SyncLoader";
 
 // Views
+import FooterV1 from "../Footers/FooterV1.0";
 import RewardInfo from "../Tasks/RewardInfo";
 import FirstTask from "../Tasks/FirstTask";
 import SecondTask from "../Tasks/SecondTask";
@@ -28,7 +28,6 @@ import FinalTask from "../Tasks/FinalTask";
 import Instruction from "../Tasks/Instruction"
 import UserForm from "../Tasks/UserForm/UserForm";
 import AuctionTask from "../Tasks/AuctionTask";
-
 
 // helpers
 import * as request from '../../helpers/fetch';
@@ -1407,22 +1406,45 @@ class Experiment extends Component {
         const { currentScreenNumber, inputNavigation, outputFormData } = this.state;
         const currentScreen = inputNavigation[currentScreenNumber].screen;
 
-        if (currentScreen === constant.USER_FORM_SCREEN) {
-            const { sex } = outputFormData;
+        let totalLength = inputNavigation.length;
 
-            let data = this.validateForm();
+        if (currentScreenNumber < totalLength) { //To prevent keep transition between pages
+            if (currentScreen === constant.USER_FORM_SCREEN) {
+                const { sex } = outputFormData;
 
-            if (data.isValid) {
-                //We are leaving user form screen, so we called texts whatever next page is (not only instructions)          
-                if (sex === constant.FEMALE_VALUE)
-                    request.fetchAppTextFemale(this._onLoadAppTextCallBack.bind(this));
-                else
-                    request.fetchAppTextMale(this._onLoadAppTextCallBack.bind(this));
+                let data = this.validateForm();
+
+                if (data.isValid) {
+                    //We are leaving user form screen, so we called texts whatever next page is (not only instructions)          
+                    if (sex === constant.FEMALE_VALUE)
+                        request.fetchAppTextFemale(this._onLoadAppTextCallBack.bind(this));
+                    else
+                        request.fetchAppTextMale(this._onLoadAppTextCallBack.bind(this));
 
 
-                this.goToNextPage();
-            } else {
-                if (data.showError) {
+                    this._goToNextTask();
+                } else {
+                    if (data.showError) {
+                        //Show errors!
+                        this.setState({
+                            error: {
+                                showError: data.showError,
+                                textError: data.textError
+                            }
+                        });
+                    } else if (data.redirect) {
+                        //we redirect to Ariadna
+                        alert(data.textError);
+                        this.setState({ showAlertWindowsClosing: false }, () => {
+                            window.location.replace(ARIADNA_REDIRECT_REJECT);
+                        })
+                    }
+                }
+
+            } else if (currentScreen === constant.FIRST_TASK_DEMO_SCREEN) {
+                let data = this.validateFirstTaskDemo();
+                if (data.isValid) this._goToNextTask();
+                else {
                     //Show errors!
                     this.setState({
                         error: {
@@ -1430,126 +1452,107 @@ class Experiment extends Component {
                             textError: data.textError
                         }
                     });
-                } else if (data.redirect) {
-                    //we redirect to Ariadna
-                    alert(data.textError);
-                    this.setState({ showAlertWindowsClosing: false }, () => {
-                        window.location.replace(ARIADNA_REDIRECT_REJECT);
-                    })
                 }
-            }
-
-        } else if (currentScreen === constant.FIRST_TASK_DEMO_SCREEN) {
-            let data = this.validateFirstTaskDemo();
-            if (data.isValid) this.goToNextPage();
-            else {
-                //Show errors!
-                this.setState({
-                    error: {
-                        showError: data.showError,
-                        textError: data.textError
-                    }
-                });
-            }
-        } else if (currentScreen === constant.FIRST_TASK_SCREEN) {
-            let data = this.validateFirstTask();
-            if (data.isValid) this.goToNextPage();
-            else {
-                //Show errors!
-                this.setState({
-                    error: {
-                        showError: data.showError,
-                        textError: data.textError
-                    }
-                });
-            }
-        } else if (currentScreen === constant.REWARD_INFO_SCREEN) {
-            this.goToNextPage();
-        } else if (currentScreen.includes(constant.INSTRUCTION_SCREEN)) {
-            this.goToNextPage();
-        } else if (currentScreen === constant.SECOND_TASK_SCREEN) {
-            let data = this.validateSecondTask();
-            if (data.isValid) this.goToNextPage();
-            else {
-                //Show errors!
-                this.setState({
-                    error: {
-                        showError: data.showError,
-                        textError: data.textError
-                    }
-                });
-            }
-        } else if (currentScreen === constant.THIRD_TASK_SCREEN) {
-            let data = this.validateThirdTask();
-            if (data.isValid) this.goToNextPage();
-            else {
-                //Show errors!
-                this.setState({
-                    error: {
-                        showError: data.showError,
-                        textError: data.textError
-                    }
-                });
-            }
-        } else if (currentScreen === constant.FOURTH_TASK_SCREEN) {
-            let data = this.validateFourthTask();
-            if (data.isValid) this.goToNextPage();
-            else {
-                //Show errors!
-                this.setState({
-                    error: {
-                        showError: data.showError,
-                        textError: data.textError
-                    }
-                });
-            }
-        } else if (currentScreen === constant.FIFTH_TASK_SCREEN) {
-            let data = this.validateFifthTask();
-            if (data.isValid) this.goToNextPage();
-            else {
-                //Show errors!
-                this.setState({
-                    error: {
-                        showError: data.showError,
-                        textError: data.textError
-                    }
-                });
-            }
-        } else if (currentScreen === constant.FINAL_TASK_SCREEN) {
-            let data = this.validateFinalTask();
-            if (data.isValid) this.goToNextPage();
-            else {
-                //Show errors!
-                this.setState({
-                    error: {
-                        showError: data.showError,
-                        textError: data.textError
-                    }
-                });
-            }
-        } else if (currentScreen === constant.AUCTION_TASK_DEMO_SCREEN) {
-            let data = this.validateAuctionDemoTask();
-            if (data.isValid) this.goToNextPage();
-            else {
-                //Show errors!
-                this.setState({
-                    error: {
-                        showError: data.showError,
-                        textError: data.textError
-                    }
-                });
-            }
-        } else if (currentScreen === constant.AUCTION_TASK_SCREEN) {
-            let data = this.validateAuctionTask();
-            if (data.isValid) this.goToNextPage();
-            else {
-                //Show errors!
-                this.setState({
-                    error: {
-                        showError: data.showError,
-                        textError: data.textError
-                    }
-                });
+            } else if (currentScreen === constant.FIRST_TASK_SCREEN) {
+                let data = this.validateFirstTask();
+                if (data.isValid) this._goToNextTask();
+                else {
+                    //Show errors!
+                    this.setState({
+                        error: {
+                            showError: data.showError,
+                            textError: data.textError
+                        }
+                    });
+                }
+            } else if (currentScreen === constant.REWARD_INFO_SCREEN) {
+                this._goToNextTask();
+            } else if (currentScreen.includes(constant.INSTRUCTION_SCREEN)) {
+                this._goToNextTask();
+            } else if (currentScreen === constant.SECOND_TASK_SCREEN) {
+                let data = this.validateSecondTask();
+                if (data.isValid) this._goToNextTask();
+                else {
+                    //Show errors!
+                    this.setState({
+                        error: {
+                            showError: data.showError,
+                            textError: data.textError
+                        }
+                    });
+                }
+            } else if (currentScreen === constant.THIRD_TASK_SCREEN) {
+                let data = this.validateThirdTask();
+                if (data.isValid) this._goToNextTask();
+                else {
+                    //Show errors!
+                    this.setState({
+                        error: {
+                            showError: data.showError,
+                            textError: data.textError
+                        }
+                    });
+                }
+            } else if (currentScreen === constant.FOURTH_TASK_SCREEN) {
+                let data = this.validateFourthTask();
+                if (data.isValid) this._goToNextTask();
+                else {
+                    //Show errors!
+                    this.setState({
+                        error: {
+                            showError: data.showError,
+                            textError: data.textError
+                        }
+                    });
+                }
+            } else if (currentScreen === constant.FIFTH_TASK_SCREEN) {
+                let data = this.validateFifthTask();
+                if (data.isValid) this._goToNextTask();
+                else {
+                    //Show errors!
+                    this.setState({
+                        error: {
+                            showError: data.showError,
+                            textError: data.textError
+                        }
+                    });
+                }
+            } else if (currentScreen === constant.FINAL_TASK_SCREEN) {
+                let data = this.validateFinalTask();
+                if (data.isValid) this._goToNextTask();
+                else {
+                    //Show errors!
+                    this.setState({
+                        error: {
+                            showError: data.showError,
+                            textError: data.textError
+                        }
+                    });
+                }
+            } else if (currentScreen === constant.AUCTION_TASK_DEMO_SCREEN) {
+                let data = this.validateAuctionDemoTask();
+                if (data.isValid) this._goToNextTask();
+                else {
+                    //Show errors!
+                    this.setState({
+                        error: {
+                            showError: data.showError,
+                            textError: data.textError
+                        }
+                    });
+                }
+            } else if (currentScreen === constant.AUCTION_TASK_SCREEN) {
+                let data = this.validateAuctionTask();
+                if (data.isValid) this._goToNextTask();
+                else {
+                    //Show errors!
+                    this.setState({
+                        error: {
+                            showError: data.showError,
+                            textError: data.textError
+                        }
+                    });
+                }
             }
         }
     }
@@ -1557,7 +1560,7 @@ class Experiment extends Component {
     /**
      * We move to next page, according to inputNavigation input data
      */
-    goToNextPage() {
+    _goToNextTask() {
         const { currentScreenNumber, inputNavigation, logTimestamp, inputFirstTask,
             inputFirstTaskDemo, showAlertWindowsClosing } = this.state;
 
@@ -1651,28 +1654,9 @@ class Experiment extends Component {
      * @param {*} event 
      */
     _handleKeyDownEvent(event) {
-        const { currentScreenNumber, inputNavigation } = this.state;
+        if (event.keyCode === constant.SPACE_KEY_CODE) { //Transition between screens
+            this.validatePressedButtonToNextPage()
 
-        let totalLength = inputNavigation.length;
-
-        if (currentScreenNumber < totalLength) { //To prevent keep transition between pages
-            if (event.keyCode === constant.SPACE_KEY_CODE) { //Transition between screens
-                this.validatePressedButtonToNextPage()
-
-            } else if (event.keyCode > 48 && event.keyCode < 58) { //FinalTask keyboard interaction. Range number keypad (1,9)
-                const currentScreen = inputNavigation[currentScreenNumber].screen;
-                let pressedNumber = (event.keyCode - 48);
-
-                if (currentScreen === constant.FINAL_TASK_SCREEN) {
-                    const currentFinalTaskScreenNumber = parseInt(inputNavigation[currentScreenNumber].pageId) - 1; //pageID goes from 1 to n, so we need to discount 1 to get the value in the array
-                    const totalFinalTasksOptions = constant.ATTRIBUTE.data.value[currentFinalTaskScreenNumber].length;
-
-                    if (pressedNumber <= totalFinalTasksOptions) {
-                        //simulate click
-                        document.getElementById(`btn${pressedNumber}`).click();
-                    }
-                }
-            }
         }
     }
 

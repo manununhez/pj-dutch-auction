@@ -12,6 +12,8 @@ import {
   FORM_LEVEL_EDUC_DEFAULT, FEMALE_VALUE, MALE_VALUE
 } from '../../../helpers/constants';
 
+const DEBUG = (process.env.REACT_APP_DEBUG_LOG === "true") ? true : false;
+
 class UserForm extends React.Component {
   constructor(props) {
     super(props);
@@ -25,7 +27,7 @@ class UserForm extends React.Component {
   }
 
   render() {
-    console.log(this.props.data)
+    if (DEBUG) console.log(this.props.data)
     return (
       <Container className="justify-content-center">
         <div className="text-center mt-2"><h3>Twoje dane</h3></div>
@@ -84,7 +86,7 @@ class UserForm extends React.Component {
             <div className="d-flex align-items-left">
               <h5>Płeć</h5>
             </div>
-            <div style={{display: "flex"}} >
+            <div style={{ display: "flex" }} >
               <Col lg="auto">
                 <FormGroup>
                   <Label check>
