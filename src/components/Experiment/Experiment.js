@@ -595,6 +595,22 @@ class Experiment extends Component {
         if (DEBUG) console.log(data);
         if (data) {
             if (DEBUG) console.log("SaveUserLogTime");
+            request.saveAuctionBids(this.state, this._onSaveUserAuctionBidsCallBack.bind(this))
+        } else {
+            if (DEBUG) console.log("Error saving user logtime")
+            this.setState({ loading: false });
+        }
+    }
+
+    /**
+     * Results from saving user logtime data
+     * @param {*} data 
+     * @param {*} error 
+     */
+    _onSaveUserAuctionBidsCallBack(data, error) {
+        if (DEBUG) console.log(data);
+        if (data) {
+            if (DEBUG) console.log("Save Auction bids");
             request.saveUserBrands(this.state, this._onSaveUserBrandsCallBack.bind(this))
         } else {
             if (DEBUG) console.log("Error saving user logtime")
@@ -1697,7 +1713,7 @@ class Experiment extends Component {
                 <div>
                     <Progress value={progressBarNow} />
                 </div>
-                <section className="section-sm  section-hero section-shaped">
+                <section className="section-sm ">
                     {changePages(this.state, this.formHandler, this.firstTaskHandler, this.firstTaskDemoHandler,
                         this.secondTaskHandler, this.thirdTaskHandler, this.fourthTaskHandler, this.fifthTaskHandler,
                         this.finalTaskHandler, this.auctionTaskHandler, this.auctionTaskDemoHandler)}

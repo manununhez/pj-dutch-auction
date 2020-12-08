@@ -1,26 +1,26 @@
 import React from "react";
 
-import { BRANDS } from '../../helpers/constants';
-
 import "./AuctionTask.css";
 
 // reactstrap components
 import {
-    Container,
-    Row,
-    Col,
-    Media,
-    Alert,
-    Card,
-    FormGroup,
-    Label,
-    Input
+    Container, Row, Col, Media, Modal, ModalHeader
 } from "reactstrap";
 
 import {
     SPACE_KEY_CODE,
-    EVENT_KEY_DOWN
+    EVENT_KEY_DOWN,
+    FREQ_CHANGE_MS,
+    PRICE_STEP,
+    AUCTION_GAIN_TEXT,
+    AUCTION_LOSE_TEXT,
+    ONE_SECOND_MS,
+    BID_STATE_NOT_STARTED,
+    BID_STATE_RUNNING,
+    BID_STATE_FINISHED
 } from '../../helpers/constants';
+
+
 
 class AuctionTask extends React.Component {
     constructor(props) {
@@ -28,7 +28,14 @@ class AuctionTask extends React.Component {
 
         this.state = {
             counterAuction: 0,
-            auctionResults: []
+            auctionResults: [],
+            bid: this.props.data[0].priceStart,
+            priceStart: this.props.data[0].priceStart,
+            auctionLength: this.props.data[0].auctionLength,
+            timeCount: 0,
+            bidState: BID_STATE_NOT_STARTED,
+            modalOpen: false,
+            isBidGain: false
         };
 
         this.handleKeyDownEvent = this._handleKeyDownEvent.bind(this);
@@ -49,76 +56,151 @@ class AuctionTask extends React.Component {
 
     componentWillUnmount() {
         document.removeEventListener(EVENT_KEY_DOWN, this.handleKeyDownEvent, false);
+
+        this._clearTimer()
+    }
+
+    _initTimerSeconds() {
+        this.myIntervalSeconds = setInterval(() => {
+            this.setState(({ timeCount }) => ({
+                timeCount: timeCount + ONE_SECOND_MS
+            }), () => {
+                const { timeCount, auctionLength } = this.state
+
+                console.log(`timeCount: ${timeCount}`)
+                if (timeCount >= auctionLength) {
+                    this._finishBidAndSaveData(false)
+                }
+            })
+        }, ONE_SECOND_MS)
+    }
+
+    _finishBidAndSaveData(isBidGain) {
+        //Aca el usuario para la apuesta. Se guarda el bid actual y se muestra el dialogo
+        const { bid, auctionResults, priceStart, counterAuction } = this.state
+
+        if (isBidGain)
+            auctionResults.push({ priceStart: priceStart, bid: bid, hotelName: this.props.data[counterAuction].hotelName })
+        else
+            auctionResults.push({ priceStart: priceStart, bid: priceStart, hotelName: this.props.data[counterAuction].hotelName })
+
+        //showModal()
+        this.setState(({
+            bidState: BID_STATE_FINISHED,
+            auctionResults: auctionResults,
+            modalOpen: true,
+            isBidGain: isBidGain
+        }), () => {
+            this._clearTimer(); //stop timer
+        });
+
+    }
+
+    _initTimerPriceStep() {
+        this.myIntervalPriceStep = setInterval(() => {
+            this.setState(({ bid }) => ({
+                bid: bid - PRICE_STEP
+            }))
+        }, FREQ_CHANGE_MS)
+    }
+
+    _initConfig() {
+        this._initTimerPriceStep()
+        this._initTimerSeconds()
+    }
+
+    _clearTimer() {
+        clearInterval(this.myIntervalPriceStep)
+        clearInterval(this.myIntervalSeconds)
     }
 
     _handleKeyDownEvent(event) {
         if (event.keyCode === SPACE_KEY_CODE) { //Transition between screens
             console.log("SPACE_KEY")
-            const { counterAuction, auctionResults } = this.state
-            console.log("Counter: " + counterAuction)
-            console.log("this.props.data.size: " + this.props.data.length)
-            if (counterAuction < (this.props.data.length - 1)) {
-                //Implement timer logic
-                //Here should be saved bid
-                //save results
-                auctionResults.push(1)
+            const { bidState, counterAuction, auctionResults } = this.state
 
-                this.setState(({ counterAuction }) => ({
-                    counterAuction: counterAuction + 1,
-                    auctionResults: auctionResults
-                }));
-            } else { //(counterAuction < (this.props.data.length)) We are in the last screen, so we dont update the counter again because causes ArrayIndexNotFound
-                //We sent the last results without saving in state
-                auctionResults.push(1)
+            if (bidState === BID_STATE_NOT_STARTED) { //bid not started yet
+                this.setState(({
+                    bidState: BID_STATE_RUNNING
+                }), () => {
+                    this._initConfig(); //start timer
+                });
+            } else if (bidState === BID_STATE_RUNNING) { //bid currently running
+                this._finishBidAndSaveData(true)
+            } else if (bidState === BID_STATE_FINISHED) { //Se cierra el modal y se pasa al siguiente hotel
+                //Cycle between the hotels (30)
+                if (counterAuction < (this.props.data.length - 1)) {
+                    //Implement timer logic
+                    //Here should be saved bid
+                    //save results
+                    // auctionResults.push(bid)
+                    this.setState(({ counterAuction }) => ({
+                        bidState: BID_STATE_NOT_STARTED,
+                        counterAuction: counterAuction + 1,
+                        bid: this.props.data[counterAuction + 1].priceStart,
+                        priceStart: this.props.data[counterAuction + 1].priceStart,
+                        auctionLength: this.props.data[counterAuction + 1].auctionLength,
+                        timeCount: 0,
+                        modalOpen: false
+                        // auctionResults: auctionResults
+                    }));
+                } else { //(counterAuction < (this.props.data.length)) We are in the last screen, so we dont update the counter again because causes ArrayIndexNotFound
+                    //We sent the last results without saving in state
+                    // auctionResults.push(bid)
 
-                this.props.action(auctionResults)
+                    this.props.action(auctionResults)
+                }
             }
+
 
             console.log(this.state)
         }
     }
 
     render() {
-        const { counterAuction } = this.state
-        const counter = counterAuction + 1 + this.props.imageIndex
-        const imgA = `http://nielek.home.pl/psychology/pictures/h${counter}a.jpg`
-        const imgB = `http://nielek.home.pl/psychology/pictures/h${counter}b.jpg`
-        const imgC = `http://nielek.home.pl/psychology/pictures/h${counter}c.jpg`
+        const { counterAuction, bid, modalOpen, isBidGain, priceStart } = this.state
+        const counterHotel = counterAuction + 1 + this.props.imageIndex
+        const imgA = `http://nielek.home.pl/psychology/pictures/h${counterHotel}a.jpg`
+        const imgB = `http://nielek.home.pl/psychology/pictures/h${counterHotel}b.jpg`
+        const imgC = `http://nielek.home.pl/psychology/pictures/h${counterHotel}c.jpg`
+
+        const hotelName = this.props.data[counterAuction].hotelName
+        const hotelDescription = this.props.data[counterAuction].hotelDescription
         return (
-            <Container className="justify-content-md-center">
+            <Container className="themed-container" fluid="xl">
+                <Modal returnFocusAfterClose={modalOpen} isOpen={modalOpen} size="lg" centered={true}
+                    style={{ position: "fixed", top: "30%", left: "45%", transform: "translate(-40%, -40%)" }}>
+                    <ModalHeader style={{ padding: "4em" }}>
+                        <div style={{ textAlign: "center", color: (isBidGain ? "green" : "red") }}>
+                            {isBidGain ? 
+                            getFormattedText(AUCTION_GAIN_TEXT(priceStart - bid)) 
+                            : getFormattedText(AUCTION_LOSE_TEXT(priceStart))}
+                        </div>
+                        <br />
+                    </ModalHeader>
+                </Modal>
                 <Row className="justify-content-md-center" style={{ padding: "20px" }}>
-                    <h2>{this.props.data[counterAuction].hotelName}</h2>
+                    <h2>{hotelName}</h2>
                 </Row>
                 <Row>
-                    <Col xs="3">
-                        <Row>
-                            <div className="strikethrough"> 800</div>
-                        </Row>
-                        <Row>
-                            <div style={{ display: "inline-block", fontSize: "30pt", fontWeight: "bold" }}>KUP TERAZ ZA</div>
-                        </Row>
-                        <Row>
-                            <div className="auction-bid"> 800</div>
-                        </Row>
+                    <Col xs="3" style={{ textAlign: "center" }}>
+                        <div className="strikethrough">{priceStart}</div>
+                        <div style={{ display: "inline-block", fontSize: "27pt", fontWeight: "bold" }}>KUP TERAZ ZA</div>
+                        <div className="auction-bid">{bid}</div>
                     </Col>
                     <Col xs="9">
-                        <Row className="justify-content-md-center">
-                            {getFormattedText(this.props.data[counterAuction].hotelDescription)}
+                        <Row className="justify-content-md-left">
+                            {getFormattedText(hotelDescription)}
                         </Row>
                         <Row className="justify-content-md-center">
-                            <Col>
-                                <Media object src={imgA} style={{ height: "150px" }} alt="Generic placeholder image" />
-                            </Col>
-                            <Col>
-                                <Media object src={imgB} style={{ height: "150px" }} alt="Generic placeholder image" />
-                            </Col>
-                            <Col>
-                                <Media object src={imgC} style={{ height: "150px" }} alt="Generic placeholder image" />
-                            </Col>
+                            <div style={{ display: "flex", marginTop: "1em", marginBottom: "1em" }}>
+                                <Media object src={imgA} style={{ height: "150px", paddingLeft: "1em", paddingRight: "0.5em" }} alt="Generic placeholder image" />
+                                <Media object src={imgB} style={{ height: "150px", paddingLeft: "0.5em", paddingRight: "0.5em" }} alt="Generic placeholder image" />
+                                <Media object src={imgC} style={{ height: "150px", paddingLeft: "0.5em", paddingRight: "1em" }} alt="Generic placeholder image" />
+                            </div>
                         </Row>
                     </Col>
                 </Row>
-
             </Container>
         );
     }
@@ -126,7 +208,8 @@ class AuctionTask extends React.Component {
 
 function getFormattedText(text) { //TODO when FirstTask, we should cache the text so we dont iterate every time
     let children = text.split('<br>').map(function (item, key) { //replace \n with <br>
-        return (<h4>{item}</h4>)
+        if (item !== "")
+            return (<><br /><h4>{item}</h4></>)
     });
 
     return children;

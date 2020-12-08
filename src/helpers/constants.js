@@ -1,5 +1,12 @@
 export const TEXT_EMPTY = "";
 
+//AuctionTask
+export const PRICE_STEP = 10;
+export const FREQ_CHANGE_MS = 500;
+export const BID_STATE_NOT_STARTED = 0;
+export const BID_STATE_RUNNING = 1;
+export const BID_STATE_FINISHED = 2;
+
 //SYNC
 export const STATE_SYNCING = 2;
 export const STATE_SYNC = 1;
@@ -146,6 +153,7 @@ export const INPUT_ALL_SHEETNAME = "input-all";
 export const INPUT_ALL_WARMUP_SHEETNAME = "input-all-warmup";
 export const APP_TEXT_FEMALE_SHEETNAME = "text-female";
 export const APP_TEXT_MALE_SHEETNAME = "text-male";
+export const USER_AUCTION_BIDS_SHEETNAME = "auction-bids"
 
 //Error
 export const ERROR_1 = "Prosimy o dokonanie wyboru.";//"You have to select a choice first!"
@@ -164,7 +172,7 @@ export const ERROR_13 = "Proszę najpierw wybrać conajmniej jedną opcję.";//P
 export const REWARD_BONUS_MESSAGE = "W nagrodę otrzymasz dodatkowo 70 punktów. Dodatkowe punkty zostaną doliczone do Twojego konta za kilka tygodni po zakończeniu cyklu badań.";
 export const REWARD_RESULT_MESSAGE = (result) => { return `Udało Ci się poprawnie rozwiązać ${result}% zadań dotyczących wyboru pralek.` } //`You’ve solved ${result}% decision tasks correctly.`
 export const AUCTION_FOOTER_TEXT = "Naciśnij SPACJĘ, aby rozpocząć aukcję."
-export const AUCTION_GAIN_TEXT = (value) => { return `Brawo, udało Ci się zarezerwować ten pokój.<br><br>Zaoszczędziłeś ${value} zł. <br><br> Naciśnij ENTER, aby przejść do następnej aukcji.`};
-export const AUCTION_LOSE_TEXT = (value) => { return `Ktoś inny zarezerwował ten pokój. Musisz zapłacić pełną cenę:  ${value} zł. <br><br> Naciśnij ENTER, aby przejść do następnej aukcji.`};
+export const AUCTION_GAIN_TEXT = (value) => { return `Brawo, udało Ci się zarezerwować ten pokój.<br><br>Zaoszczędziłeś ${value} zł. <br><br> Naciśnij SPACE, aby przejść do następnej aukcji.`};
+export const AUCTION_LOSE_TEXT = (value) => { return `Ktoś inny zarezerwował ten pokój. Musisz zapłacić pełną cenę:  ${value} zł. <br><br> Naciśnij SPACE, aby przejść do następnej aukcji.`};
 export const AUCTION_REWARD_RESULT_MESSAGE_FEMALE = (result) => { return `Dziękujemy, to już koniec tego zadania. W sumie zaoszczędziłaś ${result} zł.<br><br> Pozostań proszę na miejscu, eksperymentator zaraz do Ciebie podejdzie.` }
 export const AUCTION_REWARD_RESULT_MESSAGE_MALE = (result) => { return `Dziękujemy, to już koniec tego zadania. W sumie zaoszczędziłeś ${result} zł.<br><br> Pozostań proszę na miejscu, eksperymentator zaraz do Ciebie podejdzie.` }

@@ -1,7 +1,7 @@
 // Fetch.js
 import * as constant from '../helpers/constants';
 
-const _apiHost = 'https://api.swps-pjatk-experiment.pl/v2';
+const _apiHost = 'http://localhost:5000';
 const fetch_sheet_url = '/v4-get';
 const save_sheet_url = '/v4-post';
 const fetch_hotels_url = '/hotels';
@@ -96,12 +96,12 @@ export function fetchAuctionHotels(callback) {
             // response.forEach(element => {
             //     hotels.push(element);
             // });
-            
+
             for (let [key, value] of Object.entries(response)) {
                 hotels.push(value);
-              }      
-              console.log(response)
-              callback({ hotels });      
+            }
+            console.log(response)
+            callback({ hotels });
         }, (response) => {
             callback(false, response);
         });
@@ -124,12 +124,12 @@ export function fetchAuctionHotelsTutorial(callback) {
             // response.forEach(element => {
             //     hotels.push(element);
             // });
-            
+
             for (let [key, value] of Object.entries(response)) {
                 hotels.push(value);
-              }      
-              console.log(response)
-              callback({ hotels });      
+            }
+            console.log(response)
+            callback({ hotels });
         }, (response) => {
             callback(false, response);
         });
@@ -152,12 +152,12 @@ export function fetchAuctionHotelsRev(callback) {
             // response.forEach(element => {
             //     hotels.push(element);
             // });
-            
+
             for (let [key, value] of Object.entries(response)) {
                 hotels.push(value);
-              }      
-              console.log(response)
-              callback({ hotels });      
+            }
+            console.log(response)
+            callback({ hotels });
         }, (response) => {
             callback(false, response);
         });
@@ -389,6 +389,20 @@ export function saveUserMobileTelephone(data, callback) {
  * @param {*} data 
  * @param {*} callback 
  */
+export function saveAuctionBids(data, callback) {
+    let userData = userauctionbids(data);
+    let spreadSheetName = constant.USER_AUCTION_BIDS_SHEETNAME;
+    let row = "A2";
+    let column = "F";
+
+    save(spreadSheetName, row, column, userData, callback)
+}
+
+/**
+ * Write results to GSheets
+ * @param {*} data 
+ * @param {*} callback 
+ */
 export function saveUserInfo(data, callback) {
     let userInfo = userinfo(data);
     let spreadSheetName = constant.USER_INFO_SHEETNAME;
@@ -551,6 +565,30 @@ const usergeneraldata = (data, ariadnaUserID) => {
                 output.data[8],
                 output.data[9]
             ]);
+        } else if (output.task === constant.AUCTION_TASK_SCREEN) {
+            for (let i = 0; i < output.data.length; i++) {
+                result.push([
+                    output.userID,
+                    ariadnaUserID,
+                    output.task,
+                    output.timestamp, //created
+                    output.data[i].hotelName,
+                    output.data[i].priceStart,
+                    output.data[i].bid
+                ]);
+            }
+        } else if (output.task === constant.AUCTION_TASK_DEMO_SCREEN) {
+            for (let i = 0; i < output.data.length; i++) {
+                result.push([
+                    output.userID,
+                    ariadnaUserID,
+                    output.task,
+                    output.timestamp, //created
+                    output.data[i].hotelName,
+                    output.data[i].priceStart,
+                    output.data[i].bid
+                ]);
+            }
         }
     }
 
@@ -660,6 +698,38 @@ function usermobiletelephone(data) {
             outputFormDataNumer,
             constant.ATTRIBUTE_FOURTH_TASK.data.id[i],
             outputFourthTask[i],
+            now //created
+        ]);
+    }
+
+    return result;
+}
+
+function userauctionbids(data) {
+    let result = [];
+    // let data = this.props.data;
+    const { outputAuctionTask, outputAuctionDemoTask, outputFormData } = data;
+    const outputFormDataNumer = outputFormData.numer;
+    const now = Date.now();
+
+    for (let i = 0; i < outputAuctionDemoTask.length; i++) {
+        result.push([
+            outputFormDataNumer,
+            constant.AUCTION_TASK_DEMO_SCREEN,
+            outputAuctionDemoTask[i].hotelName,
+            outputAuctionDemoTask[i].priceStart,
+            outputAuctionDemoTask[i].bid,
+            now //created
+        ]);
+    }
+
+    for (let i = 0; i < outputAuctionTask.length; i++) {
+        result.push([
+            outputFormDataNumer,
+            constant.AUCTION_TASK_SCREEN,
+            outputAuctionTask[i].hotelName,
+            outputAuctionTask[i].priceStart,
+            outputAuctionTask[i].bid,
             now //created
         ]);
     }
