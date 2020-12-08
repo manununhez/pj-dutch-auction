@@ -3,8 +3,6 @@ import React from "react";
 import { Container, Row } from "reactstrap";
 
 import {
-    REWARD_BONUS_MESSAGE,
-    REWARD_RESULT_MESSAGE,
     FEMALE_VALUE,
     AUCTION_REWARD_RESULT_MESSAGE_FEMALE,
     AUCTION_REWARD_RESULT_MESSAGE_MALE
