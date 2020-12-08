@@ -1,11 +1,9 @@
 import React from "react";
-
-import "./AuctionTask.css";
-
-// reactstrap components
 import {
     Container, Row, Col, Media, Modal, ModalHeader
 } from "reactstrap";
+
+import "./AuctionTask.css";
 
 import {
     SPACE_KEY_CODE,
@@ -20,15 +18,12 @@ import {
     BID_STATE_FINISHED
 } from '../../helpers/constants';
 
-
-
 class AuctionTask extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
             counterAuction: 0,
-            auctionResults: [],
             bid: this.props.data[0].priceStart,
             priceStart: this.props.data[0].priceStart,
             auctionLength: this.props.data[0].auctionLength,
@@ -77,23 +72,22 @@ class AuctionTask extends React.Component {
 
     _finishBidAndSaveData(isBidGain) {
         //Aca el usuario para la apuesta. Se guarda el bid actual y se muestra el dialogo
-        const { bid, auctionResults, priceStart, counterAuction } = this.state
-
-        if (isBidGain)
-            auctionResults.push({ priceStart: priceStart, bid: bid, hotelName: this.props.data[counterAuction].hotelName })
-        else
-            auctionResults.push({ priceStart: priceStart, bid: priceStart, hotelName: this.props.data[counterAuction].hotelName })
+        const { bid, priceStart, counterAuction } = this.state
+        let bidTmp = isBidGain ? bid : priceStart
 
         //showModal()
         this.setState(({
             bidState: BID_STATE_FINISHED,
-            auctionResults: auctionResults,
             modalOpen: true,
             isBidGain: isBidGain
         }), () => {
             this._clearTimer(); //stop timer
+            this.props.action({
+                priceStart: priceStart,
+                bid: bidTmp,
+                hotelName: this.props.data[counterAuction].hotelName
+            })
         });
-
     }
 
     _initTimerPriceStep() {
@@ -117,7 +111,7 @@ class AuctionTask extends React.Component {
     _handleKeyDownEvent(event) {
         if (event.keyCode === SPACE_KEY_CODE) { //Transition between screens
             console.log("SPACE_KEY")
-            const { bidState, counterAuction, auctionResults } = this.state
+            const { bidState, counterAuction } = this.state
 
             if (bidState === BID_STATE_NOT_STARTED) { //bid not started yet
                 this.setState(({
@@ -130,10 +124,7 @@ class AuctionTask extends React.Component {
             } else if (bidState === BID_STATE_FINISHED) { //Se cierra el modal y se pasa al siguiente hotel
                 //Cycle between the hotels (30)
                 if (counterAuction < (this.props.data.length - 1)) {
-                    //Implement timer logic
-                    //Here should be saved bid
                     //save results
-                    // auctionResults.push(bid)
                     this.setState(({ counterAuction }) => ({
                         bidState: BID_STATE_NOT_STARTED,
                         counterAuction: counterAuction + 1,
@@ -142,13 +133,7 @@ class AuctionTask extends React.Component {
                         auctionLength: this.props.data[counterAuction + 1].auctionLength,
                         timeCount: 0,
                         modalOpen: false
-                        // auctionResults: auctionResults
                     }));
-                } else { //(counterAuction < (this.props.data.length)) We are in the last screen, so we dont update the counter again because causes ArrayIndexNotFound
-                    //We sent the last results without saving in state
-                    // auctionResults.push(bid)
-
-                    this.props.action(auctionResults)
                 }
             }
 
@@ -172,9 +157,9 @@ class AuctionTask extends React.Component {
                     style={{ position: "fixed", top: "30%", left: "45%", transform: "translate(-40%, -40%)" }}>
                     <ModalHeader style={{ padding: "4em" }}>
                         <div style={{ textAlign: "center", color: (isBidGain ? "green" : "red") }}>
-                            {isBidGain ? 
-                            getFormattedText(AUCTION_GAIN_TEXT(priceStart - bid)) 
-                            : getFormattedText(AUCTION_LOSE_TEXT(priceStart))}
+                            {isBidGain ?
+                                getFormattedText(AUCTION_GAIN_TEXT(priceStart - bid))
+                                : getFormattedText(AUCTION_LOSE_TEXT(priceStart))}
                         </div>
                         <br />
                     </ModalHeader>

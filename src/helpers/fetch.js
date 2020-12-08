@@ -566,29 +566,25 @@ const usergeneraldata = (data, ariadnaUserID) => {
                 output.data[9]
             ]);
         } else if (output.task === constant.AUCTION_TASK_SCREEN) {
-            for (let i = 0; i < output.data.length; i++) {
                 result.push([
                     output.userID,
                     ariadnaUserID,
                     output.task,
                     output.timestamp, //created
-                    output.data[i].hotelName,
-                    output.data[i].priceStart,
-                    output.data[i].bid
+                    output.data.hotelName,
+                    output.data.priceStart,
+                    output.data.bid
                 ]);
-            }
         } else if (output.task === constant.AUCTION_TASK_DEMO_SCREEN) {
-            for (let i = 0; i < output.data.length; i++) {
                 result.push([
                     output.userID,
                     ariadnaUserID,
                     output.task,
                     output.timestamp, //created
-                    output.data[i].hotelName,
-                    output.data[i].priceStart,
-                    output.data[i].bid
+                    output.data.hotelName,
+                    output.data.priceStart,
+                    output.data.bid
                 ]);
-            }
         }
     }
 

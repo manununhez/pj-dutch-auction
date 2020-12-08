@@ -1067,9 +1067,13 @@ class Experiment extends Component {
         });
     }
 
+    /**
+     * 
+     * @param {*} results 
+     */
     _auctionTaskHandler(results) {
         if (DEBUG) console.log(results)
-        const { generalOutput, outputFormData } = this.state;
+        const { generalOutput, outputFormData, outputAuctionTask } = this.state;
         const now = Date.now();
 
         generalOutput.push({
@@ -1080,20 +1084,28 @@ class Experiment extends Component {
             sync: constant.STATE_NOT_SYNC
         })
 
+        outputAuctionTask.push(results)
+
         //save results
         this.setState({
-            outputAuctionTask: results,
+            outputAuctionTask: outputAuctionTask,
             generalOutput: generalOutput,
             showFooter: true
         }, () => {
+            this._checkSyncGeneralData()
+
             //we simulate a space btn pressed because Auction task already finishes with a space btn pressed
             this.validatePressedButtonToNextPage()
         })
     }
 
+    /**
+     * 
+     * @param {*} results 
+     */
     _auctionTaskDemoHandler(results) {
         if (DEBUG) console.log(results)
-        const { generalOutput, outputFormData } = this.state;
+        const { generalOutput, outputFormData, outputAuctionDemoTask } = this.state;
         const now = Date.now();
 
         generalOutput.push({
@@ -1104,12 +1116,17 @@ class Experiment extends Component {
             sync: constant.STATE_NOT_SYNC
         })
 
+        outputAuctionDemoTask.push(results)
+
+
         //save results
         this.setState({
-            outputAuctionDemoTask: results,
+            outputAuctionDemoTask: outputAuctionDemoTask,
             generalOutput: generalOutput,
             showFooter: true
         }, () => {
+            this._checkSyncGeneralData()
+
             //we simulate a space btn pressed because Auction task already finishes with a space btn pressed
             this.validatePressedButtonToNextPage()
         })
@@ -1227,7 +1244,6 @@ class Experiment extends Component {
         }
 
         return data;
-
     }
 
     /**
@@ -1614,16 +1630,19 @@ class Experiment extends Component {
                 if (nextScreenNumber === (totalLength - 1)) { //Last screen!
                     // SYNC DATA
                     this.syncData() //call syncdata after the experiment is completed and updated its value to true
-                    // this.syncGeneralData()
                 } else {
-                    const { generalOutput } = this.state
-                    let itemsNotSyncedAmount = generalOutput.filter(item => item.sync === constant.STATE_NOT_SYNC).length
-
-                    if (itemsNotSyncedAmount >= constant.SYNC_AMOUN_ITEMS) {
-                        this.syncGeneralData()
-                    }
+                    this._checkSyncGeneralData()
                 }
             });
+        }
+    }
+
+    _checkSyncGeneralData() {
+        const { generalOutput } = this.state
+        let itemsNotSyncedAmount = generalOutput.filter(item => item.sync === constant.STATE_NOT_SYNC).length
+
+        if (itemsNotSyncedAmount >= constant.SYNC_AMOUN_ITEMS) {
+            this.syncGeneralData()
         }
     }
 
@@ -1854,9 +1873,17 @@ function changePages(state, formHandler, firstTaskHandler, firstTaskDemoHandler,
                     error={error}
                 />;//pageID goes from 1 to n, so we need to discount 1 to get the value in the array
             } else if (currentScreen === constant.AUCTION_TASK_SCREEN) {
-                return <AuctionTask imageIndex={0} data={inputAuctionTask} action={auctionTaskHandler} />;
+                return <AuctionTask
+                    imageIndex={0}
+                    data={inputAuctionTask}
+                    action={auctionTaskHandler}
+                />;
             } else if (currentScreen === constant.AUCTION_TASK_DEMO_SCREEN) {
-                return <AuctionTask imageIndex={30} data={inputAuctionDemoTask} action={auctionTaskDemoHandler} />;
+                return <AuctionTask
+                    imageIndex={inputAuctionTask.length} //demo image index starts in 30, after the real auctions
+                    data={inputAuctionDemoTask}
+                    action={auctionTaskDemoHandler}
+                />;
             }
         }
     }
