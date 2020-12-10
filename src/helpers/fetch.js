@@ -156,6 +156,44 @@ export function fetchVersions(callback) {
         });
 }
 
+/**
+ * Load psychology questionaries input data from the spreadsheet
+ * @param {*} callback 
+ */
+export function fetchPSFormData(callback) {
+
+    let spreadsheetName = constant.PSFORM_SHEETNAME;
+    let row = "A2";
+    let column = "J";
+
+    get(fetch_sheet_url, { spreadSheetName: spreadsheetName, column: row, row: column })
+        .then((response) => {
+            const data = response.rows;
+            let result = data.map((version, i) => {
+                let answersValues = []
+
+                const indexScreen = 0
+                const indexQuestionCode = 1
+                const indexType = 2
+                const indexAnswerStart = 3
+                
+                for (let i = indexAnswerStart; i < version.length; i++)
+                    answersValues.push(version[i])
+
+                return {
+                    screen: version[indexScreen],
+                    questionCode: version[indexQuestionCode],
+                    type: version[indexType],
+                    answer: answersValues
+                };
+            });
+
+            callback({ result });
+        }, (response) => {
+            callback(false, response.result.error);
+        });
+}
+
 
 /**
  * Load the input for the firs task as well as the first task demo from the spreadsheet
@@ -302,6 +340,20 @@ export function saveGeneralData(data, ariadnaUserID, callback) {
  * @param {*} data 
  * @param {*} callback 
  */
+export function saveUserPSForm(data, callback) {
+    let userPSForm = userpsform(data);
+    let spreadSheetName = constant.USER_PSFORM_SHEETNAME;
+    let row = "A2";
+    let column = "D";
+
+    save(spreadSheetName, row, column, userPSForm, callback)
+}
+
+/**
+ * Write results to GSheets
+ * @param {*} data 
+ * @param {*} callback 
+ */
 export function saveUserBrands(data, callback) {
     let userdata = userbrands(data);
     let spreadSheetName = constant.USER_BRANDS_SHEETNAME;
@@ -423,6 +475,20 @@ export function saveUserLogTime(data, callback) {
     let column = "F";
 
     save(spreadSheetName, row, column, userLogtime, callback)
+}
+
+/**
+ * Write results to GSheets
+ * @param {*} data 
+ * @param {*} callback 
+ */
+export function saveUserVisualPattern(data, callback) {
+    let userVisualPattern = uservisualpattern(data);
+    let spreadSheetName = constant.USER_VISUAL_PATTERN_SHEETNAME;
+    let row = "A2";
+    let column = "L";
+
+    save(spreadSheetName, row, column, userVisualPattern, callback)
 }
 
 
@@ -555,6 +621,53 @@ const usergeneraldata = (data, ariadnaUserID) => {
                 output.data.priceStart,
                 output.data.bid
             ]);
+        } else if (output.task === constant.PSFORM_SCREEN) {
+            result.push([
+                output.userID,
+                ariadnaUserID,
+                output.task,
+                output.timestamp, //created
+                output.data.questionCode,
+                output.data.answer
+            ]);
+        } else if (output.task === constant.VISUAL_PATTERN_DEMO_SCREEN) {
+            let vp1 = output.data.map((item) => {
+                return [
+                    output.userID,
+                    ariadnaUserID,
+                    output.task,
+                    output.timestamp, //created
+                    (item.level + 1), //+1 to be more idiomatic: starts from level 1 insteado of level 0
+                    `${constant.VISUAL_PATTERN_DEMO_DIMENTION[item.level][0]} x ${constant.VISUAL_PATTERN_DEMO_DIMENTION[item.level][1]}`,
+                    JSON.stringify(item.matrix),
+                    JSON.stringify(item.matrixCheckResult),
+                    item.matrixCheckResult.filter((element) => element === constant.TILE_SUCCESS).length, //we get the amount of success if any
+                    item.matrixCheckResult.filter((element) => element === constant.TILE_ERROR).length, //we get the amount of errors if any
+                    item.matrixCheckResult.filter((element) => element === constant.TILE_LEFT).length, //we get the amount of errors if any
+                    item.retry,
+                    item.timestamp
+                ]
+            });
+            result = result.concat(vp1);
+        } else if (output.task === constant.VISUAL_PATTERN_SCREEN) {
+            let vp2 = output.data.map((item) => {
+                return [
+                    output.userID,
+                    ariadnaUserID,
+                    output.task,
+                    output.timestamp, //created
+                    (item.level + 1), //+1 to be more idiomatic: starts from level 1 insteado of level 0
+                    `${constant.VISUAL_PATTERN_DIMENTION[item.level][0]} x ${constant.VISUAL_PATTERN_DIMENTION[item.level][1]}`,
+                    JSON.stringify(item.matrix),
+                    JSON.stringify(item.matrixCheckResult),
+                    item.matrixCheckResult.filter((element) => element === constant.TILE_SUCCESS).length, //we get the amount of success if any
+                    item.matrixCheckResult.filter((element) => element === constant.TILE_ERROR).length, //we get the amount of errors if any
+                    item.matrixCheckResult.filter((element) => element === constant.TILE_LEFT).length, //we get the amount of errors if any
+                    item.retry,
+                    item.timestamp
+                ]
+            });
+            result = result.concat(vp2);
         }
     }
 
@@ -778,6 +891,66 @@ function userlogtime(data) {
     }
 
     return result;
+}
 
+function uservisualpattern(data) {
+    const { outputFormData, outputVisualPattern, outputVisualPatternDemo } = data;
+    const now = Date.now();
+    const userID = outputFormData.numer;
+
+    let resultDemo = outputVisualPatternDemo.map((output) => {
+        return [
+            userID,
+            constant.VISUAL_PATTERN_DEMO_SCREEN,
+            (output.level + 1),
+            `${constant.VISUAL_PATTERN_DEMO_DIMENTION[output.level][0]} x ${constant.VISUAL_PATTERN_DEMO_DIMENTION[output.level][1]}`,
+            JSON.stringify(output.matrix),
+            JSON.stringify(output.matrixCheckResult),
+            output.matrixCheckResult.filter((item) => item === constant.TILE_SUCCESS).length,
+            output.matrixCheckResult.filter((item) => item === constant.TILE_ERROR).length,
+            output.matrixCheckResult.filter((item) => item === constant.TILE_LEFT).length,
+            output.retry,
+            output.timestamp,
+            now //created
+        ];
+    });
+
+
+    let result = outputVisualPattern.map((output) => {
+        return [
+            userID,
+            constant.VISUAL_PATTERN_SCREEN,
+            (output.level + 1),
+            `${constant.VISUAL_PATTERN_DIMENTION[output.level][0]} x ${constant.VISUAL_PATTERN_DIMENTION[output.level][1]}`,
+            JSON.stringify(output.matrix),
+            JSON.stringify(output.matrixCheckResult),
+            output.matrixCheckResult.filter((item) => item === constant.TILE_SUCCESS).length,
+            output.matrixCheckResult.filter((item) => item === constant.TILE_ERROR).length,
+            output.matrixCheckResult.filter((item) => item === constant.TILE_LEFT).length,
+            output.retry,
+            output.timestamp,
+            now //created
+        ];
+    });
+
+    return resultDemo.concat(result);
+}
+
+function userpsform(data) {
+    let result = [];
+    const { outputPSForm, outputFormData } = data;
+    const now = Date.now();
+    const userID = outputFormData.numer;
+
+    for (let i = 0; i < outputPSForm.length; i++) {
+        result.push([
+            userID,
+            outputPSForm[i].questionCode,
+            outputPSForm[i].answer,
+            now //created
+        ]);
+    }
+
+    return result;
 }
 

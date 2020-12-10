@@ -1,5 +1,25 @@
 export const TEXT_EMPTY = "";
 
+//Visual Pattern
+export const TILE_SUCCESS = 1;
+export const TILE_EMPTY = 0;
+export const TILE_ERROR = 2;
+export const TILE_LEFT = 3;
+export const VISUAL_PATTERN_DIMENTION = [
+    [3, 3, 5], //row, column, amount of blue squares
+    [3, 4, 6],
+    [4, 4, 8],
+    [4, 5, 10],
+    [5, 5, 12]
+];
+export const VISUAL_PATTERN_DEMO_DIMENTION = [
+    [2, 2, 3], //row, column, amount of blue squares
+    [2, 3, 4]
+];
+export const VISUAL_PATTERN_TIMESCREEN_SECS = 2;
+export const VISUAL_PATTERN_RETRY_ATTEMPTS = 2;
+export const VISUAL_PATTERN_DEMO_RETRY_ATTEMPTS = 1;
+
 //AuctionTask
 export const PRICE_STEP = 10;
 export const FREQ_CHANGE_MS = 500;
@@ -112,6 +132,9 @@ export const ATTRIBUTE_FOURTH_TASK = {
     }
 }
 
+//PSFORM
+export const INPUT_TYPE = "input";
+export const MULTIPLE_CHOICES_TYPE = "multiple_choice";
 
 //keyboard related
 export const SPACE_KEY_CODE = 32;
@@ -136,6 +159,13 @@ export const INSTRUCTION_SCREEN = "Instruction";
 export const SECOND_INSTRUCTION_SCREEN = "SecondInstruction";
 export const AUCTION_TASK_SCREEN = "AuctionTask";
 export const AUCTION_TASK_DEMO_SCREEN = "AuctionDemoTask";
+export const PSFORM_SCREEN = "PsychologyForm";
+export const VISUAL_PATTERN_SCREEN = "VisualPatternTask";
+export const VISUAL_PATTERN_DEMO_SCREEN = "VisualPatternTask Demo";
+export const VISUAL_PATTERN_INSTRUCTION_SCREEN = "VisualPatternInstruction";
+export const VISUAL_PATTERN_DEMO_INSTRUCTION_FINISH_SCREEN = "VisualPatternDemoInstructionFinish";
+export const VISUAL_PATTERN_INSTRUCTION_FINISH_SCREEN = "VisualPatternInstructionFinish";
+export const INPUT_PSFORM_SHEETNAME = "psychologyform";
 
 
 //Sheetnames
@@ -156,6 +186,9 @@ export const INPUT_ALL_WARMUP_SHEETNAME = "input-all-warmup";
 export const APP_TEXT_FEMALE_SHEETNAME = "text-female";
 export const APP_TEXT_MALE_SHEETNAME = "text-male";
 export const USER_AUCTION_BIDS_SHEETNAME = "auction-bids"
+export const USER_VISUAL_PATTERN_SHEETNAME = "uservisualpattern";
+export const USER_PSFORM_SHEETNAME = "userpsform";
+export const PSFORM_SHEETNAME = "psychologyform";
 
 //Error
 export const ERROR_1 = "Prosimy o dokonanie wyboru.";//"You have to select a choice first!"
@@ -178,3 +211,9 @@ export const AUCTION_GAIN_TEXT = (value) => { return `Brawo, udało Ci się zare
 export const AUCTION_LOSE_TEXT = (value) => { return `Ktoś inny zarezerwował ten pokój. Musisz zapłacić pełną cenę:  ${value} zł. <br><br> Naciśnij ENTER, aby przejść do następnej aukcji.`};
 export const AUCTION_REWARD_RESULT_MESSAGE_FEMALE = (result) => { return `Dziękujemy, to już koniec tego zadania. W sumie zaoszczędziłaś ${result} zł.<br><br> Pozostań proszę na miejscu, eksperymentator zaraz do Ciebie podejdzie.` }
 export const AUCTION_REWARD_RESULT_MESSAGE_MALE = (result) => { return `Dziękujemy, to już koniec tego zadania. W sumie zaoszczędziłeś ${result} zł.<br><br> Pozostań proszę na miejscu, eksperymentator zaraz do Ciebie podejdzie.` }
+export const VISUAL_PATTERN_TEXT1 = "Naciśnij spację, aby przejść do kolejnej planszy.";
+export const VISUAL_PATTERN_TEXT2 = "Spróbuj odtworzyć wzór wyświetlony na poprzednim ekranie. Zaznaczasz i odznaczasz pola klikając na nie lewym przyciskiem myszy.";
+export const VISUAL_PATTERN_TEXT_START_PRESS_SPACE = "Naciśnij spację, aby przesłać swoje rozwiązanie.";
+export const VISUAL_PATTERN_RESULTS_CORRECT = "Brawo! Udało Ci się poprawnie zaznaczyć wszystkie pola.";
+export const VISUAL_PATTERN_RESULTS_FAILED = "Niestety nie udało Ci się poprawnie zaznaczyć wszystkich pól.";
+export const VISUAL_PATTERN_RESULTS_PRESS_SPACE = "Naciśnij spację, aby przejść do kolejnej planszy.";

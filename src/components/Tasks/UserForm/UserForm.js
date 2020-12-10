@@ -1,16 +1,17 @@
 import React from "react";
-import "./UserForm.css";
-
-import NumberFormat from 'react-number-format';
 
 // reactstrap components
-import { FormGroup, Form, Input, Container, Row, Col, Label, Alert } from "reactstrap";
+import { FormGroup, Form, Input, Container, Col, Label, Alert } from "reactstrap";
+
+import NumberFormat from 'react-number-format';
 
 import {
   FORM_SEX, FORM_AGE, FORM_PROFESSION, FORM_YEARS_EDUC, FORM_LEVEL_EDUC,
   FORM_LEVEL_EDUC_INITIAL, FORM_LEVEL_EDUC_MIDDLE, FORM_LEVEL_EDUC_SUPERIOR,
   FORM_LEVEL_EDUC_DEFAULT, FEMALE_VALUE, MALE_VALUE
 } from '../../../helpers/constants';
+
+import "./UserForm.css";
 
 const DEBUG = (process.env.REACT_APP_DEBUG_LOG === "true") ? true : false;
 

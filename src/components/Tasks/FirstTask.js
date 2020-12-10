@@ -1,7 +1,7 @@
 import React from 'react';
 
 // reactstrap components
-import { Col, Container, Row, Table, Alert, Modal, ModalHeader, Card } from "reactstrap";
+import { Col, Container, Row, Table, Alert, Modal, ModalHeader, Card, CardBody } from "reactstrap";
 
 import ReactStars from "react-rating-stars-component";
 
@@ -59,20 +59,20 @@ class FirstTask extends React.Component {
                             </div>
                             : <></>
                         }
-                        <br/><div><h4>{TEXT_FOOTER}</h4></div>
+                        <br /><div><h4>{TEXT_FOOTER}</h4></div>
                     </ModalHeader>
                 </Modal>
                 <Row className="justify-content-center">
-                    <Card body style={{ marginTop: "20px" }}>
+                    <Card><CardBody style={{ marginTop: "20px" }}>
                         <Col lg="auto">
                             <div>{getRatingStarBarTable(this.props.data, this.props.counter)}</div>
                         </Col>
-                    </Card>
-                    <Card body style={{ marginTop: "20px" }}>
+                    </CardBody></Card>
+                    <Card><CardBody style={{ marginTop: "20px" }}>
                         <Col lg="auto">
                             <div>{getTable(this.state.selectedOption[this.props.counter - 1], this.props.data, this.props.counter, this.toggle)}</div>
                         </Col>
-                    </Card>
+                    </CardBody></Card>
                 </Row>
             </Container>
         );

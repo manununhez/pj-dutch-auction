@@ -1,13 +1,15 @@
 import React from "react";
 
-import NumberFormat from 'react-number-format';
 // reactstrap components
 import {
     Container,
     Row,
     Alert,
-    Card
+    Card,
+    CardBody
 } from "reactstrap";
+
+import NumberFormat from 'react-number-format';
 
 const DEBUG = (process.env.REACT_APP_DEBUG_LOG === "true") ? true : false;
 
@@ -50,7 +52,7 @@ class FifthTask extends React.Component {
  * @param {*} validateInput 
  */
 function getQuestions(text, validateInput) {
-    return (<Card body style={{ paddingLeft: '20px', paddingRight: '20px' }}>
+    return (<Card><CardBody style={{ paddingLeft: '20px', paddingRight: '20px' }}>
         {/* pregunta */}
         <Row style={{ marginTop: "5px" }}>
             {text}
@@ -62,7 +64,7 @@ function getQuestions(text, validateInput) {
                 onValueChange={validateInput.bind(this, "id_fifth")} decimalScale={0} />
             <pre style={{ margingBottom: '0rem' }}> <h6> modeli.</h6></pre>
         </Row>
-    </Card>
+    </CardBody></Card>
     );
 }
 

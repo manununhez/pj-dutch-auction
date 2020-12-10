@@ -1,7 +1,5 @@
 import React from "react";
 
-import { BRANDS } from '../../helpers/constants';
-
 // reactstrap components
 import {
     Container,
@@ -13,6 +11,8 @@ import {
     Label,
     Input
 } from "reactstrap";
+
+import { BRANDS } from '../../helpers/constants';
 
 class ThirdTask extends React.Component {
     constructor(props) {
@@ -50,7 +50,7 @@ class ThirdTask extends React.Component {
                     </span>
                 </Alert>
                 <Row className="justify-content-center">
-                    <Card body style={{ marginTop: "20px", width: "50%" }}>
+                    <Card body style={{ padding: "20px", width: "50%" }}>
                         {getMultipleOptions(this.validateInput)}
                     </Card>
                 </Row>

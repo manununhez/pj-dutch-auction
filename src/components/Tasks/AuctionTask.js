@@ -3,8 +3,6 @@ import {
     Container, Row, Col, Media, Modal, ModalHeader
 } from "reactstrap";
 
-import "./AuctionTask.css";
-
 import {
     SPACE_KEY_CODE,
     ENTER_KEY_CODE,
@@ -19,6 +17,8 @@ import {
     BID_STATE_FINISHED,
     AUCTION_FOOTER_TEXT
 } from '../../helpers/constants';
+
+import "./AuctionTask.css";
 
 import FooterV1 from "../Footers/FooterV1.0";
 

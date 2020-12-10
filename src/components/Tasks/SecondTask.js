@@ -15,7 +15,8 @@ import {
     Col,
     Table,
     Alert,
-    Card
+    Card,
+    CardBody
 } from "reactstrap";
 
 class SecondTask extends React.Component {
@@ -58,7 +59,7 @@ class SecondTask extends React.Component {
                     </span>
                 </Alert>
                 <Row className="justify-content-center">
-                    <Card body style={{ marginTop: "20px" }}>
+                    <Card><CardBody style={{ marginTop: "20px" }}>
                         <Col>
                             <Table responsive borderless size="sm">
                                 <thead>
@@ -72,7 +73,7 @@ class SecondTask extends React.Component {
                                 </tbody>
                             </Table>
                         </Col>
-                    </Card>
+                    </CardBody></Card>
                 </Row>
             </Container>
         );

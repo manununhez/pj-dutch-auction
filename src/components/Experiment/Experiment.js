@@ -29,6 +29,9 @@ import FinalTask from "../Tasks/FinalTask";
 import Instruction from "../Tasks/Instruction"
 import UserForm from "../Tasks/UserForm/UserForm";
 import AuctionTask from "../Tasks/AuctionTask";
+import VisualPatternTask from "../Tasks/VisualPatternTask";
+import VisualPatternDemoTask from "../Tasks/VisualPatternDemoTask";
+import PSForm from "../Tasks/PSForm";
 
 // helpers
 import * as request from '../../helpers/fetch';
@@ -65,6 +68,7 @@ class Experiment extends Component {
             inputFirstTask: [],
             inputFirstTaskDemo: [],
             inputParticipants: [],
+            inputPSForm: [],
             //Variables for output data (results)
             generalOutput: [{ //default value - user info loaded
                 userID: userID,
@@ -111,6 +115,9 @@ class Experiment extends Component {
             outputFourthTask: [],
             outputFifthTask: constant.TEXT_EMPTY,
             outputFinalTask: Array(constant.FIRST_TASK_PROPERTIES_TOTAL).fill(constant.TEXT_EMPTY), //initialize and set to empty. This array of size 6, corresponds to each property selected value (A1, A2, ...)
+            outputPSForm: [],
+            outputVisualPattern: [],
+            outputVisualPatternDemo: [],
             //utils
             logTimestamp: {
                 screen: [],
@@ -144,11 +151,6 @@ class Experiment extends Component {
         this.onActive = this._onActive.bind(this)
         this.onIdle = this._onIdle.bind(this)
 
-        //Data synchronization
-        this.fetchExperimentInputData = this._fetchExperimentInputData.bind(this);
-        this.syncData = this._syncData.bind(this)
-        this.asyncData = this._asyncData.bind(this)
-        this.syncGeneralData = this._syncGeneralData.bind(this)
         //Components handlers (manage and control data from respective components)
         this.formHandler = this._formHandler.bind(this)
         this.firstTaskHandler = this._firstTaskHandler.bind(this)
@@ -158,8 +160,11 @@ class Experiment extends Component {
         this.fourthTaskHandler = this._fourthTaskHandler.bind(this)
         this.fifthTaskHandler = this._fifthTaskHandler.bind(this)
         this.finalTaskHandler = this._finalTaskHandler.bind(this)
+        this.psFormHandler = this._psFormHandler.bind(this)
         this.auctionTaskHandler = this._auctionTaskHandler.bind(this)
         this.auctionTaskDemoHandler = this._auctionTaskDemoHandler.bind(this)
+        this.visualPatternTaskHandler = this._visualPatternTaskHandler.bind(this)
+        this.visualPatternDemoTaskHandler = this._visualPatternDemoTaskHandler.bind(this)
 
         if (DEBUG) console.log(`ARIADNA_REDIRECT_REJECT:${ARIADNA_REDIRECT_REJECT}`);
         if (DEBUG) console.log(`ARIADNA_REDIRECT_ACCEPTED:${ARIADNA_REDIRECT_ACCEPTED}`);
@@ -203,6 +208,11 @@ class Experiment extends Component {
         request.fetchNavScreens(this.state.typeTask, this._onLoadNavScreenCallBack.bind(this))
     }
 
+    /**
+     * 
+     * @param {*} data 
+     * @param {*} error 
+     */
     _onLoadAuctionHotelsCallBack(data, error) {
         if (data) {
             //Loggin the first screen of the navigation
@@ -224,6 +234,11 @@ class Experiment extends Component {
         }
     }
 
+    /**
+     * 
+     * @param {*} data 
+     * @param {*} error 
+     */
     _onLoadAuctionHotelsDemoCallBack(data, error) {
         if (data) {
             //Loggin the first screen of the navigation
@@ -277,7 +292,7 @@ class Experiment extends Component {
         let itemsNotSyncedAmount = generalOutput.filter(item => item.sync === constant.STATE_NOT_SYNC).length
 
         if (itemsNotSyncedAmount > 0) { //if we have items not synced yet
-            this.syncGeneralData()
+            this._syncGeneralData()
         }
     }
 
@@ -446,8 +461,8 @@ class Experiment extends Component {
 
             })
             if (DEBUG) console.log(data)
-
-            if (DEBUG) console.log("Fetch COMPLETED!!");
+            if (DEBUG) console.log("Fetch PSFormData");
+            request.fetchPSFormData(this._onLoadPSFormCallback.bind(this))
         } else {
             this.setState({
                 loading: false,
@@ -482,6 +497,35 @@ class Experiment extends Component {
             })
             if (DEBUG) console.log(error)
 
+        }
+    }
+
+          /**
+     * Once the psychology questionnaries input have been loaded from the spreadsheet
+     * @param {*} data 
+     * @param {*} error 
+     */
+    _onLoadPSFormCallback(data, error) {
+        if (data) {
+            this.setState({
+                loading: false, //Hide loading
+                inputPSForm: data.result
+            }, () => {
+                if (DEBUG) console.log(this.state)
+            });
+
+            if (DEBUG) console.log(data)
+            if (DEBUG) console.log("Fetch COMPLETED!!");
+        }
+        else {
+            this.setState({
+                loading: false,
+                error: {
+                    showError: true,
+                    textError: `${error}. Please refresh page.`
+                }
+            })
+            if (DEBUG) console.log(error);
         }
     }
 
@@ -610,9 +654,25 @@ class Experiment extends Component {
         if (DEBUG) console.log(data);
         if (data) {
             if (DEBUG) console.log("Save Auction bids");
-            request.saveUserBrands(this.state, this._onSaveUserBrandsCallBack.bind(this))
+            request.saveUserVisualPattern(this.state, this._onSaveUserVisualPatternCallBack.bind(this))
         } else {
             if (DEBUG) console.log("Error saving user logtime")
+            this.setState({ loading: false });
+        }
+    }
+
+        /**
+     * Results from saving user visual pattern data
+     * @param {*} data 
+     * @param {*} error 
+     */
+    _onSaveUserVisualPatternCallBack(data, error) {
+        if (DEBUG) console.log(data);
+        if (data) {
+            if (DEBUG) console.log("SaveUserVisualPattern");
+            request.saveUserBrands(this.state, this._onSaveUserBrandsCallBack.bind(this))
+        } else {
+            if (DEBUG) console.log("Error saving user visualPattern")
             this.setState({ loading: false });
         }
     }
@@ -626,10 +686,28 @@ class Experiment extends Component {
         if (DEBUG) console.log(data);
         if (data) {
             if (DEBUG) console.log("SaveUserBrands");
-            //redirect to ARIADNA
-            window.location.replace(ARIADNA_REDIRECT_ACCEPTED);
+            request.saveUserPSForm(this.state, this._onSaveUserPSFormCallBack.bind(this))
         } else {
             if (DEBUG) console.log("Error saving user brands")
+            this.setState({ loading: false });
+        }
+    }
+
+      /**
+     * Results from saving user ps questionaries data
+     * @param {*} data 
+     * @param {*} error 
+     */
+    _onSaveUserPSFormCallBack(data, error) {
+        if (DEBUG) console.log(data);
+        if (data) {
+            if (DEBUG) console.log("SaveUserPSForm");
+
+            //redirect to ARIADNA
+            window.location.replace(ARIADNA_REDIRECT_ACCEPTED);
+
+        } else {
+            if (DEBUG) console.log("Error saving user psform")
             this.setState({ loading: false });
         }
     }
@@ -1066,6 +1144,72 @@ class Experiment extends Component {
         });
     }
 
+        /**
+     * Manage results comming from Psychology questionaries
+     * PSFORM component (PSForm.js)
+     * @param {*} evt 
+     */
+    _psFormHandler(evt) {
+        const { outputPSForm, generalOutput, outputFormData } = this.state;
+        const now = Date.now();
+
+        const selectedQuestionCode = evt.target.id;
+        const selectedQuestionValue = evt.target.value;
+
+        const psFormValue = { questionCode: selectedQuestionCode, answer: selectedQuestionValue };
+
+        let outputPSFormIndex = -1;
+        //if something already exists, we loop through to find the element
+        for (let i = 0; i < outputPSForm.length; i++) {
+            if (outputPSForm[i].questionCode === selectedQuestionCode) {  //if it is something already selected, we find that code and updated it
+                outputPSFormIndex = i;
+                break;
+            }
+        }
+
+        if (outputPSFormIndex === -1) {
+            outputPSForm.push(psFormValue)
+        } else {
+            outputPSForm[outputPSFormIndex] = psFormValue
+        }
+
+
+        //we find the index of userform to update the same element instead of adding a new one in array
+        let generalOutputIndex = -1;
+        for (let i = 0; i < generalOutput.length; i++) {
+            if ((generalOutput[i].task === constant.PSFORM_SCREEN) &&
+                (generalOutput[i].data.questionCode === selectedQuestionCode)) {
+                generalOutputIndex = i;
+                break;
+            }
+        }
+
+
+        if (generalOutputIndex === -1) {
+            generalOutput.push({
+                userID: outputFormData.numer,
+                task: constant.PSFORM_SCREEN,
+                data: psFormValue,
+                timestamp: now,
+                sync: constant.STATE_NOT_SYNC
+            })
+        } else {
+            generalOutput[generalOutputIndex] = {
+                userID: outputFormData.numer,
+                task: constant.PSFORM_SCREEN,
+                data: psFormValue,
+                timestamp: now,
+                sync: constant.STATE_NOT_SYNC
+            }
+        }
+
+        //save results
+        this.setState({
+            outputPSForm: outputPSForm,
+            generalOutput: generalOutput
+        })
+    }
+
     /**
      * 
      * @param {*} results 
@@ -1093,6 +1237,63 @@ class Experiment extends Component {
             this._checkSyncGeneralData()
 
             //we simulate a space btn pressed because Auction task already finishes with a space btn pressed
+            this.validatePressedButtonToNextPage()
+        })
+    }
+
+    /**
+     * Manage results comming from VisualPattern component (VisualPatternTask.js)
+     * @param {*} results 
+     */
+    _visualPatternTaskHandler(results) {
+        if (DEBUG) console.log(results)
+
+        const { generalOutput, outputFormData } = this.state;
+        const now = Date.now();
+
+        generalOutput.push({
+            userID: outputFormData.numer,
+            task: constant.VISUAL_PATTERN_SCREEN,
+            data: results,
+            timestamp: now,
+            sync: constant.STATE_NOT_SYNC
+        })
+
+        //save results
+        this.setState({
+            outputVisualPattern: results,
+            generalOutput: generalOutput,
+            showFooter: true
+        }, () => {
+            //we simulate a space btn pressed because VisualPattern already finishes with a space btn pressed
+            this.validatePressedButtonToNextPage()
+        })
+    }
+
+    /**
+     * Manage results comming from VisualPatternDemo component (VisualPatternDemoTask.js)
+     * @param {*} results 
+     */
+    _visualPatternDemoTaskHandler(results) {
+        if (DEBUG) console.log(results)
+        const { generalOutput, outputFormData } = this.state;
+        const now = Date.now();
+
+        generalOutput.push({
+            userID: outputFormData.numer,
+            task: constant.VISUAL_PATTERN_DEMO_SCREEN,
+            data: results,
+            timestamp: now,
+            sync: constant.STATE_NOT_SYNC
+        })
+
+        //save results
+        this.setState({
+            outputVisualPatternDemo: results,
+            generalOutput: generalOutput,
+            showFooter: true
+        }, () => {
+            //we simulate a space btn pressed because VisualPattern already finishes with a space btn pressed
             this.validatePressedButtonToNextPage()
         })
     }
@@ -1375,9 +1576,46 @@ class Experiment extends Component {
     }
 
     /**
+     * Validate PS Form questionaries results
+     */
+    validatePSForm() {
+        const { currentScreenNumber, inputNavigation, inputPSForm, outputPSForm } = this.state
+
+        let data = {
+            isValid: true,
+            textError: constant.TEXT_EMPTY,
+            showError: false
+        }
+        let currentPSFormNumber = parseInt(inputNavigation[currentScreenNumber].pageId) - 1;
+        let currentInputPSForm = inputPSForm[currentPSFormNumber];
+
+        if (outputPSForm.length === 0) {
+            data.isValid = false;
+            data.textError = constant.ERROR_9;
+            data.showError = true;
+        } else {
+            let found = false;
+            let questionCodeNotFound = constant.TEXT_EMPTY;
+            for (let i = 0; i < outputPSForm.length; i++) {
+                if (currentInputPSForm.questionCode === outputPSForm[i].questionCode) {
+                    found = true;
+                    questionCodeNotFound = currentInputPSForm.questionCode;
+                    break;
+                }
+            }
+
+            if (!found) {
+                data.isValid = false;
+                data.textError = constant.ERROR_10;
+                data.showError = true;
+            }
+        }
+        return data;
+    }
+
+    /**
    * Validate Auction task results
    */
-
     validateAuctionDemoTask() {
         console.log("validateAuctionDemoTask")
 
@@ -1398,6 +1636,50 @@ class Experiment extends Component {
         }
 
         console.log(data)
+
+        return data;
+    }
+
+       /**
+     * Validate Visual Pattern task results
+     */
+    validateVisualPattern() {
+        const { outputVisualPattern } = this.state;
+
+        let data = {
+            isValid: false,
+            textError: constant.TEXT_EMPTY,
+            showError: false
+        }
+
+        if (outputVisualPattern.length > 0) {
+            data.isValid = true;
+        } else {
+            data.textError = "Finish the task first!";
+            data.showError = true;
+        }
+
+        return data;
+    }
+
+    /**
+     * Validate Visual Pattern demo task results
+     */
+    validateVisualPatternDemo() {
+        const { outputVisualPatternDemo } = this.state;
+
+        let data = {
+            isValid: false,
+            textError: constant.TEXT_EMPTY,
+            showError: false
+        }
+
+        if (outputVisualPatternDemo.length > 0) {
+            data.isValid = true;
+        } else {
+            data.textError = "Finish the task first!";
+            data.showError = true;
+        }
 
         return data;
     }
@@ -1534,6 +1816,18 @@ class Experiment extends Component {
                         }
                     });
                 }
+            } else if (currentScreen === constant.PSFORM_SCREEN) {
+                let data = this.validatePSForm();
+                if (data.isValid) this._goToNextTaskInInputNavigation();
+                else {
+                    //Show errors!
+                    this.setState({
+                        error: {
+                            showError: data.showError,
+                            textError: data.textError
+                        }
+                    });
+                }
             } else if (currentScreen === constant.AUCTION_TASK_DEMO_SCREEN) {
                 let data = this.validateAuctionDemoTask();
                 if (data.isValid) this._goToNextTaskInInputNavigation();
@@ -1548,6 +1842,30 @@ class Experiment extends Component {
                 }
             } else if (currentScreen === constant.AUCTION_TASK_SCREEN) {
                 let data = this.validateAuctionTask();
+                if (data.isValid) this._goToNextTaskInInputNavigation();
+                else {
+                    //Show errors!
+                    this.setState({
+                        error: {
+                            showError: data.showError,
+                            textError: data.textError
+                        }
+                    });
+                }
+            } else if (currentScreen === constant.VISUAL_PATTERN_SCREEN) {
+                let data = this.validateVisualPattern();
+                if (data.isValid) this._goToNextTaskInInputNavigation();
+                else {
+                    //Show errors!
+                    this.setState({
+                        error: {
+                            showError: data.showError,
+                            textError: data.textError
+                        }
+                    });
+                }
+            } else if (currentScreen === constant.VISUAL_PATTERN_DEMO_SCREEN) {
+                let data = this.validateVisualPatternDemo();
                 if (data.isValid) this._goToNextTaskInInputNavigation();
                 else {
                     //Show errors!
@@ -1603,6 +1921,16 @@ class Experiment extends Component {
                 showFooter = false;
             } else if (nextScreen === constant.AUCTION_TASK_DEMO_SCREEN) {
                 showFooter = false;
+            } else if (nextScreen === constant.VISUAL_PATTERN_SCREEN) {
+                showFooter = false;
+            } else if (nextScreen === constant.VISUAL_PATTERN_INSTRUCTION_SCREEN){
+                showFooter = false;
+            } else if (nextScreen === constant.VISUAL_PATTERN_DEMO_INSTRUCTION_FINISH_SCREEN){
+                showFooter = false;
+            } else if (nextScreen === constant.VISUAL_PATTERN_INSTRUCTION_FINISH_SCREEN){
+                showFooter = false;  
+            } else if (nextScreen === constant.VISUAL_PATTERN_DEMO_SCREEN) {
+                showFooter = false;
             } else if (nextScreenNumber === (totalLength - 1)) { //Last screen!
                 // SYNC DATA
                 showAlertWindowsClosingTmp = false
@@ -1633,7 +1961,7 @@ class Experiment extends Component {
 
                 if (nextScreenNumber === (totalLength - 1)) { //Last screen!
                     // SYNC DATA
-                    this.syncData() //call syncdata after the experiment is completed and updated its value to true
+                    this._syncData() //call syncdata after the experiment is completed and updated its value to true
                 } else {
                     this._checkSyncGeneralData()
                 }
@@ -1646,7 +1974,7 @@ class Experiment extends Component {
         let itemsNotSyncedAmount = generalOutput.filter(item => item.sync === constant.STATE_NOT_SYNC).length
 
         if (itemsNotSyncedAmount >= constant.SYNC_AMOUN_ITEMS) {
-            this.syncGeneralData()
+            this._syncGeneralData()
         }
     }
 
@@ -1674,7 +2002,7 @@ class Experiment extends Component {
         if (DEBUG) console.log(event)
 
         //we syncdata before the windows closes
-        this.asyncData();
+        this._asyncData();
     }
 
     componentDidMount() {
@@ -1698,12 +2026,12 @@ class Experiment extends Component {
         this.setState({ loading: true }); //Show Loading
 
         //we start fetching all the necesary data for the experiment
-        this.fetchExperimentInputData();
+        this._fetchExperimentInputData();
     }
 
     componentWillUnmount() {
         document.removeEventListener(constant.EVENT_KEY_DOWN, this.handleKeyDownEvent, false);
-        this.asyncData();
+        this._asyncData();
 
         window.removeEventListener(constant.EVENT_BEFORE_UNLOAD, this.handleWindowClose);
     }
@@ -1716,10 +2044,11 @@ class Experiment extends Component {
                 <div>
                     <Progress value={progressBarNow} />
                 </div>
-                <section className="section-sm" style={{ minHeight: "500px" }}>
+                <section className="section-sm" style={{ marginTop:"20px", marginBottom:"20px", minHeight: "500px" }}>
                     {changePages(this.state, this.formHandler, this.firstTaskHandler, this.firstTaskDemoHandler,
                         this.secondTaskHandler, this.thirdTaskHandler, this.fourthTaskHandler, this.fifthTaskHandler,
-                        this.finalTaskHandler, this.auctionTaskHandler, this.auctionTaskDemoHandler)}
+                        this.finalTaskHandler, this.psFormHandler, this.auctionTaskHandler, this.auctionTaskDemoHandler,
+                        this.visualPatternTaskHandler, this.visualPatternDemoTaskHandler)}
                 </section>
                 <div>
                     <IdleTimer
@@ -1765,8 +2094,8 @@ class Experiment extends Component {
  * @param {*} finalTaskHandler 
  */
 function changePages(state, formHandler, firstTaskHandler, firstTaskDemoHandler,
-    secondTaskHandler, thirdTaskHandler, fourthTaskHandler, fifthTaskHandler, finalTaskHandler,
-    auctionTaskHandler, auctionTaskDemoHandler) {
+    secondTaskHandler, thirdTaskHandler, fourthTaskHandler, fifthTaskHandler, finalTaskHandler, psFormHandler,
+    auctionTaskHandler, auctionTaskDemoHandler, visualPatternTaskHandler, visualPatternDemoTaskHandler) {
 
     const { currentScreenNumber,
         inputNavigation,
@@ -1778,9 +2107,10 @@ function changePages(state, formHandler, firstTaskHandler, firstTaskDemoHandler,
         inputAuctionTask,
         inputAuctionDemoTask,
         outputAuctionTask,
-        outputAuctionDemoTask,
         outputFirstTask,
         outputFirstTaskDemo,
+        inputPSForm,
+        outputPSForm,
         modalOpen } = state;
     const totalLength = inputNavigation.length;
 
@@ -1873,8 +2203,25 @@ function changePages(state, formHandler, firstTaskHandler, firstTaskDemoHandler,
             } else if (currentScreen === constant.REWARD_AUCTION_INFO_SCREEN) {
                 return <RewardAuctionInfo
                     sex={outputFormData.sex}
-                    data={outputAuctionDemoTask}
+                    data={outputAuctionTask}
                 />;
+            } else if (currentScreen === constant.VISUAL_PATTERN_SCREEN) {
+                return <VisualPatternTask action={visualPatternTaskHandler} />;
+            } else if (currentScreen === constant.VISUAL_PATTERN_DEMO_SCREEN) {
+                return <VisualPatternDemoTask action={visualPatternDemoTaskHandler} />;
+            } else if (currentScreen === constant.PSFORM_SCREEN) {
+                const currentPSForm = inputPSForm[pageID - 1];
+                if (inputPSForm.length > 0) { //if we have received already the input data for psform
+                    const textPSForm = getTextForCurrentScreen(inputTextInstructions, currentPSForm.screen);
+                    return <PSForm
+                        action={psFormHandler}
+                        text={textPSForm}
+                        data={currentPSForm}
+                        questionsText={inputTextInstructions}
+                        output={outputPSForm}
+                        error={error}
+                    />;
+                }
             }
         }
     }

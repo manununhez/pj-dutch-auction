@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Container, Table, Alert, Card } from 'reactstrap';
+import { Container, Table, Alert, Card, CardBody, Button } from 'reactstrap';
 
 import { ATTRIBUTE, TEXT_EMPTY, FIRST_TASK_PROPERTIES_TOTAL } from '../../helpers/constants';
 
@@ -35,9 +35,9 @@ class FinalTask extends React.Component {
                         {this.props.error.textError}
                     </span>
                 </Alert>
-                <Card body style={{ marginTop: "20px" }}>
+                <Card><CardBody style={{ padding:"20px", marginTop: "20px" }}>
                     {getTableProperty(this.validateInput, this.state.selectedOption[this.props.counter - 1], this.props.counter - 1)}
-                </Card>
+                </CardBody></Card>
             </Container>
         );
     }
@@ -51,7 +51,7 @@ class FinalTask extends React.Component {
  */
 function getTableProperty(validateInput, selectedValue, counter) {
     return (
-        <Table bordered>
+        <Table bordered responsive>
             <thead>
                 <tr>
                     <th></th>
@@ -69,7 +69,7 @@ function getTableProperty(validateInput, selectedValue, counter) {
                         <h5>{ATTRIBUTE.data.text[counter]}</h5>
                     </td>
                     <td className="align-middle" style={{ textAlign: 'center', padding: '7px' }}>
-                        {getPropertiesTableBody(selectedValue, ATTRIBUTE.data.value[counter], validateInput)}
+                        <div>{getPropertiesTableBody(selectedValue, ATTRIBUTE.data.value[counter], validateInput)}</div>
                     </td>
                     <td className="align-middle" style={{ textAlign: 'center', padding: '7px' }}>
                         <h5>{getSelectedValueNameFormatted(counter, selectedValue)}</h5>
@@ -101,11 +101,11 @@ function getSelectedValueNameFormatted(counter, selectedValue) {
  */
 function getPropertiesTableBody(selectedValue, data, validateInput) {
     let children = data.map((item, i) => {
-        return <button id={"btn" + (i + 1)} key={"btn" + (i + 1)} onClick={validateInput.bind(this, i + 1)}
-            className={parseInt(selectedValue) === (i + 1) ? "btn btn-warning" : "btn btn-primary"} //Values from 1 to length
-            style={{ marginTop: "0px", marginBottom: "0px", fontSize: "1.1em" }}>
+        return <Button id={"btn" + (i + 1)} key={"btn" + (i + 1)} onClick={validateInput.bind(this, i + 1)}
+            color={parseInt(selectedValue) === (i + 1) ? "warning" : "primary"} //Values from 1 to length
+            style={{ fontSize: "1.1em" }}>
             {item}
-        </button>
+        </Button>
     });
 
     return children;

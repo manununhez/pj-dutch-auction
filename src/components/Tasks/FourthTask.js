@@ -1,7 +1,5 @@
 import React from "react";
 
-import ReactStars from "react-rating-stars-component";
-
 // reactstrap components
 import {
     Container,
@@ -9,8 +7,11 @@ import {
     Col,
     Table,
     Alert,
-    Card
+    Card,
+    CardBody
 } from "reactstrap";
+
+import ReactStars from "react-rating-stars-component";
 
 // get our fontawesome imports
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
@@ -58,7 +59,7 @@ class FourthTask extends React.Component {
                     </span>
                 </Alert>
                 <Row className="justify-content-center">
-                    <Card body style={{ marginTop: "20px" }}>
+                    <Card><CardBody>
                         <Col>
                             <Table responsive borderless size="sm">
                                 <tbody>
@@ -66,7 +67,7 @@ class FourthTask extends React.Component {
                                 </tbody>
                             </Table>
                         </Col>
-                    </Card>
+                    </CardBody></Card>
                 </Row>
             </Container>
         );
