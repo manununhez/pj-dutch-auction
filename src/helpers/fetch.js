@@ -1,7 +1,7 @@
 // Fetch.js
 import * as constant from '../helpers/constants';
 
-const _apiHost = 'https://api.swps-pjatk-experiment.pl/v2';//'http://localhost:5000';
+const _apiHost = 'https://api.swps-pjatk-experiment.pl/v2';//'http://localhost:5000'; //
 const fetch_sheet_url = '/v4-get';
 const save_sheet_url = '/v4-post';
 const fetch_hotels_url = '/hotels';
@@ -124,6 +124,7 @@ export function fetchAuctionHotelsRev(callback) {
         .then((response) => {
             let hotels = [];
 
+            console.log(response)
             for (let [key, value] of Object.entries(response)) {
                 hotels.push(value);
             }
@@ -415,7 +416,7 @@ export function saveAuctionBids(data, callback) {
     let userData = userauctionbids(data);
     let spreadSheetName = constant.USER_AUCTION_BIDS_SHEETNAME;
     let row = "A2";
-    let column = "F";
+    let column = "G";
 
     save(spreadSheetName, row, column, userData, callback)
 }
@@ -607,6 +608,7 @@ const usergeneraldata = (data, ariadnaUserID) => {
                 ariadnaUserID,
                 output.task,
                 output.timestamp, //created
+                output.data.hotelId,
                 output.data.hotelName,
                 output.data.priceStart,
                 output.data.bid
@@ -617,6 +619,7 @@ const usergeneraldata = (data, ariadnaUserID) => {
                 ariadnaUserID,
                 output.task,
                 output.timestamp, //created
+                output.data.hotelId,
                 output.data.hotelName,
                 output.data.priceStart,
                 output.data.bid
@@ -790,6 +793,7 @@ function userauctionbids(data) {
         result.push([
             userID,
             constant.AUCTION_TASK_DEMO_SCREEN,
+            outputAuctionDemoTask[i].hotelId,
             outputAuctionDemoTask[i].hotelName,
             outputAuctionDemoTask[i].priceStart,
             outputAuctionDemoTask[i].bid,
@@ -801,6 +805,7 @@ function userauctionbids(data) {
         result.push([
             userID,
             constant.AUCTION_TASK_SCREEN,
+            outputAuctionTask[i].hotelId,
             outputAuctionTask[i].hotelName,
             outputAuctionTask[i].priceStart,
             outputAuctionTask[i].bid,

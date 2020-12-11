@@ -20,6 +20,11 @@ class RewardAuctionInfo extends React.Component {
     };
 }
 
+/**
+ * 
+ * @param {*} data 
+ * @param {*} sex 
+ */
 function totalReward(data, sex) {
     const savedMoney = data
         .map(li => (li.priceStart - li.bid))
@@ -31,6 +36,10 @@ function totalReward(data, sex) {
     </div>);
 }
 
+/**
+ * 
+ * @param {*} text 
+ */
 function getFormattedText(text) { //TODO when FirstTask, we should cache the text so we dont iterate every time
     let children = text.split('<br>').map(function (item, key) { //replace \n with <br>
         if (item !== "")

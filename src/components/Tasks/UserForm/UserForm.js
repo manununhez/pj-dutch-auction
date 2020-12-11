@@ -8,8 +8,7 @@ import NumberFormat from 'react-number-format';
 import {
   FORM_SEX, FORM_AGE, FORM_PROFESSION, FORM_YEARS_EDUC, FORM_LEVEL_EDUC,
   FORM_LEVEL_EDUC_INITIAL, FORM_LEVEL_EDUC_MIDDLE, FORM_LEVEL_EDUC_SUPERIOR,
-  FORM_LEVEL_EDUC_DEFAULT, FEMALE_VALUE, MALE_VALUE, EVENT_KEY_DOWN, TEXT_EMPTY,
-  ENTER_KEY_CODE
+  FORM_LEVEL_EDUC_DEFAULT, FEMALE_VALUE, MALE_VALUE, TEXT_EMPTY
 } from '../../../helpers/constants';
 
 import "./UserForm.css";
@@ -30,23 +29,7 @@ class UserForm extends React.Component {
       }
     }
     this.validateNumberFormat = this._validateNumberFormat.bind(this);
-    this.handleKeyDownEvent = this._handleKeyDownEvent.bind(this);
     this.validateInputForm = this._validateInputForm.bind(this)
-  }
-
-  componentDidMount() {
-    //for keyboard detection
-    document.addEventListener(EVENT_KEY_DOWN, this.handleKeyDownEvent, false);
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener(EVENT_KEY_DOWN, this.handleKeyDownEvent, false);
-  }
-
-  _handleKeyDownEvent(event) {
-    if (event.keyCode === ENTER_KEY_CODE) {
-      this.props.action(this.state.formData)
-    }
   }
 
   _validateInputForm(evt) {
@@ -71,7 +54,9 @@ class UserForm extends React.Component {
       formData.levelEduc = formInputValue
     }
 
-    this.setState({ formData: formData })
+    this.setState({ formData: formData }, () => {
+      this.props.action(this.state.formData)
+    })
   }
 
   _validateNumberFormat(id, numberFormat) {

@@ -78,8 +78,7 @@ class AuctionTask extends React.Component {
 
     _finishBidAndSaveData(isBidGain) {
         //Aca el usuario para la apuesta. Se guarda el bid actual y se muestra el dialogo
-        const { bid, priceStart, counterAuction } = this.state
-        
+
         //showModal()
         this.setState(({
             bidState: BID_STATE_FINISHED,
@@ -87,7 +86,6 @@ class AuctionTask extends React.Component {
             isBidGain: isBidGain
         }), () => {
             this._clearTimer(); //stop timer
-            
         });
     }
 
@@ -143,11 +141,13 @@ class AuctionTask extends React.Component {
                 }
 
                 let bidTmp = isBidGain ? bid : priceStart
-                this.props.action({
+                let bidResult = {
                     priceStart: priceStart,
                     bid: bidTmp,
+                    hotelId: this.props.data[counterAuction].hotelId,
                     hotelName: this.props.data[counterAuction].hotelName
-                })
+                }
+                this.props.action(bidResult)
             }
 
         }

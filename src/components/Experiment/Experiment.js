@@ -206,9 +206,9 @@ class Experiment extends Component {
     * fetchPSForm
      */
     _fetchExperimentInputData() {
-        request.fetchAuctionHotels(this._onLoadAuctionHotelsCallBack.bind(this))
+        // request.fetchAuctionHotels(this._onLoadAuctionHotelsCallBack.bind(this))
         request.fetchAuctionHotelsTutorial(this._onLoadAuctionHotelsDemoCallBack.bind(this))
-        // request.fetchAuctionHotelsRev(this._onLoadAuctionHotelsCallBack.bind(this))
+        request.fetchAuctionHotelsRev(this._onLoadAuctionHotelsCallBack.bind(this))
         if (DEBUG) console.log("Fetch navigationScreens");
         request.fetchNavScreens(this.state.typeTask, this._onLoadNavScreenCallBack.bind(this))
     }
@@ -1320,10 +1320,11 @@ class Experiment extends Component {
     * Validate user form results
     */
     validateForm() {
-        console.log("validateForm")
+        
         const { outputFormData, inputParticipants } = this.state
         const { sex, age, yearsEduc, levelEduc, profession } = outputFormData;
-
+        console.log("validateForm")
+        console.log(outputFormData)
         let data = {
             isValid: false,
             textError: constant.TEXT_EMPTY,
@@ -1340,17 +1341,15 @@ class Experiment extends Component {
         if (age === constant.TEXT_EMPTY) {
             data.textError = constant.ERROR_5;
             data.showError = true;
+        } else if (profession === constant.TEXT_EMPTY) {
+            data.textError = constant.ERROR_7;
+            data.showError = true; 
+        } else if (levelEduc === constant.FORM_LEVEL_EDUC_DEFAULT) {
+            data.textError = constant.ERROR_11;
+            data.showError = true;
         } else if (yearsEduc === constant.TEXT_EMPTY) {
             data.textError = constant.ERROR_6;
             data.showError = true;
-        } else if (profession === constant.TEXT_EMPTY) {
-            data.textError = constant.ERROR_7;
-            data.showError = true;
-        } else { //ALL valid data
-            if (levelEduc === constant.FORM_LEVEL_EDUC_DEFAULT) {
-                data.textError = constant.ERROR_11;
-                data.showError = true;
-            }
         }
 
         if (data.showError) return data;
