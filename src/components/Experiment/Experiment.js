@@ -136,7 +136,6 @@ class Experiment extends Component {
             currentScreenNumber: 0,
             loading: false,
             loadingSyncData: false,
-            showFooter: true,
             progressBarNow: 1,
             showPagination: false,
             page: constant.TEXT_EMPTY,
@@ -1247,8 +1246,7 @@ class Experiment extends Component {
         //save results
         this.setState({
             outputVisualPattern: results,
-            generalOutput: generalOutput,
-            showFooter: true
+            generalOutput: generalOutput
         }, () => {
             //we simulate a space btn pressed because VisualPattern already finishes with a space btn pressed
             this._validatePressedSpaceKeyToNextPage()
@@ -1275,8 +1273,7 @@ class Experiment extends Component {
         //save results
         this.setState({
             outputVisualPatternDemo: results,
-            generalOutput: generalOutput,
-            showFooter: true
+            generalOutput: generalOutput
         }, () => {
             //we simulate a space btn pressed because VisualPattern already finishes with a space btn pressed
             this._validatePressedSpaceKeyToNextPage()
@@ -1890,7 +1887,6 @@ class Experiment extends Component {
         let screens = logTimestamp.screen;
         let timestamps = logTimestamp.timestamp;
         let showPagination = false; //default
-        let showFooter = true; //default
         let totalLength = inputNavigation.length;
         let firsTaskTotalLength = inputFirstTask.length / constant.FIRST_TASK_PROPERTIES_TOTAL;
         let firsTaskDemoTotalLength = inputFirstTaskDemo.length / constant.FIRST_TASK_PROPERTIES_TOTAL;
@@ -1909,30 +1905,13 @@ class Experiment extends Component {
             if (nextScreen === constant.FIRST_TASK_SCREEN) {
                 showPagination = true;
                 page = `${pageID}/${firsTaskTotalLength}`;
-                showFooter = false;
             } else if (nextScreen === constant.FIRST_TASK_DEMO_SCREEN) {
                 showPagination = true;
                 page = `${pageID}/${firsTaskDemoTotalLength}`;
-                showFooter = false;
-            } else if (nextScreen === constant.AUCTION_TASK_SCREEN) {
-                showFooter = false;
-            } else if (nextScreen === constant.AUCTION_TASK_DEMO_SCREEN) {
-                showFooter = false;
-            } else if (nextScreen === constant.VISUAL_PATTERN_SCREEN) {
-                showFooter = false;
-            } else if (nextScreen === constant.VISUAL_PATTERN_INSTRUCTION_SCREEN) {
-                showFooter = false;
-            } else if (nextScreen === constant.VISUAL_PATTERN_DEMO_INSTRUCTION_FINISH_SCREEN) {
-                showFooter = false;
-            } else if (nextScreen === constant.VISUAL_PATTERN_INSTRUCTION_FINISH_SCREEN) {
-                showFooter = false;
-            } else if (nextScreen === constant.VISUAL_PATTERN_DEMO_SCREEN) {
-                showFooter = false;
             } else if (nextScreenNumber === (totalLength - 1)) { //Last screen!
                 // SYNC DATA
                 showAlertWindowsClosingTmp = false
                 loading = true //Show Loading
-                showFooter = false
             }
 
 
@@ -1950,7 +1929,6 @@ class Experiment extends Component {
                 showPagination: showPagination,
                 page: page,
                 loading: loading,
-                showFooter: showFooter,
                 modalOpen: false,
                 progressBarNow: progressBarNow
             }, () => {
@@ -2035,7 +2013,7 @@ class Experiment extends Component {
     }
 
     render() {
-        const { progressBarNow, loading, loadingSyncData, showPagination, page, showFooter } = this.state;
+        const { progressBarNow, loading, loadingSyncData, showPagination, page } = this.state;
         const timeout = 1000 * 60 * (60 * 3); //3horas
         return (
             <main ref="main">
@@ -2076,10 +2054,43 @@ class Experiment extends Component {
                     />
                 </div>
                 {showPagination ? <div style={{ textAlign: "end", marginRight: "5em" }}>{page}</div> : <></>}
-                { showFooter ? <FooterV1 text={constant.TEXT_FOOTER} /> : <></>}
+                { isFooterShownInCurrentScreen(this.state)}
             </main>
         )
     }
+}
+
+function isFooterShownInCurrentScreen(state) {
+    const { currentScreenNumber, inputNavigation } = state;
+    if (inputNavigation.length === 0) return; //data was not loaded yet
+
+
+    const currentScreen = inputNavigation[currentScreenNumber].screen
+    let isFooterShown = false
+    let footerText = constant.TEXT_FOOTER
+
+    if (currentScreen.includes(constant.INSTRUCTION_SCREEN)) {
+        if (currentScreen !== constant.VISUAL_PATTERN_INSTRUCTION_SCREEN &&
+            currentScreen !== constant.VISUAL_PATTERN_DEMO_INSTRUCTION_FINISH_SCREEN &&
+            currentScreen !== constant.VISUAL_PATTERN_INSTRUCTION_FINISH_SCREEN) {
+            isFooterShown = true;
+        }
+    } else if (currentScreen === constant.REWARD_INFO_SCREEN ||
+        currentScreen === constant.SECOND_TASK_SCREEN ||
+        currentScreen === constant.THIRD_TASK_SCREEN ||
+        currentScreen === constant.FOURTH_TASK_SCREEN ||
+        currentScreen === constant.FIFTH_TASK_SCREEN ||
+        currentScreen === constant.FINAL_TASK_SCREEN ||
+        currentScreen === constant.REWARD_AUCTION_INFO_SCREEN ||
+        currentScreen === constant.USER_FORM_SCREEN) {
+        isFooterShown = true;
+    }
+
+    if (currentScreen === constant.USER_FORM_SCREEN) {
+        footerText = constant.TEXT_FOOTER_ENTER
+    }
+
+    return ((isFooterShown) ? <FooterV1 text={footerText} /> : <></>)
 }
 
 /**

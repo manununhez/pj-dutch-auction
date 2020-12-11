@@ -136,7 +136,7 @@ class UserForm extends React.Component {
             <div className="d-flex align-items-left">
               <h5>Płeć</h5>
             </div>
-            <div style={{ display: "flex" }} >
+            <div style={{ display: "inline-flex" }} >
               <Col lg="auto">
                 <FormGroup>
                   <Label check>

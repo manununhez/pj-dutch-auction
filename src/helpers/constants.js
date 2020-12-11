@@ -49,6 +49,7 @@ export const MALE_VALUE = "M";
 
 //Footer
 export const TEXT_FOOTER = "Naciśnij spację, aby przejść dalej";
+export const TEXT_FOOTER_ENTER = "Naciśnij enter, aby przejść dalej";
 
 //RATING bar
 export const INACTIVE_STAR = '#d1d1cf';
