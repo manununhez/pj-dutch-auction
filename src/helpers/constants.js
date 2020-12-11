@@ -35,7 +35,6 @@ export const SYNC_AMOUN_ITEMS = 5;
 export const ONE_SECOND_MS = 1000;
 
 // Form IDs
-export const FORM_NUMER = "numer";
 export const FORM_SEX = "radioSex";
 export const FORM_AGE = "age";
 export const FORM_PROFESSION = "profession";
@@ -194,7 +193,6 @@ export const PSFORM_SHEETNAME = "psychologyform";
 export const ERROR_1 = "Prosimy o dokonanie wyboru.";//"You have to select a choice first!"
 export const ERROR_2 = "Wiek powinien mieścić się w zakresie od 19 do 76 lat.";//Age should be in range 19 to 76 years!
 export const ERROR_3 = "Liczba lat formalnej edukacji powinna mieścić się w zakresie od 11 do 18 lat.";//Years of formal education should be in range 10 to 18 years! 
-export const ERROR_4 = "Pole Numer nie może pozostać puste.";//"Numer field cannot be empty!";
 export const ERROR_5 = "Pole Wiek nie może pozostać puste.";//Age field cannot be empty
 export const ERROR_6 = "Pole Lata formalnej edukacji nie może pozostać puste.";//Years Education field cannot be empty!
 export const ERROR_7 = "Pole Zawód nie może pozostać puste.";//Profession field cannot be empty!

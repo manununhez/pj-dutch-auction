@@ -675,9 +675,8 @@ const usergeneraldata = (data, ariadnaUserID) => {
 }
 
 function userbrands(data) {
-    const { outputFormData, outputThirdTask, outputFifthTask } = data;
+    const { userID, outputThirdTask, outputFifthTask } = data;
     const now = Date.now();
-    const userID = outputFormData.numer;
 
     let result = outputThirdTask.map((output) => {
         return [
@@ -701,9 +700,8 @@ function userbrands(data) {
 function userinfo(data) {
     let result = [];
 
-    const { userInfo, outputFormData } = data;
+    const { userInfo, userID } = data;
     const now = Date.now();
-    const userID = outputFormData.numer;
 
     result.push([
         userID,
@@ -727,11 +725,11 @@ function userinfo(data) {
 function userform(data) {
     let result = [];
     // let data = this.props.data;
-    const { outputFormData, typeTask, ariadnaUserID } = data;
+    const { userID, outputFormData, typeTask, ariadnaUserID } = data;
     const now = Date.now();
 
     result.push([
-        outputFormData.numer,
+        userID,
         ariadnaUserID,
         outputFormData.sex,
         outputFormData.age,
@@ -749,13 +747,12 @@ function userform(data) {
 function userpralkarating(data) {
     let result = [];
     // let data = this.props.data;
-    const { outputSecondTask, outputFormData } = data;
-    const outputFormDataNumer = outputFormData.numer;
+    const { outputSecondTask, userID } = data;
     const now = Date.now();
 
     for (let i = 0; i < constant.ATTRIBUTE_CUSTOM.data.id.length; i++) {
         result.push([
-            outputFormDataNumer,
+            userID,
             constant.ATTRIBUTE_CUSTOM.data.id[i],
             outputSecondTask[i],
             now //created
@@ -768,13 +765,12 @@ function userpralkarating(data) {
 function usermobiletelephone(data) {
     let result = [];
     // let data = this.props.data;
-    const { outputFourthTask, outputFormData } = data;
-    const outputFormDataNumer = outputFormData.numer;
+    const { outputFourthTask, userID } = data;
     const now = Date.now();
 
     for (let i = 0; i < constant.ATTRIBUTE_FOURTH_TASK.data.id.length; i++) {
         result.push([
-            outputFormDataNumer,
+            userID,
             constant.ATTRIBUTE_FOURTH_TASK.data.id[i],
             outputFourthTask[i],
             now //created
@@ -787,13 +783,12 @@ function usermobiletelephone(data) {
 function userauctionbids(data) {
     let result = [];
     // let data = this.props.data;
-    const { outputAuctionTask, outputAuctionDemoTask, outputFormData } = data;
-    const outputFormDataNumer = outputFormData.numer;
+    const { outputAuctionTask, outputAuctionDemoTask, userID } = data;
     const now = Date.now();
 
     for (let i = 0; i < outputAuctionDemoTask.length; i++) {
         result.push([
-            outputFormDataNumer,
+            userID,
             constant.AUCTION_TASK_DEMO_SCREEN,
             outputAuctionDemoTask[i].hotelName,
             outputAuctionDemoTask[i].priceStart,
@@ -804,7 +799,7 @@ function userauctionbids(data) {
 
     for (let i = 0; i < outputAuctionTask.length; i++) {
         result.push([
-            outputFormDataNumer,
+            userID,
             constant.AUCTION_TASK_SCREEN,
             outputAuctionTask[i].hotelName,
             outputAuctionTask[i].priceStart,
@@ -819,13 +814,12 @@ function userauctionbids(data) {
 function userpralkaselection(data) {
     let result = [];
     // let data = this.props.data;
-    const { outputFinalTask, outputFormData } = data;
-    const outputFormDataNumer = outputFormData.numer;
+    const { outputFinalTask, userID } = data;
     const now = Date.now();
 
     for (let i = 0; i < constant.ATTRIBUTE.data.id.length; i++) {
         result.push([
-            outputFormDataNumer,
+            userID,
             constant.ATTRIBUTE.data.id[i],
             outputFinalTask[i],
             now //created
@@ -839,13 +833,12 @@ function userproperties(data) {
     // UserID	QuestionID	QuestionNumber	SelectedAnswer
     let result = [];
     // let data = this.props.data;
-    const { outputFirstTask, outputFirstTaskDemo, outputFormData } = data;
-    const outputFormDataNumer = outputFormData.numer;
+    const { outputFirstTask, outputFirstTaskDemo, userID } = data;
     const now = Date.now();
 
     for (let i = 0; i < outputFirstTaskDemo.questionID.length; i++) {
         result.push([
-            outputFormDataNumer,
+            userID,
             constant.FIRST_TASK_DEMO_SCREEN,
             outputFirstTaskDemo.questionID[i],
             outputFirstTaskDemo.questionNumber[i],
@@ -857,7 +850,7 @@ function userproperties(data) {
 
     for (let i = 0; i < outputFirstTask.questionID.length; i++) {
         result.push([
-            outputFormDataNumer,
+            userID,
             constant.FIRST_TASK_SCREEN,
             outputFirstTask.questionID[i],
             outputFirstTask.questionNumber[i],
@@ -875,14 +868,13 @@ function userlogtime(data) {
     // UserID	QuestionID	QuestionNumber	SelectedAnswer
     let result = [];
 
-    const { logTimestamp, outputFormData } = data;
+    const { logTimestamp, userID } = data;
     const { screen, timestamp } = logTimestamp;
-    const outputFormDataNumer = outputFormData.numer;
     const now = Date.now();
 
     for (let i = 0; i < screen.length; i++) {
         result.push([
-            outputFormDataNumer,
+            userID,
             screen[i],
             timestamp[i],
             Math.floor((((i + 1) < screen.length) ? (timestamp[i + 1] - timestamp[i]) : 0) / 1000),
@@ -894,9 +886,8 @@ function userlogtime(data) {
 }
 
 function uservisualpattern(data) {
-    const { outputFormData, outputVisualPattern, outputVisualPatternDemo } = data;
+    const { userID, outputVisualPattern, outputVisualPatternDemo } = data;
     const now = Date.now();
-    const userID = outputFormData.numer;
 
     let resultDemo = outputVisualPatternDemo.map((output) => {
         return [
@@ -938,9 +929,8 @@ function uservisualpattern(data) {
 
 function userpsform(data) {
     let result = [];
-    const { outputPSForm, outputFormData } = data;
+    const { outputPSForm, userID } = data;
     const now = Date.now();
-    const userID = outputFormData.numer;
 
     for (let i = 0; i < outputPSForm.length; i++) {
         result.push([

@@ -57,8 +57,39 @@ class Experiment extends Component {
         super(props);
 
         const userID = uuidv4();
+        const ariadnaUserID = queryString.parse(this.props.location.search).respondent_id;
+        const userGeneralInfo = { //default value - user info loaded
+            userID: userID,
+            task: constant.USER_INFO_SCREEN,
+            data: [
+                this.props.match.params.version,
+                USER_INFO.os.name,
+                USER_INFO.os.version,
+                USER_INFO.browser.name,
+                USER_INFO.browser.version,
+                USER_INFO.browser.major,
+                USER_INFO.browser.language,
+                USER_INFO.engine.name,
+                USER_INFO.engine.version,
+                USER_INFO.screen.width,
+                USER_INFO.screen.height
+            ],
+            timestamp: Date.now(), //created
+            sync: constant.STATE_NOT_SYNC
+        }
+        const generalOutputDefault = [userGeneralInfo]
+        const typeTask = this.props.match.params.version
+        const userFormDefault = {
+            sex: constant.FEMALE_VALUE,//default selected sex
+            age: constant.TEXT_EMPTY,
+            yearsEduc: constant.TEXT_EMPTY,
+            levelEduc: constant.FORM_LEVEL_EDUC_DEFAULT, //default selected 
+            profession: constant.TEXT_EMPTY
+        }
+
         this.state = {
-            ariadnaUserID: queryString.parse(this.props.location.search).respondent_id,
+            ariadnaUserID: ariadnaUserID,
+            userID: userID,
             userInfo: USER_INFO,
             //Variables for input data
             inputNavigation: [],
@@ -70,34 +101,9 @@ class Experiment extends Component {
             inputParticipants: [],
             inputPSForm: [],
             //Variables for output data (results)
-            generalOutput: [{ //default value - user info loaded
-                userID: userID,
-                task: constant.USER_INFO_SCREEN,
-                data: [
-                    this.props.match.params.version,
-                    USER_INFO.os.name,
-                    USER_INFO.os.version,
-                    USER_INFO.browser.name,
-                    USER_INFO.browser.version,
-                    USER_INFO.browser.major,
-                    USER_INFO.browser.language,
-                    USER_INFO.engine.name,
-                    USER_INFO.engine.version,
-                    USER_INFO.screen.width,
-                    USER_INFO.screen.height
-                ],
-                timestamp: Date.now(), //created
-                sync: constant.STATE_NOT_SYNC
-            }],
+            generalOutput: generalOutputDefault,
             generalOutputIndexes: [],
-            outputFormData: {
-                sex: constant.FEMALE_VALUE,//default selected sex
-                age: constant.TEXT_EMPTY,
-                yearsEduc: constant.TEXT_EMPTY,
-                levelEduc: constant.FORM_LEVEL_EDUC_DEFAULT, //default selected 
-                numer: userID, //default user id generated
-                profession: constant.TEXT_EMPTY
-            },
+            outputFormData: userFormDefault,
             outputFirstTask: {
                 questionID: [],
                 questionNumber: [],
@@ -125,7 +131,7 @@ class Experiment extends Component {
             },
             outputAuctionTask: [],
             outputAuctionDemoTask: [],
-            typeTask: this.props.match.params.version,
+            typeTask: typeTask,
             showAlertWindowsClosing: true,
             currentScreenNumber: 0,
             loading: false,
@@ -500,11 +506,11 @@ class Experiment extends Component {
         }
     }
 
-          /**
-     * Once the psychology questionnaries input have been loaded from the spreadsheet
-     * @param {*} data 
-     * @param {*} error 
-     */
+    /**
+* Once the psychology questionnaries input have been loaded from the spreadsheet
+* @param {*} data 
+* @param {*} error 
+*/
     _onLoadPSFormCallback(data, error) {
         if (data) {
             this.setState({
@@ -661,11 +667,11 @@ class Experiment extends Component {
         }
     }
 
-        /**
-     * Results from saving user visual pattern data
-     * @param {*} data 
-     * @param {*} error 
-     */
+    /**
+ * Results from saving user visual pattern data
+ * @param {*} data 
+ * @param {*} error 
+ */
     _onSaveUserVisualPatternCallBack(data, error) {
         if (DEBUG) console.log(data);
         if (data) {
@@ -693,11 +699,11 @@ class Experiment extends Component {
         }
     }
 
-      /**
-     * Results from saving user ps questionaries data
-     * @param {*} data 
-     * @param {*} error 
-     */
+    /**
+   * Results from saving user ps questionaries data
+   * @param {*} data 
+   * @param {*} error 
+   */
     _onSaveUserPSFormCallBack(data, error) {
         if (DEBUG) console.log(data);
         if (data) {
@@ -755,32 +761,11 @@ class Experiment extends Component {
      * UserForm component (UserForm.js)
      * @param {*} evt 
      */
-    _formHandler(evt) {
-        const { outputFormData, generalOutput } = this.state
-        const formId = evt.target.id;
-        const formInputValue = evt.target.value;
+    _formHandler(formData) {
+        const { generalOutput, userID } = this.state
         const now = Date.now();
 
-        if (DEBUG) console.log(formId)
-        if (DEBUG) console.log(formInputValue)
-
-        //We save all fields from form data 
-        if (formId === constant.FORM_SEX) {
-            outputFormData.sex = formInputValue
-        } else if (formId === constant.FORM_AGE) {
-            // if (formInputValue === constant.TEXT_EMPTY) { //validating number only admitted
-            outputFormData.age = formInputValue
-            // }
-        } else if (formId === constant.FORM_PROFESSION) {
-            outputFormData.profession = formInputValue
-        } else if (formId === constant.FORM_YEARS_EDUC) {
-            // if (formInputValue === constant.TEXT_EMPTY) { //validating number only admitted
-            outputFormData.yearsEduc = formInputValue
-            // }
-        } else if (formId === constant.FORM_LEVEL_EDUC) {
-            outputFormData.levelEduc = formInputValue
-        }
-
+        console.log(formData)
 
         //we find the index of userform to update the same element instead of adding a new one in array
         let index = -1;
@@ -793,17 +778,17 @@ class Experiment extends Component {
 
         if (index === -1) { //does not exists yet
             generalOutput.push({
-                userID: outputFormData.numer,
+                userID: userID,
                 task: constant.USER_FORM_SCREEN,
-                data: outputFormData,
+                data: formData,
                 timestamp: now,
                 sync: constant.STATE_NOT_SYNC
             })
         } else { //we update existing values
             generalOutput[index] = {
-                userID: outputFormData.numer,
+                userID: userID,
                 task: constant.USER_FORM_SCREEN,
-                data: outputFormData,
+                data: formData,
                 timestamp: now,
                 sync: constant.STATE_NOT_SYNC
             }
@@ -811,7 +796,7 @@ class Experiment extends Component {
 
         //save results
         this.setState({
-            outputFormData: outputFormData,
+            outputFormData: formData,
             generalOutput: generalOutput
         })
     }
@@ -823,7 +808,7 @@ class Experiment extends Component {
      */
     _firstTaskHandler(selectedNumber) {
         const { currentScreenNumber, inputNavigation, inputFirstTask, outputFirstTask,
-            generalOutput, outputFormData } = this.state;
+            generalOutput, userID } = this.state;
         const { questionID, questionNumber, selectedAnswer, isCorrectAnswer } = outputFirstTask;
 
         const currentFirsTaskScreenNumber = parseInt(inputNavigation[currentScreenNumber].pageId);
@@ -843,7 +828,7 @@ class Experiment extends Component {
         isCorrectAnswer.push(isCorrectSelectedAnswer);
 
         generalOutput.push({
-            userID: outputFormData.numer,
+            userID: userID,
             task: constant.FIRST_TASK_SCREEN,
             data: [currentQuestionID, currentFirsTaskScreenNumber, selectedNumber, isCorrectSelectedAnswer],
             timestamp: now,
@@ -872,7 +857,7 @@ class Experiment extends Component {
      */
     _firstTaskDemoHandler(selectedNumber) {
         const { currentScreenNumber, inputNavigation, inputFirstTaskDemo, outputFirstTaskDemo,
-            outputFormData, generalOutput } = this.state;
+            userID, generalOutput } = this.state;
         const { questionID, questionNumber, selectedAnswer, isCorrectAnswer } = outputFirstTaskDemo;
 
         const currentFirsTaskDemoScreenNumber = parseInt(inputNavigation[currentScreenNumber].pageId);
@@ -893,7 +878,7 @@ class Experiment extends Component {
         isCorrectAnswer.push(isCorrectSelectedAnswer);
 
         generalOutput.push({
-            userID: outputFormData.numer,
+            userID: userID,
             task: constant.FIRST_TASK_DEMO_SCREEN,
             data: [currentQuestionID, currentFirsTaskDemoScreenNumber, selectedNumber, isCorrectSelectedAnswer],
             timestamp: now,
@@ -924,7 +909,7 @@ class Experiment extends Component {
     _secondTaskHandler(selectedRatings) {
         if (DEBUG) console.log(selectedRatings)
 
-        const { generalOutput, outputFormData } = this.state
+        const { generalOutput, userID } = this.state
         const now = Date.now();
 
         //we find the index of userform to update the same element instead of adding a new one in array
@@ -938,7 +923,7 @@ class Experiment extends Component {
 
         if (index === -1) {
             generalOutput.push({
-                userID: outputFormData.numer,
+                userID: userID,
                 task: constant.SECOND_TASK_SCREEN,
                 data: selectedRatings,
                 timestamp: now,
@@ -946,7 +931,7 @@ class Experiment extends Component {
             })
         } else {
             generalOutput[index] = {
-                userID: outputFormData.numer,
+                userID: userID,
                 task: constant.SECOND_TASK_SCREEN,
                 data: selectedRatings,
                 timestamp: now,
@@ -969,7 +954,7 @@ class Experiment extends Component {
      */
     _thirdTaskHandler(brand) {
         if (DEBUG) console.log(`Brand:${brand}`)
-        const { generalOutput, outputFormData } = this.state
+        const { generalOutput, userID } = this.state
         const now = Date.now();
 
         //we find the index of userform to update the same element instead of adding a new one in array
@@ -983,7 +968,7 @@ class Experiment extends Component {
 
         if (index === -1) {
             generalOutput.push({
-                userID: outputFormData.numer,
+                userID: userID,
                 task: constant.THIRD_TASK_SCREEN,
                 data: brand,
                 timestamp: now,
@@ -991,7 +976,7 @@ class Experiment extends Component {
             })
         } else {
             generalOutput[index] = {
-                userID: outputFormData.numer,
+                userID: userID,
                 task: constant.THIRD_TASK_SCREEN,
                 data: brand,
                 timestamp: now,
@@ -1014,7 +999,7 @@ class Experiment extends Component {
      */
     _fourthTaskHandler(selectedRatings) {
         if (DEBUG) console.log(selectedRatings)
-        const { generalOutput, outputFormData } = this.state
+        const { generalOutput, userID } = this.state
         const now = Date.now();
 
         //we find the index of userform to update the same element instead of adding a new one in array
@@ -1028,7 +1013,7 @@ class Experiment extends Component {
 
         if (index === -1) {
             generalOutput.push({
-                userID: outputFormData.numer,
+                userID: userID,
                 task: constant.FOURTH_TASK_SCREEN,
                 data: selectedRatings,
                 timestamp: now,
@@ -1036,7 +1021,7 @@ class Experiment extends Component {
             })
         } else {
             generalOutput[index] = {
-                userID: outputFormData.numer,
+                userID: userID,
                 task: constant.FOURTH_TASK_SCREEN,
                 data: selectedRatings,
                 timestamp: now,
@@ -1054,7 +1039,7 @@ class Experiment extends Component {
     _fifthTaskHandler(selectValue) {
 
         if (DEBUG) console.log(selectValue)
-        const { generalOutput, outputFormData } = this.state
+        const { generalOutput, userID } = this.state
         const now = Date.now();
 
         //we find the index of userform to update the same element instead of adding a new one in array
@@ -1068,7 +1053,7 @@ class Experiment extends Component {
 
         if (index === -1) {
             generalOutput.push({
-                userID: outputFormData.numer,
+                userID: userID,
                 task: constant.FIFTH_TASK_SCREEN,
                 data: selectValue,
                 timestamp: now,
@@ -1076,7 +1061,7 @@ class Experiment extends Component {
             })
         } else {
             generalOutput[index] = {
-                userID: outputFormData.numer,
+                userID: userID,
                 task: constant.FIFTH_TASK_SCREEN,
                 data: selectValue,
                 timestamp: now,
@@ -1098,7 +1083,7 @@ class Experiment extends Component {
      */
     _finalTaskHandler(selectedAnswer) {
         const { inputNavigation, currentScreenNumber, outputFinalTask,
-            generalOutput, outputFormData } = this.state;
+            generalOutput, userID } = this.state;
         const now = Date.now();
 
         if (DEBUG) console.log(selectedAnswer)
@@ -1121,7 +1106,7 @@ class Experiment extends Component {
 
         if (index === -1) {
             generalOutput.push({
-                userID: outputFormData.numer,
+                userID: userID,
                 task: constant.FINAL_TASK_SCREEN,
                 data: [currentFinalTaskScreenNumber, selectedValue],
                 timestamp: now,
@@ -1129,7 +1114,7 @@ class Experiment extends Component {
             })
         } else {
             generalOutput[index] = {
-                userID: outputFormData.numer,
+                userID: userID,
                 task: constant.FINAL_TASK_SCREEN,
                 data: [currentFinalTaskScreenNumber, selectedValue],
                 timestamp: now,
@@ -1144,13 +1129,13 @@ class Experiment extends Component {
         });
     }
 
-        /**
-     * Manage results comming from Psychology questionaries
-     * PSFORM component (PSForm.js)
-     * @param {*} evt 
-     */
+    /**
+ * Manage results comming from Psychology questionaries
+ * PSFORM component (PSForm.js)
+ * @param {*} evt 
+ */
     _psFormHandler(evt) {
-        const { outputPSForm, generalOutput, outputFormData } = this.state;
+        const { outputPSForm, generalOutput, userID } = this.state;
         const now = Date.now();
 
         const selectedQuestionCode = evt.target.id;
@@ -1187,7 +1172,7 @@ class Experiment extends Component {
 
         if (generalOutputIndex === -1) {
             generalOutput.push({
-                userID: outputFormData.numer,
+                userID: userID,
                 task: constant.PSFORM_SCREEN,
                 data: psFormValue,
                 timestamp: now,
@@ -1195,7 +1180,7 @@ class Experiment extends Component {
             })
         } else {
             generalOutput[generalOutputIndex] = {
-                userID: outputFormData.numer,
+                userID: userID,
                 task: constant.PSFORM_SCREEN,
                 data: psFormValue,
                 timestamp: now,
@@ -1216,11 +1201,11 @@ class Experiment extends Component {
      */
     _auctionTaskHandler(results) {
         if (DEBUG) console.log(results)
-        const { generalOutput, outputFormData, outputAuctionTask } = this.state;
+        const { generalOutput, userID, outputAuctionTask } = this.state;
         const now = Date.now();
 
         generalOutput.push({
-            userID: outputFormData.numer,
+            userID: userID,
             task: constant.AUCTION_TASK_SCREEN,
             data: results,
             timestamp: now,
@@ -1237,7 +1222,7 @@ class Experiment extends Component {
             this._checkSyncGeneralData()
 
             //we simulate a space btn pressed because Auction task already finishes with a space btn pressed
-            this.validatePressedButtonToNextPage()
+            this._validatePressedSpaceKeyToNextPage()
         })
     }
 
@@ -1248,11 +1233,11 @@ class Experiment extends Component {
     _visualPatternTaskHandler(results) {
         if (DEBUG) console.log(results)
 
-        const { generalOutput, outputFormData } = this.state;
+        const { generalOutput, userID } = this.state;
         const now = Date.now();
 
         generalOutput.push({
-            userID: outputFormData.numer,
+            userID: userID,
             task: constant.VISUAL_PATTERN_SCREEN,
             data: results,
             timestamp: now,
@@ -1266,7 +1251,7 @@ class Experiment extends Component {
             showFooter: true
         }, () => {
             //we simulate a space btn pressed because VisualPattern already finishes with a space btn pressed
-            this.validatePressedButtonToNextPage()
+            this._validatePressedSpaceKeyToNextPage()
         })
     }
 
@@ -1276,11 +1261,11 @@ class Experiment extends Component {
      */
     _visualPatternDemoTaskHandler(results) {
         if (DEBUG) console.log(results)
-        const { generalOutput, outputFormData } = this.state;
+        const { generalOutput, userID } = this.state;
         const now = Date.now();
 
         generalOutput.push({
-            userID: outputFormData.numer,
+            userID: userID,
             task: constant.VISUAL_PATTERN_DEMO_SCREEN,
             data: results,
             timestamp: now,
@@ -1294,7 +1279,7 @@ class Experiment extends Component {
             showFooter: true
         }, () => {
             //we simulate a space btn pressed because VisualPattern already finishes with a space btn pressed
-            this.validatePressedButtonToNextPage()
+            this._validatePressedSpaceKeyToNextPage()
         })
     }
 
@@ -1304,11 +1289,11 @@ class Experiment extends Component {
      */
     _auctionTaskDemoHandler(results) {
         if (DEBUG) console.log(results)
-        const { generalOutput, outputFormData, outputAuctionDemoTask } = this.state;
+        const { generalOutput, userID, outputAuctionDemoTask } = this.state;
         const now = Date.now();
 
         generalOutput.push({
-            userID: outputFormData.numer,
+            userID: userID,
             task: constant.AUCTION_TASK_DEMO_SCREEN,
             data: results,
             timestamp: now,
@@ -1326,7 +1311,7 @@ class Experiment extends Component {
             this._checkSyncGeneralData()
 
             //we simulate a space btn pressed because Auction task already finishes with a space btn pressed
-            this.validatePressedButtonToNextPage()
+            this._validatePressedSpaceKeyToNextPage()
         })
     }
 
@@ -1338,8 +1323,9 @@ class Experiment extends Component {
     * Validate user form results
     */
     validateForm() {
+        console.log("validateForm")
         const { outputFormData, inputParticipants } = this.state
-        const { sex, age, yearsEduc, levelEduc, numer, profession } = outputFormData;
+        const { sex, age, yearsEduc, levelEduc, profession } = outputFormData;
 
         let data = {
             isValid: false,
@@ -1354,10 +1340,7 @@ class Experiment extends Component {
         let maleParticipants = inputParticipants[1];
 
         // CONTROL OF EMPTY_TEXT
-        if (numer === constant.TEXT_EMPTY) {
-            data.textError = constant.ERROR_4;
-            data.showError = true;
-        } else if (age === constant.TEXT_EMPTY) {
+        if (age === constant.TEXT_EMPTY) {
             data.textError = constant.ERROR_5;
             data.showError = true;
         } else if (yearsEduc === constant.TEXT_EMPTY) {
@@ -1640,9 +1623,9 @@ class Experiment extends Component {
         return data;
     }
 
-       /**
-     * Validate Visual Pattern task results
-     */
+    /**
+  * Validate Visual Pattern task results
+  */
     validateVisualPattern() {
         const { outputVisualPattern } = this.state;
 
@@ -1685,48 +1668,16 @@ class Experiment extends Component {
     }
 
     /**
-     * Validate components before navigating between pages. 
+     * Validate components before navigating between pages. Space key pressed
      */
-    validatePressedButtonToNextPage() {
+    _validatePressedSpaceKeyToNextPage() {
         const { currentScreenNumber, inputNavigation, outputFormData } = this.state;
         const currentScreen = inputNavigation[currentScreenNumber].screen;
 
         let totalLength = inputNavigation.length;
 
         if (currentScreenNumber < totalLength) { //To prevent keep transition between pages
-            if (currentScreen === constant.USER_FORM_SCREEN) {
-                const { sex } = outputFormData;
-
-                let data = this.validateForm();
-
-                if (data.isValid) {
-                    //We are leaving user form screen, so we called texts whatever next page is (not only instructions)          
-                    if (sex === constant.FEMALE_VALUE)
-                        request.fetchAppTextFemale(this._onLoadAppTextCallBack.bind(this));
-                    else
-                        request.fetchAppTextMale(this._onLoadAppTextCallBack.bind(this));
-
-
-                    this._goToNextTaskInInputNavigation();
-                } else {
-                    if (data.showError) {
-                        //Show errors!
-                        this.setState({
-                            error: {
-                                showError: data.showError,
-                                textError: data.textError
-                            }
-                        });
-                    } else if (data.redirect) {
-                        //we redirect to Ariadna
-                        alert(data.textError);
-                        this.setState({ showAlertWindowsClosing: false }, () => {
-                            window.location.replace(ARIADNA_REDIRECT_REJECT);
-                        })
-                    }
-                }
-
-            } else if (currentScreen === constant.FIRST_TASK_DEMO_SCREEN) {
+            if (currentScreen === constant.FIRST_TASK_DEMO_SCREEN) {
                 let data = this.validateFirstTaskDemo();
                 if (data.isValid) this._goToNextTaskInInputNavigation();
                 else {
@@ -1881,6 +1832,52 @@ class Experiment extends Component {
     }
 
     /**
+     * Validate components before navigating between pages. Enter key pressed
+     */
+    _validatePressedEnterButtonToNextPage() {
+        const { currentScreenNumber, inputNavigation, outputFormData } = this.state;
+        const currentScreen = inputNavigation[currentScreenNumber].screen;
+
+        let totalLength = inputNavigation.length;
+
+        if (currentScreenNumber < totalLength) { //To prevent keep transition between pages
+            if (currentScreen === constant.USER_FORM_SCREEN) {
+                const { sex } = outputFormData;
+
+                let data = this.validateForm();
+
+                if (data.isValid) {
+                    //We are leaving user form screen, so we called texts whatever next page is (not only instructions)          
+                    if (sex === constant.FEMALE_VALUE)
+                        request.fetchAppTextFemale(this._onLoadAppTextCallBack.bind(this));
+                    else
+                        request.fetchAppTextMale(this._onLoadAppTextCallBack.bind(this));
+
+
+                    this._goToNextTaskInInputNavigation();
+                } else {
+                    if (data.showError) {
+                        //Show errors!
+                        this.setState({
+                            error: {
+                                showError: data.showError,
+                                textError: data.textError
+                            }
+                        });
+                    } else if (data.redirect) {
+                        //we redirect to Ariadna
+                        alert(data.textError);
+                        this.setState({ showAlertWindowsClosing: false }, () => {
+                            window.location.replace(ARIADNA_REDIRECT_REJECT);
+                        })
+                    }
+                }
+
+            }
+        }
+    }
+
+    /**
      * We move to next page, according to inputNavigation input data
      */
     _goToNextTaskInInputNavigation() {
@@ -1923,12 +1920,12 @@ class Experiment extends Component {
                 showFooter = false;
             } else if (nextScreen === constant.VISUAL_PATTERN_SCREEN) {
                 showFooter = false;
-            } else if (nextScreen === constant.VISUAL_PATTERN_INSTRUCTION_SCREEN){
+            } else if (nextScreen === constant.VISUAL_PATTERN_INSTRUCTION_SCREEN) {
                 showFooter = false;
-            } else if (nextScreen === constant.VISUAL_PATTERN_DEMO_INSTRUCTION_FINISH_SCREEN){
+            } else if (nextScreen === constant.VISUAL_PATTERN_DEMO_INSTRUCTION_FINISH_SCREEN) {
                 showFooter = false;
-            } else if (nextScreen === constant.VISUAL_PATTERN_INSTRUCTION_FINISH_SCREEN){
-                showFooter = false;  
+            } else if (nextScreen === constant.VISUAL_PATTERN_INSTRUCTION_FINISH_SCREEN) {
+                showFooter = false;
             } else if (nextScreen === constant.VISUAL_PATTERN_DEMO_SCREEN) {
                 showFooter = false;
             } else if (nextScreenNumber === (totalLength - 1)) { //Last screen!
@@ -1984,8 +1981,9 @@ class Experiment extends Component {
      */
     _handleKeyDownEvent(event) {
         if (event.keyCode === constant.SPACE_KEY_CODE) { //Transition between screens
-            this.validatePressedButtonToNextPage()
-
+            this._validatePressedSpaceKeyToNextPage()
+        } else if (event.keyCode === constant.ENTER_KEY_CODE) {
+            this._validatePressedEnterButtonToNextPage()
         }
     }
 
@@ -2044,7 +2042,7 @@ class Experiment extends Component {
                 <div>
                     <Progress value={progressBarNow} />
                 </div>
-                <section className="section-sm" style={{ marginTop:"20px", marginBottom:"20px", minHeight: "500px" }}>
+                <section className="section-sm" style={{ marginTop: "20px", marginBottom: "20px", minHeight: "500px" }}>
                     {changePages(this.state, this.formHandler, this.firstTaskHandler, this.firstTaskDemoHandler,
                         this.secondTaskHandler, this.thirdTaskHandler, this.fourthTaskHandler, this.fifthTaskHandler,
                         this.finalTaskHandler, this.psFormHandler, this.auctionTaskHandler, this.auctionTaskDemoHandler,
@@ -2125,7 +2123,6 @@ function changePages(state, formHandler, firstTaskHandler, firstTaskDemoHandler,
             if (currentScreen === constant.USER_FORM_SCREEN) {
                 return <UserForm
                     action={formHandler}
-                    data={outputFormData}
                     error={error}
                 />;
             } else if (currentScreen.includes(constant.INSTRUCTION_SCREEN)) {

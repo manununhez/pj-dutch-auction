@@ -8,7 +8,8 @@ import NumberFormat from 'react-number-format';
 import {
   FORM_SEX, FORM_AGE, FORM_PROFESSION, FORM_YEARS_EDUC, FORM_LEVEL_EDUC,
   FORM_LEVEL_EDUC_INITIAL, FORM_LEVEL_EDUC_MIDDLE, FORM_LEVEL_EDUC_SUPERIOR,
-  FORM_LEVEL_EDUC_DEFAULT, FEMALE_VALUE, MALE_VALUE
+  FORM_LEVEL_EDUC_DEFAULT, FEMALE_VALUE, MALE_VALUE, EVENT_KEY_DOWN, TEXT_EMPTY,
+  ENTER_KEY_CODE
 } from '../../../helpers/constants';
 
 import "./UserForm.css";
@@ -19,16 +20,67 @@ class UserForm extends React.Component {
   constructor(props) {
     super(props);
 
-    this.validateInput = this._validateInput.bind(this);
+    this.state = {
+      formData: {
+        sex: FEMALE_VALUE,//default selected sex
+        age: TEXT_EMPTY,
+        yearsEduc: TEXT_EMPTY,
+        levelEduc: FORM_LEVEL_EDUC_DEFAULT, //default selected 
+        profession: TEXT_EMPTY
+      }
+    }
+    this.validateNumberFormat = this._validateNumberFormat.bind(this);
+    this.handleKeyDownEvent = this._handleKeyDownEvent.bind(this);
+    this.validateInputForm = this._validateInputForm.bind(this)
   }
 
-  _validateInput(id, numberFormat) {
+  componentDidMount() {
+    //for keyboard detection
+    document.addEventListener(EVENT_KEY_DOWN, this.handleKeyDownEvent, false);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener(EVENT_KEY_DOWN, this.handleKeyDownEvent, false);
+  }
+
+  _handleKeyDownEvent(event) {
+    if (event.keyCode === ENTER_KEY_CODE) {
+      this.props.action(this.state.formData)
+    }
+  }
+
+  _validateInputForm(evt) {
+    const formId = evt.target.id;
+    const formInputValue = evt.target.value;
+
+    let { formData } = this.state
+
+    if (DEBUG) console.log(formId)
+    if (DEBUG) console.log(formInputValue)
+
+    //We save all fields from form data 
+    if (formId === FORM_SEX) {
+      formData.sex = formInputValue
+    } else if (formId === FORM_AGE) {
+      formData.age = formInputValue
+    } else if (formId === FORM_PROFESSION) {
+      formData.profession = formInputValue
+    } else if (formId === FORM_YEARS_EDUC) {
+      formData.yearsEduc = formInputValue
+    } else if (formId === FORM_LEVEL_EDUC) {
+      formData.levelEduc = formInputValue
+    }
+
+    this.setState({ formData: formData })
+  }
+
+  _validateNumberFormat(id, numberFormat) {
     let e = { target: { id: id, value: numberFormat.formattedValue } }
-    this.props.action(e)
+    this._validateInputForm(e)
   }
 
   render() {
-    if (DEBUG) console.log(this.props.data)
+    const { formData } = this.state
     return (
       <Container className="justify-content-center">
         <div className="text-center mt-2"><h3>Twoje dane</h3></div>
@@ -46,8 +98,7 @@ class UserForm extends React.Component {
               id={FORM_AGE}
               placeholder=""
               autoFocus={true}
-              onValueChange={this.validateInput.bind(this, FORM_AGE)}
-              //value={this.props.data.age}
+              onValueChange={this.validateNumberFormat.bind(this, FORM_AGE)}
               decimalScale={0} />
           </FormGroup>
           <FormGroup className="mb-3">
@@ -56,16 +107,15 @@ class UserForm extends React.Component {
             </div>
             <Input id={FORM_PROFESSION}
               placeholder=""
-              onChange={this.props.action}
+              onChange={this.validateInputForm}
               type="text"
-            // value={this.props.data.profession} 
             />
           </FormGroup>
           <FormGroup>
             <div className="d-flex align-items-left">
               <h5>Poziom wykształcenia</h5>
             </div>
-            <Input type="select" name="select" id={FORM_LEVEL_EDUC} onChange={this.props.action}>
+            <Input type="select" name="select" id={FORM_LEVEL_EDUC} onChange={this.validateInputForm}>
               <option value={FORM_LEVEL_EDUC_DEFAULT}>Wybierz...</option>
               <option value={FORM_LEVEL_EDUC_INITIAL}>podstawowe</option>
               <option value={FORM_LEVEL_EDUC_MIDDLE}>średnie</option>
@@ -79,8 +129,7 @@ class UserForm extends React.Component {
             <NumberFormat className="form-control"
               id={FORM_YEARS_EDUC}
               placeholder=""
-              onValueChange={this.validateInput.bind(this, FORM_YEARS_EDUC)}
-              //value={this.props.data.yearsEduc}
+              onValueChange={this.validateNumberFormat.bind(this, FORM_YEARS_EDUC)}
               decimalScale={0} />
           </FormGroup>
           <FormGroup tag="fieldset" className="mb-3">
@@ -95,8 +144,8 @@ class UserForm extends React.Component {
                       id={FORM_SEX}
                       name={FORM_SEX + "_F"}
                       value={FEMALE_VALUE}
-                      onChange={this.props.action}
-                      checked={this.props.data.sex === FEMALE_VALUE} />{' '}
+                      onChange={this.validateInputForm}
+                      checked={formData.sex === FEMALE_VALUE} />{' '}
                     Kobieta
                   </Label>
                 </FormGroup>
@@ -108,8 +157,8 @@ class UserForm extends React.Component {
                       id={FORM_SEX}
                       name={FORM_SEX + "_M"}
                       value={MALE_VALUE}
-                      onChange={this.props.action}
-                      checked={this.props.data.sex === MALE_VALUE} />{' '}
+                      onChange={this.validateInputForm}
+                      checked={formData.sex === MALE_VALUE} />{' '}
                     Mężczyzna
                     </Label>
                 </FormGroup>
