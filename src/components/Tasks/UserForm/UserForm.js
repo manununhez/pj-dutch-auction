@@ -21,7 +21,7 @@ class UserForm extends React.Component {
 
     this.state = {
       formData: {
-        sex: FEMALE_VALUE,//default selected sex
+        sex: TEXT_EMPTY,//default selected sex
         age: TEXT_EMPTY,
         yearsEduc: TEXT_EMPTY,
         levelEduc: FORM_LEVEL_EDUC_DEFAULT, //default selected 

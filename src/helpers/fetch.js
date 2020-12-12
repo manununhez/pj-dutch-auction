@@ -124,7 +124,6 @@ export function fetchAuctionHotelsRev(callback) {
         .then((response) => {
             let hotels = [];
 
-            console.log(response)
             for (let [key, value] of Object.entries(response)) {
                 hotels.push(value);
             }

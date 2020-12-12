@@ -196,6 +196,7 @@ export const ERROR_2 = "Wiek powinien mieścić się w zakresie od 19 do 76 lat.
 export const ERROR_3 = "Liczba lat formalnej edukacji powinna mieścić się w zakresie od 11 do 18 lat.";//Years of formal education should be in range 10 to 18 years! 
 export const ERROR_5 = "Pole Wiek nie może pozostać puste.";//Age field cannot be empty
 export const ERROR_6 = "Pole Lata formalnej edukacji nie może pozostać puste.";//Years Education field cannot be empty!
+export const ERROR_14 = "Pole Sex nie może pozostać puste.";//Age field cannot be empty
 export const ERROR_7 = "Pole Zawód nie może pozostać puste.";//Profession field cannot be empty!
 export const ERROR_8 = "Proszę najpierw ocenić wszystkie opcje.";//Please rate all the options first!
 export const ERROR_9 = "Najpierw należy odpowiedzieć na wszystkie pytania.";//You need to complete the questions first!
@@ -206,8 +207,8 @@ export const ERROR_13 = "Proszę najpierw wybrać conajmniej jedną opcję.";//P
 export const REWARD_BONUS_MESSAGE = "W nagrodę otrzymasz dodatkowo 70 punktów. Dodatkowe punkty zostaną doliczone do Twojego konta za kilka tygodni po zakończeniu cyklu badań.";
 export const REWARD_RESULT_MESSAGE = (result) => { return `Udało Ci się poprawnie rozwiązać ${result}% zadań dotyczących wyboru pralek.` } //`You’ve solved ${result}% decision tasks correctly.`
 export const AUCTION_FOOTER_TEXT = "Naciśnij SPACJĘ, aby rozpocząć aukcję."
-export const AUCTION_GAIN_TEXT = (value) => { return `Brawo, udało Ci się zarezerwować ten pokój.<br><br>Zaoszczędziłeś ${value} zł. <br><br> Naciśnij ENTER, aby przejść do następnej aukcji.`};
-export const AUCTION_LOSE_TEXT = (value) => { return `Ktoś inny zarezerwował ten pokój. Musisz zapłacić pełną cenę:  ${value} zł. <br><br> Naciśnij ENTER, aby przejść do następnej aukcji.`};
+export const AUCTION_GAIN_TEXT = (value) => { return `Brawo, udało Ci się zarezerwować ten pokój.<br><br>Zaoszczędziłeś ${value} zł. <br><br> Naciśnij ENTER, aby przejść do następnej aukcji.` };
+export const AUCTION_LOSE_TEXT = (value) => { return `Ktoś inny zarezerwował ten pokój. Musisz zapłacić pełną cenę:  ${value} zł. <br><br> Naciśnij ENTER, aby przejść do następnej aukcji.` };
 export const AUCTION_REWARD_RESULT_MESSAGE_FEMALE = (result) => { return `Dziękujemy, to już koniec tego zadania. W sumie zaoszczędziłaś ${result} zł.<br><br> Pozostań proszę na miejscu, eksperymentator zaraz do Ciebie podejdzie.` }
 export const AUCTION_REWARD_RESULT_MESSAGE_MALE = (result) => { return `Dziękujemy, to już koniec tego zadania. W sumie zaoszczędziłeś ${result} zł.<br><br> Pozostań proszę na miejscu, eksperymentator zaraz do Ciebie podejdzie.` }
 export const VISUAL_PATTERN_TEXT1 = "Naciśnij spację, aby przejść do kolejnej planszy.";

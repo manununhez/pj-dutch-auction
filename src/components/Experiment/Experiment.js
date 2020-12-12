@@ -80,7 +80,7 @@ class Experiment extends Component {
         const generalOutputDefault = [userGeneralInfo]
         const typeTask = this.props.match.params.version
         const userFormDefault = {
-            sex: constant.FEMALE_VALUE,//default selected sex
+            sex: constant.TEXT_EMPTY,//default selected sex
             age: constant.TEXT_EMPTY,
             yearsEduc: constant.TEXT_EMPTY,
             levelEduc: constant.FORM_LEVEL_EDUC_DEFAULT, //default selected 
@@ -764,7 +764,7 @@ class Experiment extends Component {
         const { generalOutput, userID } = this.state
         const now = Date.now();
 
-        console.log(formData)
+        if (DEBUG) console.log(formData)
 
         //we find the index of userform to update the same element instead of adding a new one in array
         let index = -1;
@@ -1320,11 +1320,11 @@ class Experiment extends Component {
     * Validate user form results
     */
     validateForm() {
-        
+
         const { outputFormData, inputParticipants } = this.state
         const { sex, age, yearsEduc, levelEduc, profession } = outputFormData;
-        console.log("validateForm")
-        console.log(outputFormData)
+        if (DEBUG) console.log("validateForm")
+        if (DEBUG) console.log(outputFormData)
         let data = {
             isValid: false,
             textError: constant.TEXT_EMPTY,
@@ -1343,12 +1343,15 @@ class Experiment extends Component {
             data.showError = true;
         } else if (profession === constant.TEXT_EMPTY) {
             data.textError = constant.ERROR_7;
-            data.showError = true; 
+            data.showError = true;
         } else if (levelEduc === constant.FORM_LEVEL_EDUC_DEFAULT) {
             data.textError = constant.ERROR_11;
             data.showError = true;
         } else if (yearsEduc === constant.TEXT_EMPTY) {
             data.textError = constant.ERROR_6;
+            data.showError = true;
+        } else if (sex === constant.TEXT_EMPTY) {
+            data.textError = constant.ERROR_14;
             data.showError = true;
         }
 
@@ -1535,7 +1538,7 @@ class Experiment extends Component {
      */
 
     validateAuctionTask() {
-        console.log("validateAuctionTask")
+        if (DEBUG) console.log("validateAuctionTask")
         const { outputAuctionTask, inputAuctionTask } = this.state;
 
         let data = {
@@ -1596,7 +1599,7 @@ class Experiment extends Component {
    * Validate Auction task results
    */
     validateAuctionDemoTask() {
-        console.log("validateAuctionDemoTask")
+        if (DEBUG) console.log("validateAuctionDemoTask")
 
         const { outputAuctionDemoTask, inputAuctionDemoTask } = this.state;
 
@@ -1606,7 +1609,7 @@ class Experiment extends Component {
             showError: false
         }
 
-        console.log(outputAuctionDemoTask)
+        if (DEBUG) console.log(outputAuctionDemoTask)
         if (outputAuctionDemoTask.length > 0 && outputAuctionDemoTask.length === inputAuctionDemoTask.length) {
             data.isValid = true;
         } else {
@@ -1614,7 +1617,7 @@ class Experiment extends Component {
             data.showError = true;
         }
 
-        console.log(data)
+        if (DEBUG) console.log(data)
 
         return data;
     }

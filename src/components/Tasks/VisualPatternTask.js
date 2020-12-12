@@ -269,8 +269,6 @@ class VisualPatternTask extends React.Component {
                 matrixResult: matrixResult
             })
             if (DEBUG) console.log(matrixResult);
-            // if (DEBUG) console.log(matrixCheckResult);
-            // if (DEBUG) console.log(this.state);
         }
     }
 
