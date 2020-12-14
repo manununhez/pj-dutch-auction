@@ -346,6 +346,36 @@ export function fetchParticipantsCounter(callback) {
         });
 }
 
+/**
+ * Load reward info data from the spreadsheet
+ * @param {*} callback 
+ */
+export function fetchRewardData(callback) {
+
+    let spreadsheetName = constant.INPUT_REWARD_SHEETNAME;
+    let row = "A2";
+    let column = "B";
+
+    get(fetch_sheet_url, { spreadSheetName: spreadsheetName, column: row, row: column })
+        .then((response) => {
+            const data = response.rows;
+            let result = data.map((version, i) => {
+
+                const indexThreshold = 0
+                const indexBonusPoints = 1
+
+                return {
+                    threshold: version[indexThreshold],
+                    bonusPoint: version[indexBonusPoints]
+                };
+            });
+
+            callback({ result });
+        }, (response) => {
+            callback(false, response.result.error);
+        });
+}
+
 
 /**
  * Write results to GSheets

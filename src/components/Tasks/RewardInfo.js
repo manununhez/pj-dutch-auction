@@ -13,14 +13,16 @@ class RewardInfo extends React.Component {
         return (
             <Container fluid="md">
                 <Row className="justify-content-md-center" style={{ padding: "20px" }}>
-                    {parserResults(this.props.data)}
+                {parserResults(this.props.data, this.props.config)}
                 </Row>
             </Container>
         )
     };
 }
 
-function parserResults(data) {
+function parserResults(data, config) {
+    const threshold = parseFloat(config[0].threshold)
+    const bonusPoint = config[0].bonusPoint
     const totalTasks = parseFloat(data.isCorrectAnswer.length);
     const totalCorrect = parseFloat(data.isCorrectAnswer.filter(item => item).length)
     let result = (totalCorrect / totalTasks) * 100;
@@ -34,14 +36,15 @@ function parserResults(data) {
     if (DEBUG) console.log("TotalTasks: " + totalTasks)
     if (DEBUG) console.log("TotalCorrect: " + totalCorrect)
     if (DEBUG) console.log("result: " + result)
+    if (DEBUG) console.log("Threshold: "+ threshold)
 
-    if (result >= 40.0)
-        textBonus = textBonus + REWARD_BONUS_MESSAGE;
+    if (result >= threshold)
+        textBonus = textBonus + REWARD_BONUS_MESSAGE(bonusPoint);
 
     return (<div style={{ textAlign: "justify" }}>
-        <h2>{textToDisplay}</h2><br />
-        <h2>{textBonus}</h2><br />
-    </div>);
+                <h2>{textToDisplay}</h2><br />
+                <h2>{textBonus}</h2><br />
+            </div>);
 }
 
 export default RewardInfo;

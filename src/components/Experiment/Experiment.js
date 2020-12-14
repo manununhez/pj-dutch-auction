@@ -101,6 +101,7 @@ class Experiment extends Component {
             inputFirstTaskDemo: [],
             inputParticipants: [],
             inputPSForm: [],
+            inputRewardData: [],
             //Variables for output data (results)
             generalOutput: generalOutputDefault,
             generalOutputIndexes: [],
@@ -516,6 +517,35 @@ class Experiment extends Component {
             this.setState({
                 loading: false, //Hide loading
                 inputPSForm: data.result
+            }, () => {
+                if (DEBUG) console.log(this.state)
+            });
+
+            if (DEBUG) console.log("Fetch RewardData");
+            request.fetchRewardData(this._onLoadRewardDataCallback.bind(this))
+        }
+        else {
+            this.setState({
+                loading: false,
+                error: {
+                    showError: true,
+                    textError: `${error}. Please refresh page.`
+                }
+            })
+            if (DEBUG) console.log(error);
+        }
+    }
+
+    /**
+* Once the reward info input have been loaded from the spreadsheet
+* @param {*} data 
+* @param {*} error 
+*/
+    _onLoadRewardDataCallback(data, error) {
+        if (data) {
+            this.setState({
+                loading: false, //Hide loading
+                inputRewardData: data.result
             }, () => {
                 if (DEBUG) console.log(this.state)
             });
@@ -1926,7 +1956,7 @@ class Experiment extends Component {
         const { inputParticipants, outputFormData } = this.state;
         const { config, participants, scenarios } = inputParticipants
         const { scenariosLimit } = config
-        
+
         let randomNumberGenerated = []
         let scenarioNumber = 0
 
@@ -2212,7 +2242,8 @@ function changePages(state, formHandler, firstTaskHandler, firstTaskDemoHandler,
         outputFirstTaskDemo,
         inputPSForm,
         outputPSForm,
-        modalOpen } = state;
+        modalOpen,
+        inputRewardData } = state;
     const totalLength = inputNavigation.length;
 
     if (totalLength > 0) { //If input navigation has been called
@@ -2257,6 +2288,7 @@ function changePages(state, formHandler, firstTaskHandler, firstTaskDemoHandler,
             } else if (currentScreen === constant.REWARD_INFO_SCREEN) {
                 return <RewardInfo
                     data={outputFirstTask}
+                    config={inputRewardData}
                 />;
             } else if (currentScreen === constant.SECOND_TASK_SCREEN) {
                 return <SecondTask

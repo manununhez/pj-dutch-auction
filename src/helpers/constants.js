@@ -193,6 +193,7 @@ export const USER_AUCTION_BIDS_SHEETNAME = "auction-bids"
 export const USER_VISUAL_PATTERN_SHEETNAME = "uservisualpattern";
 export const USER_PSFORM_SHEETNAME = "userpsform";
 export const PSFORM_SHEETNAME = "psychologyform";
+export const INPUT_REWARD_SHEETNAME = "input-reward";
 
 //Error
 export const ERROR_1 = "Prosimy o dokonanie wyboru.";//"You have to select a choice first!"
@@ -208,7 +209,7 @@ export const ERROR_10 = "Proszę upewnić się, że odpowiedź na pytanie zosta�
 export const ERROR_11 = "Proszę wybrać poziom wykształcenia.";//You need to select an education level
 export const ERROR_12 = "Przepraszamy, ale niestety nie spełniasz wszystkich warunków uczestnictwa w badaniu lub przekroczona jest liczbę osób, która może wziąć w nim udział."; //We are sorry, but unfortunately you do not meet all the conditions for participating in the study or the number of eligible participants is already exceeded
 export const ERROR_13 = "Proszę najpierw wybrać conajmniej jedną opcję.";//Please rate all the options first!
-export const REWARD_BONUS_MESSAGE = "W nagrodę otrzymasz dodatkowo 70 punktów. Dodatkowe punkty zostaną doliczone do Twojego konta za kilka tygodni po zakończeniu cyklu badań.";
+export const REWARD_BONUS_MESSAGE = (bonus) => { return `W nagrodę otrzymasz dodatkowo ${bonus} punktów. Dodatkowe punkty zostaną doliczone do Twojego konta za kilka tygodni po zakończeniu cyklu badań.`};
 export const REWARD_RESULT_MESSAGE = (result) => { return `Udało Ci się poprawnie rozwiązać ${result}% zadań dotyczących wyboru pralek.` } //`You’ve solved ${result}% decision tasks correctly.`
 export const AUCTION_FOOTER_TEXT = "Naciśnij SPACJĘ, aby rozpocząć aukcję."
 export const AUCTION_GAIN_TEXT = (value) => { return `Brawo, udało Ci się zarezerwować ten pokój.<br><br>Zaoszczędziłeś ${value} zł. <br><br> Naciśnij ENTER, aby przejść do następnej aukcji.` };
