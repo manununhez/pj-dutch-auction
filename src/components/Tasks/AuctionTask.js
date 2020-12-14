@@ -206,9 +206,11 @@ class AuctionTask extends React.Component {
 }
 
 function getFormattedText(text) { //TODO when FirstTask, we should cache the text so we dont iterate every time
-    let children = text.split('<br>').map(function (item, key) { //replace \n with <br>
+    let children = []
+    
+    text.split('<br>').forEach(item => { //replace \n with <br>
         if (item !== "")
-            return (<><br /><h4>{item}</h4></>)
+            children.push(<><br /><h4>{item}</h4></>)
     });
 
     return children;

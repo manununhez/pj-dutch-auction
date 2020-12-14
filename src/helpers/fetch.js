@@ -88,7 +88,7 @@ export function fetchAuctionHotels(callback) {
         .then((response) => {
             let hotels = [];
 
-            for (let [key, value] of Object.entries(response)) {
+            for (let value of Object.values(response)) {
                 hotels.push(value);
             }
             callback({ hotels });
@@ -106,7 +106,7 @@ export function fetchAuctionHotelsTutorial(callback) {
         .then((response) => {
             let hotels = [];
 
-            for (let [key, value] of Object.entries(response)) {
+            for (let value of Object.values(response)) {
                 hotels.push(value);
             }
             callback({ hotels });
@@ -124,7 +124,7 @@ export function fetchAuctionHotelsRev(callback) {
         .then((response) => {
             let hotels = [];
 
-            for (let [key, value] of Object.entries(response)) {
+            for (let value of Object.values(response)) {
                 hotels.push(value);
             }
             callback({ hotels });
@@ -176,7 +176,7 @@ export function fetchPSFormData(callback) {
                 const indexQuestionCode = 1
                 const indexType = 2
                 const indexAnswerStart = 3
-                
+
                 for (let i = indexAnswerStart; i < version.length; i++)
                     answersValues.push(version[i])
 
@@ -304,17 +304,43 @@ export function fetchParticipantsCounter(callback) {
 
     let spreadsheetName = constant.USER_PARTICIPANTS_COUNTER_SHEETNAME;
     let row = "B2";
-    let column = "D";
+    let column = "I";
 
     get(fetch_sheet_url, { spreadSheetName: spreadsheetName, column: row, row: column })
         .then((response) => {
             const data = response.rows;
 
-            let participants = data.map((group, i) => {
-                return { firstGroup: group[0], secondGroup: group[1], thirdGroup: group[2] }
+            let participants = []
+            let scenarios = []
+            let groups = []
+            let config = {
+                participantsLimit: "",
+                yearsEducLimit: "",
+                scenariosLimit: ""
+            }
+
+            data.forEach(column => {
+                //Participants table from column B to D
+                if (column[0] !== "" && column[1] !== "" && column[2] !== "") {
+                    participants.push([column[0], column[1], column[2]])
+                }
+
+                //Config parameters table from column G to I
+                if (column[5] === "participants_per_sex_per_group") {
+                    config.participantsLimit = column[6]
+                } else if (column[5] === "years_education_limit") {
+                    config.yearsEducLimit = column[6]
+                } else if (column[5] === "participants_per_scenario_per_group") {
+                    config.scenariosLimit = column[6]
+                } else if (column[5].includes("scenario_")) {
+                    scenarios.push(column[6])
+                } else if (column[5].includes("group_")) {
+                    groups.push({ minAge: column[6], maxAge: column[7] })
+                }
             });
 
-            callback({ participants });
+
+            callback({ participants, config, groups, scenarios });
         }, (response) => {
             callback(false, response.result.error);
         });
@@ -458,7 +484,7 @@ export function saveUserForm(data, callback) {
     let userForm = userform(data);
     let spreadSheetName = constant.USER_FORM_SHEETNAME;
     let row = "A2";
-    let column = "I";
+    let column = "K";
 
     save(spreadSheetName, row, column, userForm, callback)
 }
@@ -509,9 +535,10 @@ const usergeneraldata = (data, ariadnaUserID) => {
                 output.timestamp, //created
                 output.data.sex,
                 output.data.age,
+                output.data.profession,
                 output.data.yearsEduc,
                 output.data.levelEduc,
-                output.data.profession
+                output.data.typeAuction
             ]);
         } else if (output.task === constant.FIRST_TASK_DEMO_SCREEN) {
             result.push([
@@ -727,7 +754,7 @@ function userinfo(data) {
 function userform(data) {
     let result = [];
     // let data = this.props.data;
-    const { userID, outputFormData, typeTask, ariadnaUserID } = data;
+    const { userID, outputFormData, typeTask, ariadnaUserID, typeAuction } = data;
     const now = Date.now();
 
     result.push([
@@ -738,6 +765,7 @@ function userform(data) {
         outputFormData.profession,
         outputFormData.yearsEduc,
         outputFormData.levelEduc,
+        outputFormData.typeAuction,
         typeTask,
         true, //experimentCompleted,
         now //created

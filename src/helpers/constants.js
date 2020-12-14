@@ -132,6 +132,10 @@ export const ATTRIBUTE_FOURTH_TASK = {
     }
 }
 
+//Scenarios
+export const SCENARIO_HOTEL_REV = "hotels-rev"
+export const SCENARIO_HOTEL_NORMAL = "hotels"
+
 //PSFORM
 export const INPUT_TYPE = "input";
 export const MULTIPLE_CHOICES_TYPE = "multiple_choice";

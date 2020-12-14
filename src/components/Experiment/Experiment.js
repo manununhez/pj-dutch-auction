@@ -36,7 +36,7 @@ import PSForm from "../Tasks/PSForm";
 // helpers
 import * as request from '../../helpers/fetch';
 import * as constant from '../../helpers/constants';
-import { USER_INFO } from '../../helpers/utils';
+import { USER_INFO, randomNumber } from '../../helpers/utils';
 
 // CSS - Can be a string as well. Need to ensure each key-value pair ends with ;
 const override = css`
@@ -84,7 +84,8 @@ class Experiment extends Component {
             age: constant.TEXT_EMPTY,
             yearsEduc: constant.TEXT_EMPTY,
             levelEduc: constant.FORM_LEVEL_EDUC_DEFAULT, //default selected 
-            profession: constant.TEXT_EMPTY
+            profession: constant.TEXT_EMPTY,
+            typeAuction: constant.TEXT_EMPTY
         }
 
         this.state = {
@@ -206,9 +207,9 @@ class Experiment extends Component {
     * fetchPSForm
      */
     _fetchExperimentInputData() {
-        // request.fetchAuctionHotels(this._onLoadAuctionHotelsCallBack.bind(this))
+        if (DEBUG) console.log("FETCH hotels tutorial")
         request.fetchAuctionHotelsTutorial(this._onLoadAuctionHotelsDemoCallBack.bind(this))
-        request.fetchAuctionHotelsRev(this._onLoadAuctionHotelsCallBack.bind(this))
+
         if (DEBUG) console.log("Fetch navigationScreens");
         request.fetchNavScreens(this.state.typeTask, this._onLoadNavScreenCallBack.bind(this))
     }
@@ -398,7 +399,7 @@ class Experiment extends Component {
             //Loggin the first screen of the navigation
             this.setState({
                 // loading: false, //Hide loading
-                inputParticipants: data.participants
+                inputParticipants: data
             })
 
             if (DEBUG) console.log(data)
@@ -1323,6 +1324,24 @@ class Experiment extends Component {
 
         const { outputFormData, inputParticipants } = this.state
         const { sex, age, yearsEduc, levelEduc, profession } = outputFormData;
+        const { participants, config, groups } = inputParticipants
+
+        const firstGroupAgeLimit = groups[0]
+        const secondGroupAgeLimit = groups[1]
+        const thirdGroupAgeLimit = groups[2]
+
+        const participantsLimit = parseInt(config.participantsLimit)
+        const yearsEducLimit = parseInt(config.yearsEducLimit)
+
+        const femaleParticipants = participants[0];
+        const maleParticipants = participants[1];
+        const scenario_1 = participants[3];
+        const scenario_2 = participants[4];
+
+        const indexFirstGroup = 0
+        const indexSecondGroup = 1
+        const indexThirdGroup = 2
+
         if (DEBUG) console.log("validateForm")
         if (DEBUG) console.log(outputFormData)
         let data = {
@@ -1334,8 +1353,6 @@ class Experiment extends Component {
 
         let amountParticipant = 0;
         let ageIncorrectIntervalFlag = false;
-        let femaleParticipants = inputParticipants[0];
-        let maleParticipants = inputParticipants[1];
 
         // CONTROL OF EMPTY_TEXT
         if (age === constant.TEXT_EMPTY) {
@@ -1358,18 +1375,21 @@ class Experiment extends Component {
         if (data.showError) return data;
 
         // CONTROL OF AMOUNT OF PARTICIPANTS
-        if (age >= 19 && age <= 30) { //firstGroup
-            amountParticipant = sex === constant.FEMALE_VALUE ? femaleParticipants.firstGroup : maleParticipants.firstGroup;
-        } else if (age >= 42 && age <= 53) { //secondGroup
-            amountParticipant = sex === constant.FEMALE_VALUE ? femaleParticipants.secondGroup : maleParticipants.secondGroup;
-        } else if (age >= 65 && age <= 76) { //thirdGroup
-            amountParticipant = sex === constant.FEMALE_VALUE ? femaleParticipants.thirdGroup : maleParticipants.thirdGroup;
+        if (age >= parseInt(firstGroupAgeLimit.minAge) &&
+            age <= parseInt(firstGroupAgeLimit.maxAge)) { //firstGroup
+            amountParticipant = sex === constant.FEMALE_VALUE ? femaleParticipants[indexFirstGroup] : maleParticipants[indexFirstGroup];
+        } else if (age >= parseInt(secondGroupAgeLimit.minAge) &&
+            age <= parseInt(secondGroupAgeLimit.maxAge)) { //secondGroup
+            amountParticipant = sex === constant.FEMALE_VALUE ? femaleParticipants[indexSecondGroup] : maleParticipants[indexSecondGroup];
+        } else if (age >= parseInt(thirdGroupAgeLimit.minAge) &&
+            age <= parseInt(thirdGroupAgeLimit.maxAge)) { //thirdGroup
+            amountParticipant = sex === constant.FEMALE_VALUE ? femaleParticipants[indexThirdGroup] : maleParticipants[indexThirdGroup];
         } else {
             ageIncorrectIntervalFlag = true;
         }
 
-        if (ageIncorrectIntervalFlag || amountParticipant >= 30 ||
-            levelEduc === constant.FORM_LEVEL_EDUC_INITIAL || yearsEduc < 11) {
+        if (ageIncorrectIntervalFlag || parseInt(amountParticipant) >= participantsLimit ||
+            levelEduc === constant.FORM_LEVEL_EDUC_INITIAL || yearsEduc < yearsEducLimit) {
 
             data.redirect = true;
             data.textError = constant.ERROR_12;
@@ -1846,12 +1866,7 @@ class Experiment extends Component {
                 let data = this.validateForm();
 
                 if (data.isValid) {
-                    //We are leaving user form screen, so we called texts whatever next page is (not only instructions)          
-                    if (sex === constant.FEMALE_VALUE)
-                        request.fetchAppTextFemale(this._onLoadAppTextCallBack.bind(this));
-                    else
-                        request.fetchAppTextMale(this._onLoadAppTextCallBack.bind(this));
-
+                    this._syncDataAfterUserValidation()
 
                     this._goToNextTaskInInputNavigation();
                 } else {
@@ -1874,6 +1889,81 @@ class Experiment extends Component {
 
             }
         }
+    }
+
+    _syncDataAfterUserValidation() {
+        const { inputParticipants, outputFormData } = this.state;
+        const { sex, age } = outputFormData;
+        const { groups } = inputParticipants
+
+        const firstGroupAgeLimit = groups[0]
+        const secondGroupAgeLimit = groups[1]
+        const thirdGroupAgeLimit = groups[2]
+
+        let groupAge = 0
+        //We are leaving user form screen, so we called texts whatever next page is (not only instructions)          
+        if (sex === constant.FEMALE_VALUE)
+            request.fetchAppTextFemale(this._onLoadAppTextCallBack.bind(this));
+        else
+            request.fetchAppTextMale(this._onLoadAppTextCallBack.bind(this));
+
+        if (age >= parseInt(firstGroupAgeLimit.minAge) &&
+            age <= parseInt(firstGroupAgeLimit.maxAge)) { //firstGroup
+            groupAge = 0
+        } else if (age >= parseInt(secondGroupAgeLimit.minAge) &&
+            age <= parseInt(secondGroupAgeLimit.maxAge)) { //secondGroup
+            groupAge = 1
+        } else if (age >= parseInt(thirdGroupAgeLimit.minAge) &&
+            age <= parseInt(thirdGroupAgeLimit.maxAge)) { //thirdGroup
+            groupAge = 2
+        }
+
+        this._callAuctionHotelsData(groupAge)
+
+    }
+
+    _callAuctionHotelsData(groupAge) {
+        const { inputParticipants, outputFormData } = this.state;
+        const { config, participants, scenarios } = inputParticipants
+        const { scenariosLimit } = config
+        
+        let randomNumberGenerated = []
+        let scenarioNumber = 0
+
+        //Logic to assign and check scenarios availability
+        while (true) {
+            scenarioNumber = randomNumber(0, (inputParticipants.scenarios.length - 1))
+
+            if (randomNumberGenerated.includes(scenarioNumber)) { //If we already have generated a certain number, we do not check again scenario availability, we only check if we have seen all number options availables
+                if (randomNumberGenerated.length === inputParticipants.scenarios.length) {
+                    alert("No more space for Scenarios participants!");
+                    this.setState({ showAlertWindowsClosing: false }, () => {
+                        window.location.replace(ARIADNA_REDIRECT_REJECT);
+                    })
+                    break;
+                }
+            } else { //if we generated a new number option, we add it to randomNumberGenerated and check that scenario availability 
+                randomNumberGenerated.push(scenarioNumber)
+                //Index in table for scenario_1 = 3 and scenario_2 = 4
+                //ScenarioNumber should be a random number between 0 and 1, so if we add 3, we have the correct table index with values for the scenario 
+                if (participants[scenarioNumber + 3][groupAge] < parseInt(scenariosLimit)) {
+                    break;
+                }
+            }
+        }
+
+        if (scenarios[scenarioNumber] === constant.SCENARIO_HOTEL_NORMAL) {
+            outputFormData.typeAuction = constant.SCENARIO_HOTEL_NORMAL
+            console.log("FETCH hotels normal")
+            request.fetchAuctionHotels(this._onLoadAuctionHotelsCallBack.bind(this))
+        } else if (scenarios[scenarioNumber] === constant.SCENARIO_HOTEL_REV) {
+            outputFormData.typeAuction = constant.SCENARIO_HOTEL_REV
+            console.log("FETCH hotels reverse")
+            request.fetchAuctionHotelsRev(this._onLoadAuctionHotelsCallBack.bind(this))
+        }
+
+        //we update select hotel value
+        this.setState({ outputFormData: outputFormData })
     }
 
     /**

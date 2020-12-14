@@ -41,9 +41,11 @@ function totalReward(data, sex) {
  * @param {*} text 
  */
 function getFormattedText(text) { //TODO when FirstTask, we should cache the text so we dont iterate every time
-    let children = text.split('<br>').map(function (item, key) { //replace \n with <br>
+    let children = []
+    
+    text.split('<br>').forEach(item => { //replace \n with <br>
         if (item !== "")
-            return (<><br /><h3>{item}</h3></>)
+            children.push(<><br /><h3>{item}</h3></>)
     });
 
     return children;
