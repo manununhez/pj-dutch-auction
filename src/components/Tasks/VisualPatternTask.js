@@ -171,7 +171,7 @@ class VisualPatternTask extends React.Component {
         const { matrixResult, matrixCheckResult, visualTaskData } = this.state
         const { matrix } = visualTaskData
 
-        matrix.map((value, i) => {
+        matrix.forEach((value, i) => {
             let selectedValue = TILE_EMPTY
             if (value === matrixResult[i]) {
                 selectedValue = value
@@ -242,6 +242,7 @@ class VisualPatternTask extends React.Component {
             matrix: matrix,
             matrixResult: matrixResult,
             matrixCheckResult: matrixCheckResult,
+            dimention: `${VISUAL_PATTERN_DIMENTION[level][0]} x ${VISUAL_PATTERN_DIMENTION[level][1]}`,
             level: level,
             retry: VISUAL_PATTERN_RETRY_ATTEMPTS - retry,
             timestamp: (Date.now() - logtime) / 1000 //spent time
@@ -375,9 +376,11 @@ function getTableResults(TRow, TColumn, matrix, matrixResult, matrixCheckResult)
                     <h4 style={{ textAlign: "center" }}>{VISUAL_PATTERN_RESULTS_CORRECT}</h4>
                 </Row>
                 <Row className="justify-content-center">
-                    <Card style={{ marginTop: "20px", marginBottom: "20px" }}>
+                    <Card style={{ marginBottom: "20px" }}>
                         <CardBody>
-                            {getTableResultsBody(TRow, TColumn, matrixCheckResult)}
+                            <Table responsive bordered size="sm" style={{ width: "50%", marginBottom: "0" }}>
+                                {getTableResultsBody(TRow, TColumn, matrixCheckResult)}
+                            </Table>
                         </CardBody>
                     </Card>
                 </Row>

@@ -1365,8 +1365,8 @@ class Experiment extends Component {
 
         const femaleParticipants = participants[0];
         const maleParticipants = participants[1];
-        const scenario_1 = participants[3];
-        const scenario_2 = participants[4];
+        // const scenario_1 = participants[3];
+        // const scenario_2 = participants[4];
 
         const indexFirstGroup = 0
         const indexSecondGroup = 1
@@ -1627,11 +1627,9 @@ class Experiment extends Component {
             data.showError = true;
         } else {
             let found = false;
-            let questionCodeNotFound = constant.TEXT_EMPTY;
             for (let i = 0; i < outputPSForm.length; i++) {
                 if (currentInputPSForm.questionCode === outputPSForm[i].questionCode) {
                     found = true;
-                    questionCodeNotFound = currentInputPSForm.questionCode;
                     break;
                 }
             }
@@ -1720,7 +1718,7 @@ class Experiment extends Component {
      * Validate components before navigating between pages. Space key pressed
      */
     _validatePressedSpaceKeyToNextPage() {
-        const { currentScreenNumber, inputNavigation, outputFormData } = this.state;
+        const { currentScreenNumber, inputNavigation } = this.state;
         const currentScreen = inputNavigation[currentScreenNumber].screen;
 
         let totalLength = inputNavigation.length;
@@ -1884,15 +1882,13 @@ class Experiment extends Component {
      * Validate components before navigating between pages. Enter key pressed
      */
     _validatePressedEnterButtonToNextPage() {
-        const { currentScreenNumber, inputNavigation, outputFormData } = this.state;
+        const { currentScreenNumber, inputNavigation } = this.state;
         const currentScreen = inputNavigation[currentScreenNumber].screen;
 
         let totalLength = inputNavigation.length;
 
         if (currentScreenNumber < totalLength) { //To prevent keep transition between pages
             if (currentScreen === constant.USER_FORM_SCREEN) {
-                const { sex } = outputFormData;
-
                 let data = this.validateForm();
 
                 if (data.isValid) {
@@ -2204,7 +2200,8 @@ function isFooterShownInCurrentScreen(state) {
         currentScreen === constant.FIFTH_TASK_SCREEN ||
         currentScreen === constant.FINAL_TASK_SCREEN ||
         currentScreen === constant.REWARD_AUCTION_INFO_SCREEN ||
-        currentScreen === constant.USER_FORM_SCREEN) {
+        currentScreen === constant.USER_FORM_SCREEN ||
+        currentScreen === constant.PSFORM_SCREEN) {
         isFooterShown = true;
     }
 

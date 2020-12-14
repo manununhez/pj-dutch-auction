@@ -43,7 +43,7 @@ class NavbarCustom extends React.Component {
               </DropdownMenu>
             </UncontrolledDropdown>
           </Nav>
-          <NavbarText>v0.1</NavbarText>
+          <NavbarText>v1.0</NavbarText>
         </Collapse>
       </Navbar>
     </div>

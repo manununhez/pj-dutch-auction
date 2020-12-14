@@ -169,8 +169,6 @@ export const VISUAL_PATTERN_DEMO_SCREEN = "VisualPatternTask Demo";
 export const VISUAL_PATTERN_INSTRUCTION_SCREEN = "VisualPatternInstruction";
 export const VISUAL_PATTERN_DEMO_INSTRUCTION_FINISH_SCREEN = "VisualPatternDemoInstructionFinish";
 export const VISUAL_PATTERN_INSTRUCTION_FINISH_SCREEN = "VisualPatternInstructionFinish";
-export const INPUT_PSFORM_SHEETNAME = "psychologyform";
-
 
 //Sheetnames
 export const USER_PARTICIPANTS_COUNTER_SHEETNAME = "userexperimentcount";
@@ -194,6 +192,8 @@ export const USER_VISUAL_PATTERN_SHEETNAME = "uservisualpattern";
 export const USER_PSFORM_SHEETNAME = "userpsform";
 export const PSFORM_SHEETNAME = "psychologyform";
 export const INPUT_REWARD_SHEETNAME = "input-reward";
+export const INPUT_PSFORM_SHEETNAME = "psychologyform";
+
 
 //Error
 export const ERROR_1 = "Prosimy o dokonanie wyboru.";//"You have to select a choice first!"

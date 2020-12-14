@@ -471,7 +471,7 @@ export function saveAuctionBids(data, callback) {
     let userData = userauctionbids(data);
     let spreadSheetName = constant.USER_AUCTION_BIDS_SHEETNAME;
     let row = "A2";
-    let column = "G";
+    let column = "I";
 
     save(spreadSheetName, row, column, userData, callback)
 }
@@ -570,18 +570,7 @@ const usergeneraldata = (data, ariadnaUserID) => {
                 output.data.levelEduc,
                 output.data.typeAuction
             ]);
-        } else if (output.task === constant.FIRST_TASK_DEMO_SCREEN) {
-            result.push([
-                output.userID,
-                ariadnaUserID,
-                output.task,
-                output.timestamp, //created
-                output.data[0],
-                output.data[1],
-                output.data[2],
-                output.data[3]
-            ]);
-        } else if (output.task === constant.FIRST_TASK_SCREEN) {
+        } else if (output.task === constant.FIRST_TASK_SCREEN || output.task === constant.FIRST_TASK_DEMO_SCREEN) {
             result.push([
                 output.userID,
                 ariadnaUserID,
@@ -658,7 +647,7 @@ const usergeneraldata = (data, ariadnaUserID) => {
                 output.data[8],
                 output.data[9]
             ]);
-        } else if (output.task === constant.AUCTION_TASK_SCREEN) {
+        } else if (output.task === constant.AUCTION_TASK_SCREEN || output.task === constant.AUCTION_TASK_DEMO_SCREEN) {
             result.push([
                 output.userID,
                 ariadnaUserID,
@@ -667,18 +656,9 @@ const usergeneraldata = (data, ariadnaUserID) => {
                 output.data.hotelId,
                 output.data.hotelName,
                 output.data.priceStart,
-                output.data.bid
-            ]);
-        } else if (output.task === constant.AUCTION_TASK_DEMO_SCREEN) {
-            result.push([
-                output.userID,
-                ariadnaUserID,
-                output.task,
-                output.timestamp, //created
-                output.data.hotelId,
-                output.data.hotelName,
-                output.data.priceStart,
-                output.data.bid
+                output.data.bid,
+                output.data.bidStartTimestamp,
+                output.data.bidStopTimestamp
             ]);
         } else if (output.task === constant.PSFORM_SCREEN) {
             result.push([
@@ -689,7 +669,7 @@ const usergeneraldata = (data, ariadnaUserID) => {
                 output.data.questionCode,
                 output.data.answer
             ]);
-        } else if (output.task === constant.VISUAL_PATTERN_DEMO_SCREEN) {
+        } else if (output.task === constant.VISUAL_PATTERN_SCREEN || output.task === constant.VISUAL_PATTERN_DEMO_SCREEN) {
             let vp1 = output.data.map((item) => {
                 return [
                     output.userID,
@@ -697,7 +677,7 @@ const usergeneraldata = (data, ariadnaUserID) => {
                     output.task,
                     output.timestamp, //created
                     (item.level + 1), //+1 to be more idiomatic: starts from level 1 insteado of level 0
-                    `${constant.VISUAL_PATTERN_DEMO_DIMENTION[item.level][0]} x ${constant.VISUAL_PATTERN_DEMO_DIMENTION[item.level][1]}`,
+                    item.dimention,
                     JSON.stringify(item.matrix),
                     JSON.stringify(item.matrixCheckResult),
                     item.matrixCheckResult.filter((element) => element === constant.TILE_SUCCESS).length, //we get the amount of success if any
@@ -708,25 +688,6 @@ const usergeneraldata = (data, ariadnaUserID) => {
                 ]
             });
             result = result.concat(vp1);
-        } else if (output.task === constant.VISUAL_PATTERN_SCREEN) {
-            let vp2 = output.data.map((item) => {
-                return [
-                    output.userID,
-                    ariadnaUserID,
-                    output.task,
-                    output.timestamp, //created
-                    (item.level + 1), //+1 to be more idiomatic: starts from level 1 insteado of level 0
-                    `${constant.VISUAL_PATTERN_DIMENTION[item.level][0]} x ${constant.VISUAL_PATTERN_DIMENTION[item.level][1]}`,
-                    JSON.stringify(item.matrix),
-                    JSON.stringify(item.matrixCheckResult),
-                    item.matrixCheckResult.filter((element) => element === constant.TILE_SUCCESS).length, //we get the amount of success if any
-                    item.matrixCheckResult.filter((element) => element === constant.TILE_ERROR).length, //we get the amount of errors if any
-                    item.matrixCheckResult.filter((element) => element === constant.TILE_LEFT).length, //we get the amount of errors if any
-                    item.retry,
-                    item.timestamp
-                ]
-            });
-            result = result.concat(vp2);
         }
     }
 
@@ -784,7 +745,7 @@ function userinfo(data) {
 function userform(data) {
     let result = [];
     // let data = this.props.data;
-    const { userID, outputFormData, typeTask, ariadnaUserID, typeAuction } = data;
+    const { userID, outputFormData, typeTask, ariadnaUserID } = data;
     const now = Date.now();
 
     result.push([
@@ -854,6 +815,8 @@ function userauctionbids(data) {
             outputAuctionDemoTask[i].hotelName,
             outputAuctionDemoTask[i].priceStart,
             outputAuctionDemoTask[i].bid,
+            outputAuctionDemoTask[i].bidStartTimestamp,
+            outputAuctionDemoTask[i].bidStopTimestamp,
             now //created
         ]);
     }
@@ -866,6 +829,8 @@ function userauctionbids(data) {
             outputAuctionTask[i].hotelName,
             outputAuctionTask[i].priceStart,
             outputAuctionTask[i].bid,
+            outputAuctionTask[i].bidStartTimestamp,
+            outputAuctionTask[i].bidStopTimestamp,
             now //created
         ]);
     }
@@ -956,7 +921,7 @@ function uservisualpattern(data) {
             userID,
             constant.VISUAL_PATTERN_DEMO_SCREEN,
             (output.level + 1),
-            `${constant.VISUAL_PATTERN_DEMO_DIMENTION[output.level][0]} x ${constant.VISUAL_PATTERN_DEMO_DIMENTION[output.level][1]}`,
+            output.dimention,
             JSON.stringify(output.matrix),
             JSON.stringify(output.matrixCheckResult),
             output.matrixCheckResult.filter((item) => item === constant.TILE_SUCCESS).length,
@@ -974,7 +939,7 @@ function uservisualpattern(data) {
             userID,
             constant.VISUAL_PATTERN_SCREEN,
             (output.level + 1),
-            `${constant.VISUAL_PATTERN_DIMENTION[output.level][0]} x ${constant.VISUAL_PATTERN_DIMENTION[output.level][1]}`,
+            output.dimention,
             JSON.stringify(output.matrix),
             JSON.stringify(output.matrixCheckResult),
             output.matrixCheckResult.filter((item) => item === constant.TILE_SUCCESS).length,

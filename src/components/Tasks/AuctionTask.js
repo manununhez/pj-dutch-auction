@@ -36,7 +36,9 @@ class AuctionTask extends React.Component {
             timeCount: 0,
             bidState: BID_STATE_NOT_STARTED,
             modalOpen: false,
-            isBidGain: false
+            isBidGain: false,
+            bidStartTimestamp: 0,
+            bidStopTimestamp: 0
         };
 
         this.handleKeyDownEvent = this._handleKeyDownEvent.bind(this);
@@ -69,7 +71,7 @@ class AuctionTask extends React.Component {
                 const { timeCount, auctionLength } = this.state
 
                 if (DEBUG) console.log(`timeCount: ${timeCount}`)
-                if (timeCount >= auctionLength) {
+                if (timeCount >= auctionLength) { //timeout. we finish and save data
                     this._finishBidAndSaveData(false)
                 }
             })
@@ -83,7 +85,8 @@ class AuctionTask extends React.Component {
         this.setState(({
             bidState: BID_STATE_FINISHED,
             modalOpen: true,
-            isBidGain: isBidGain
+            isBidGain: isBidGain,
+            bidStopTimestamp: Date.now()
         }), () => {
             this._clearTimer(); //stop timer
         });
@@ -108,14 +111,17 @@ class AuctionTask extends React.Component {
     }
 
     _handleKeyDownEvent(event) {
-        const { bidState, counterAuction, isBidGain, bid, priceStart } = this.state
+        const { bidState, counterAuction,
+            isBidGain, bid, priceStart, bidStartTimestamp,
+            bidStopTimestamp } = this.state
 
         if (event.keyCode === SPACE_KEY_CODE) { //Transition between screens
             if (DEBUG) console.log("SPACE_KEY")
 
             if (bidState === BID_STATE_NOT_STARTED) { //bid not started yet
                 this.setState(({
-                    bidState: BID_STATE_RUNNING
+                    bidState: BID_STATE_RUNNING,
+                    bidStartTimestamp: Date.now()
                 }), () => {
                     this._initConfig(); //start timer
                 });
@@ -145,8 +151,11 @@ class AuctionTask extends React.Component {
                     priceStart: priceStart,
                     bid: bidTmp,
                     hotelId: this.props.data[counterAuction].hotelId,
-                    hotelName: this.props.data[counterAuction].hotelName
+                    hotelName: this.props.data[counterAuction].hotelName,
+                    bidStartTimestamp: bidStartTimestamp,
+                    bidStopTimestamp: bidStopTimestamp
                 }
+
                 this.props.action(bidResult)
             }
 
@@ -198,7 +207,7 @@ class AuctionTask extends React.Component {
                     </Col>
                 </Row>
                 <Row>
-                { (bidState === BID_STATE_NOT_STARTED) ? <FooterV1 text={AUCTION_FOOTER_TEXT} /> : <></>}
+                    {(bidState === BID_STATE_NOT_STARTED) ? <FooterV1 text={AUCTION_FOOTER_TEXT} /> : <></>}
                 </Row>
             </Container>
         );
@@ -207,7 +216,7 @@ class AuctionTask extends React.Component {
 
 function getFormattedText(text) { //TODO when FirstTask, we should cache the text so we dont iterate every time
     let children = []
-    
+
     text.split('<br>').forEach(item => { //replace \n with <br>
         if (item !== "")
             children.push(<><br /><h4>{item}</h4></>)
