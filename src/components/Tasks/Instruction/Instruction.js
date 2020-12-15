@@ -20,7 +20,6 @@ import { ATTRIBUTE_CUSTOM,
 
 class Instruction extends React.Component {
     render() {
-        console.log(this.props.text)
         return (
             <Container fluid="md">
                 {this.props.name === AUCTION_INSTRUCTION_DEMO_SCREEN ?
@@ -60,27 +59,27 @@ function getRatingStarBarTable() {
                     <tbody>
                         {/* TODO Actualizar estos atributos */}
                         <tr>
-                            <td style={{ textAlign: 'left', fontSize: '1.3em' }}>{ATTRIBUTE_CUSTOM.data.text[0]}</td>
+                            <td className="attr-td">{ATTRIBUTE_CUSTOM.data.text[0]}</td>
                             <td className="align-middle">{RatingBarDemo(6)}</td>
                         </tr>
                         <tr>
-                            <td style={{ textAlign: 'left', fontSize: '1.3em' }}>{ATTRIBUTE_CUSTOM.data.text[1]}</td>
+                            <td className="attr-td">{ATTRIBUTE_CUSTOM.data.text[1]}</td>
                             <td className="align-middle">{RatingBarDemo(5)}</td>
                         </tr>
                         <tr>
-                            <td style={{ textAlign: 'left', fontSize: '1.3em' }}>{ATTRIBUTE_CUSTOM.data.text[2]}</td>
+                            <td className="attr-td">{ATTRIBUTE_CUSTOM.data.text[2]}</td>
                             <td className="align-middle">{RatingBarDemo(4)}</td>
                         </tr>
                         <tr>
-                            <td style={{ textAlign: 'left', fontSize: '1.3em' }}>{ATTRIBUTE_CUSTOM.data.text[3]}</td>
+                            <td className="attr-td">{ATTRIBUTE_CUSTOM.data.text[3]}</td>
                             <td className="align-middle">{RatingBarDemo(3)}</td>
                         </tr>
                         <tr>
-                            <td style={{ textAlign: 'left', fontSize: '1.3em' }}>{ATTRIBUTE_CUSTOM.data.text[4]}</td>
+                            <td className="attr-td">{ATTRIBUTE_CUSTOM.data.text[4]}</td>
                             <td className="align-middle">{RatingBarDemo(2)}</td>
                         </tr>
                         <tr>
-                            <td style={{ textAlign: 'left', fontSize: '1.3em' }}>{ATTRIBUTE_CUSTOM.data.text[5]}</td>
+                            <td className="attr-td">{ATTRIBUTE_CUSTOM.data.text[5]}</td>
                             <td className="align-middle">{RatingBarDemo(1)}</td>
                         </tr>
                     </tbody>

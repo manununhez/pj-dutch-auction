@@ -26,9 +26,11 @@ import {
     VISUAL_PATTERN_RESULTS_CORRECT,
     VISUAL_PATTERN_RESULTS_FAILED,
     VISUAL_PATTERN_RESULTS_PRESS_SPACE
-} from '../../helpers/constants';
+} from '../../../helpers/constants';
 
-import { randomNumber } from '../../helpers/utils';
+import { randomNumber } from '../../../helpers/utils';
+
+import './VisualPatternTask.css'
 
 const DEBUG = (process.env.REACT_APP_DEBUG_LOG === "true") ? true : false;
 
@@ -277,10 +279,7 @@ class VisualPatternTask extends React.Component {
         return (
             <>
                 {showInitMessage ?
-                    <h2 style={{
-                        position: "fixed", top: "40%", left: "45%", textAlign: "center",
-                        transform: "translate(-40%, -40%)"
-                    }}>{VISUAL_PATTERN_RESULTS_PRESS_SPACE}</h2> :
+                    <h2 className="pressSpace">{VISUAL_PATTERN_RESULTS_PRESS_SPACE}</h2> :
                     displayTable(this.state, this.handleClick)}
             </>
         );
@@ -560,9 +559,10 @@ function getDemoColumns(row, TRow, TColumn, data) {
 
     for (let i = 0; i < TColumn; i++) {
         let currentDataIndex = (rows - (TColumn - (i + 1))) - 1;
+        let backgroundColor = (data[currentDataIndex] ? 'blue' : 'white');
         children.push(
             <td className="align-middle" key={"key_td_" + TRow + "_" + TColumn + "_" + i}
-                style={{ padding: '2.5rem', fontSize: '1.2em', backgroundColor: (data[currentDataIndex] ? 'blue' : 'white') }} />
+                style={{ padding: '2.5rem', fontSize: '1.2em', backgroundColor: backgroundColor }} />
         );
     }
     return children;

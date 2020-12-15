@@ -6,11 +6,13 @@ import {
   Container
 } from "reactstrap";
 
+import './FooterV1.0.css'
+
 class SimpleFooter extends React.Component {
   render() {
     return (
       <Container>
-        <Alert color="success" style={{ backgroundColor: "#0eaf35", color: "#000000", fontSize: "1.5em", textAlign: "center" }}>
+        <Alert className="footer" color="success">
           {this.props.text}
         </Alert>
       </Container>

@@ -15,8 +15,7 @@ import {
     BID_STATE_NOT_STARTED,
     BID_STATE_RUNNING,
     BID_STATE_FINISHED,
-    AUCTION_FOOTER_TEXT,
-    AUCTION_REWARD_BONUS_MESSAGE
+    AUCTION_FOOTER_TEXT
 } from '../../../helpers/constants';
 
 import "./AuctionTask.css";
@@ -217,9 +216,9 @@ class AuctionTask extends React.Component {
 function getFormattedText(text) { //TODO when FirstTask, we should cache the text so we dont iterate every time
     let children = []
 
-    text.split('<br>').forEach(item => { //replace \n with <br>
+    text.split('<br>').forEach((item, index) => { //replace \n with <br>
         if (item !== "")
-            children.push(<><br /><div className="hotel-description">{item}</div></>)
+            children.push(<><br /><div className="hotel-description" key={"KEY_"+index}>{item}</div></>)
     });
 
     return children;

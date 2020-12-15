@@ -1,4 +1,30 @@
 .section-sm {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    min-height: 500px;
     padding-top: 2rem;
-    padding-bottom: 2rem; 
+    padding-bottom: 2rem;
+}
+
+.fade-loader {
+    display: block;
+    margin: 0 auto;
+    border-color: red;
+    position: fixed;
+    top: 35%;
+    left: 48%;
+}
+
+.sync-loader {
+    display: block;
+    margin: 0 auto;
+    border-color: red;
+    position: fixed;
+    top: 5%;
+    right: 5%;
+}
+
+.pagination {
+    text-align: end;
+    margin-right: 5em
 }

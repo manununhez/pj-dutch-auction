@@ -12,7 +12,6 @@ import IdleTimer from 'react-idle-timer'
 //Parse URL
 import queryString from 'query-string'
 // Loader
-import { css } from "@emotion/core";
 import FadeLoader from "react-spinners/FadeLoader";
 import SyncLoader from "react-spinners/SyncLoader";
 
@@ -29,24 +28,15 @@ import FinalTask from "../Tasks/FinalTask";
 import Instruction from "../Tasks/Instruction/Instruction"
 import UserForm from "../Tasks/UserForm/UserForm";
 import AuctionTask from "../Tasks/AuctionTask/AuctionTask";
-import VisualPatternTask from "../Tasks/VisualPatternTask";
-import VisualPatternDemoTask from "../Tasks/VisualPatternDemoTask";
+import VisualPatternTask from "../Tasks/VisualPatternTask/VisualPatternTask";
+import VisualPatternDemoTask from "../Tasks/VisualPatternTask/VisualPatternDemoTask";
 import PSForm from "../Tasks/PSForm";
+import "./Experiment.css"
 
 // helpers
 import * as request from '../../helpers/fetch';
 import * as constant from '../../helpers/constants';
 import { USER_INFO, randomNumber } from '../../helpers/utils';
-
-// CSS - Can be a string as well. Need to ensure each key-value pair ends with ;
-const override = css`
-  display: block;
-  margin: 0 auto;
-  border-color: red;
-`;
-
-const LIGHT_GRAY = "#e9ecef"; //lighter
-const WHITE = "white";
 
 const DEBUG = (process.env.REACT_APP_DEBUG_LOG === "true") ? true : false;
 const ARIADNA_REDIRECT_REJECT = process.env.REACT_APP_ARIADNA_REDIRECT_REJECT;
@@ -165,8 +155,8 @@ class Experiment extends Component {
         // if(DEBUG) console.log('time remaining', this.idleTimer.getRemainingTime())
 
         if (this.idleTimer.getRemainingTime() === 0) {
-            alert("Z powodu upływu czasu sesja została zamknięta");
-            document.location.reload(true);
+            alert(constant.SESSION_TIMEOUT_MESSAGE);
+            document.location.reload();
         }
     }
 
@@ -1940,7 +1930,7 @@ class Experiment extends Component {
 
             if (randomNumberGenerated.includes(scenarioNumber)) { //If we already have generated a certain number, we do not check again scenario availability, we only check if we have seen all number options availables
                 if (randomNumberGenerated.length === inputParticipants.scenarios.length) {
-                    alert("No more space for Scenarios participants!");
+                    alert(constant.AUCTION_EXHAUSTED_QUOTA_MESSAGE);
                     this.setState({ showAlertWindowsClosing: false }, () => {
                         window.location.replace(ARIADNA_REDIRECT_REJECT);
                     })
@@ -1958,11 +1948,11 @@ class Experiment extends Component {
 
         if (scenarios[scenarioNumber] === constant.SCENARIO_HOTEL_NORMAL) {
             outputFormData.typeAuction = constant.SCENARIO_HOTEL_NORMAL
-            console.log("FETCH hotels normal")
+            if(DEBUG)console.log("FETCH hotels normal")
             request.fetchAuctionHotels(this._onLoadAuctionHotelsCallBack.bind(this))
         } else if (scenarios[scenarioNumber] === constant.SCENARIO_HOTEL_REV) {
             outputFormData.typeAuction = constant.SCENARIO_HOTEL_REV
-            console.log("FETCH hotels reverse")
+            if(DEBUG)console.log("FETCH hotels reverse")
             request.fetchAuctionHotelsRev(this._onLoadAuctionHotelsCallBack.bind(this))
         }
 
@@ -2117,7 +2107,7 @@ class Experiment extends Component {
                 <div>
                     <Progress value={progressBarNow} />
                 </div>
-                <section className="section-sm" style={{ marginTop: "20px", marginBottom: "20px", minHeight: "500px" }}>
+                <section className="section-sm">
                     {changePages(this.state, this)}
                 </section>
                 <div>
@@ -2130,24 +2120,22 @@ class Experiment extends Component {
                         debounce={250}
                         timeout={timeout} />
                 </div>
-                <div style={{ position: "fixed", top: "35%", left: "48%" }}>
+                <div className="fade-loader">
                     <FadeLoader
-                        css={override}
                         size={50}
-                        color={"#123abc"}
+                        color={constant.BLUE}
                         loading={loading}
                     />
                 </div>
-                <div style={{ position: "fixed", top: "5%", right: "5%" }}>
+                <div className="sync-loader">
                     <SyncLoader
-                        css={override}
                         size={7}
                         margin={3}
-                        color={"#123abc"}
+                        color={constant.BLUE}
                         loading={loadingSyncData}
                     />
                 </div>
-                {showPagination ? <div style={{ textAlign: "end", marginRight: "5em" }}>{page}</div> : <></>}
+                {showPagination ? <div className="pagination">{page}</div> : <></>}
                 { isFooterShownInCurrentScreen(this.state)}
             </main>
         )
@@ -2218,11 +2206,11 @@ function changePages(state, context) {
     const totalLength = inputNavigation.length;
 
     if (totalLength > 0) { //If input navigation has been called
-        document.body.style.backgroundColor = LIGHT_GRAY;
-
         const currentScreen = inputNavigation[currentScreenNumber].screen
         const pageID = parseInt(inputNavigation[currentScreenNumber].pageId)
         const text = getTextForCurrentScreen(inputTextInstructions, currentScreen);
+
+        document.body.style.backgroundColor = currentScreen.includes(constant.INSTRUCTION_SCREEN) ? constant.WHITE : constant.LIGHT_GRAY;
 
         if (currentScreenNumber < totalLength) { //To prevent keep transition between pages
             if (currentScreen === constant.USER_FORM_SCREEN) {
@@ -2231,7 +2219,6 @@ function changePages(state, context) {
                     error={error}
                 />;
             } else if (currentScreen.includes(constant.INSTRUCTION_SCREEN)) {
-                document.body.style.backgroundColor = WHITE;
                 return <Instruction
                     text={text}
                     name={currentScreen}
@@ -2357,12 +2344,13 @@ function getRewardDataForCurrentScreen(inputRewardData, screen) {
 function getTextForCurrentScreen(inputTextInstructions, screen) { //TODO when FirstTask, we should cache the text so we dont iterate every time
     let children = inputTextInstructions
         .filter((instruction) => instruction.screen === screen)
-        .map((instruction) => {
+        .map((instruction, index) => {
             let txtFormatted = instruction.text.split('\\n').map(function (item, key) { //replace \n with <br> 
-                return (<>{item}<br /></>)
+                return (<div key={key}>{item}<br /></div>)
             })
+            let key = "KEY_"+txtFormatted.length+"_"+index
 
-            return getFontSize(txtFormatted, instruction.size)
+            return getFontSize(txtFormatted, instruction.size, key)
         });
 
     return children;
@@ -2374,23 +2362,23 @@ function getTextForCurrentScreen(inputTextInstructions, screen) { //TODO when Fi
  * @param {*} fontSize 
  * @param {*} key 
  */
-function getFontSize(item, fontSize) {
+function getFontSize(item, fontSize, key) {
     if (item !== constant.TEXT_EMPTY) {
         switch (fontSize) {
             case constant.FONT_SIZE_HEADING1:
-                return (<div className="instr-h1">{item}</div>)
+                return (<div className="instr-h1" key={key}>{item}</div>)
             case constant.FONT_SIZE_HEADING2:
-                return (<div className="instr-h2">{item}</div>)
+                return (<div className="instr-h2" key={key}>{item}</div>)
             case constant.FONT_SIZE_HEADING3:
-                return (<div className="instr-h3">{item}</div>)
+                return (<div className="instr-h3" key={key}>{item}</div>)
             case constant.FONT_SIZE_HEADING4:
-                return (<div className="instr-h4">{item}</div>)
+                return (<div className="instr-h4" key={key}>{item}</div>)
             case constant.FONT_SIZE_HEADING5:
-                return (<div className="instr-h5">{item}</div>)
+                return (<div className="instr-h5" key={key}>{item}</div>)
             case constant.FONT_SIZE_HEADING6:
-                return (<div className="instr-h6">{item}</div>)
+                return (<div className="instr-h6" key={key}>{item}</div>)
             default:
-                return (<div className="instr-h3">{item}</div>)
+                return (<div className="instr-h3" key={key}>{item}</div>)
         }
     }
 }

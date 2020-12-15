@@ -1,5 +1,13 @@
+.body {
+  background-color: white;
+}
 .instr-title {
   font-size: 30pt;
   font-weight: bold;
   text-align: center;
+}
+
+.attr-td {
+  text-align: left;
+  font-size: 1.3em;
 }

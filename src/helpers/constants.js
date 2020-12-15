@@ -1,3 +1,7 @@
+export const LIGHT_GRAY = "#e9ecef"; //lighter
+export const WHITE = "white";
+export const BLUE = "#123abc";
+
 export const TEXT_EMPTY = "";
 
 //Visual Pattern
@@ -223,3 +227,5 @@ export const VISUAL_PATTERN_TEXT_START_PRESS_SPACE = "Naciśnij spację, aby prz
 export const VISUAL_PATTERN_RESULTS_CORRECT = "Brawo! Udało Ci się poprawnie zaznaczyć wszystkie pola.";
 export const VISUAL_PATTERN_RESULTS_FAILED = "Niestety nie udało Ci się poprawnie zaznaczyć wszystkich pól.";
 export const VISUAL_PATTERN_RESULTS_PRESS_SPACE = "Naciśnij spację, aby przejść do kolejnej planszy.";
+export const SESSION_TIMEOUT_MESSAGE = "Z powodu upływu czasu sesja została zamknięta";
+export const AUCTION_EXHAUSTED_QUOTA_MESSAGE = "No more space for Scenarios participants!";
