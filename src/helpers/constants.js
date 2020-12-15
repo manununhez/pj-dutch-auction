@@ -173,7 +173,7 @@ export const VISUAL_PATTERN_DEMO_INSTRUCTION_FINISH_SCREEN = "VisualPatternDemoI
 export const VISUAL_PATTERN_INSTRUCTION_FINISH_SCREEN = "VisualPatternInstructionFinish";
 
 //Sheetnames
-export const USER_PARTICIPANTS_COUNTER_SHEETNAME = "userexperimentcount";
+export const USER_PARTICIPANTS_COUNTER_SHEETNAME = "input-userexperimentcount";
 export const USER_BRANDS_SHEETNAME = "userbrands";
 export const USER_INFO_SHEETNAME = "userinfo";
 export const USER_PROPERTIES_SHEETNAME = "userproperties";
@@ -184,17 +184,16 @@ export const USER_PRALKA_RATING_SHEETNAME = "userpralkarating";
 export const USER_PRALKA_SELECTIONS_SHEETNAME = "userpralkaselections";
 export const USER_MOBILE_TELEPHONE_SHEETNAME = "usermobiletelephone";
 export const USER_GENERAL_DATA_SHEETNAME = "usergeneraldata";
-export const VERSIONS_SHEETNAME = "versions";
+export const VERSIONS_SHEETNAME = "input-versions";
 export const INPUT_ALL_SHEETNAME = "input-all";
 export const INPUT_ALL_WARMUP_SHEETNAME = "input-all-warmup";
-export const APP_TEXT_FEMALE_SHEETNAME = "text-female";
-export const APP_TEXT_MALE_SHEETNAME = "text-male";
+export const APP_TEXT_FEMALE_SHEETNAME = "input-text-female";
+export const APP_TEXT_MALE_SHEETNAME = "input-text-male";
 export const USER_AUCTION_BIDS_SHEETNAME = "auction-bids"
 export const USER_VISUAL_PATTERN_SHEETNAME = "uservisualpattern";
 export const USER_PSFORM_SHEETNAME = "userpsform";
-export const PSFORM_SHEETNAME = "psychologyform";
+export const PSFORM_SHEETNAME = "input-psychologyform";
 export const INPUT_REWARD_SHEETNAME = "input-reward";
-export const INPUT_PSFORM_SHEETNAME = "psychologyform";
 
 
 //Error
@@ -218,6 +217,7 @@ export const AUCTION_GAIN_TEXT = (value) => { return `Brawo, udało Ci się zare
 export const AUCTION_LOSE_TEXT = (value) => { return `Ktoś inny zarezerwował ten pokój. Musisz zapłacić pełną cenę:  ${value} zł. <br><br> Naciśnij ENTER, aby przejść do następnej aukcji.` };
 export const AUCTION_REWARD_RESULT_MESSAGE_FEMALE = (result) => { return `Dziękujemy, to już koniec tego zadania. W sumie zaoszczędziłaś ${result} zł.<br><br> Pozostań proszę na miejscu, eksperymentator zaraz do Ciebie podejdzie.` }
 export const AUCTION_REWARD_RESULT_MESSAGE_MALE = (result) => { return `Dziękujemy, to już koniec tego zadania. W sumie zaoszczędziłeś ${result} zł.<br><br> Pozostań proszę na miejscu, eksperymentator zaraz do Ciebie podejdzie.` }
+export const AUCTION_REWARD_BONUS_MESSAGE = (bonus) => { return `W nagrodę otrzymasz dodatkowo ${bonus} punktów. Dodatkowe punkty zostaną doliczone do Twojego konta za kilka tygodni po zakończeniu cyklu badań.`};
 export const VISUAL_PATTERN_TEXT2 = "Spróbuj odtworzyć wzór wyświetlony na poprzednim ekranie. Zaznaczasz i odznaczasz pola klikając na nie lewym przyciskiem myszy.";
 export const VISUAL_PATTERN_TEXT_START_PRESS_SPACE = "Naciśnij spację, aby przesłać swoje rozwiązanie.";
 export const VISUAL_PATTERN_RESULTS_CORRECT = "Brawo! Udało Ci się poprawnie zaznaczyć wszystkie pola.";
