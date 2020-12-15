@@ -12,7 +12,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import {
     FIRST_TASK_PROPERTIES_TOTAL, FIRST_RADIO_VALUE, SECOND_RADIO_VALUE,
-    THIRD_RADIO_VALUE, ACTIVE_STAR, HIDDEN_STAR, TEXT_FOOTER, SHOW_FEEDBACK_TRUE
+    THIRD_RADIO_VALUE, ACTIVE_STAR, HIDDEN_STAR, TEXT_FOOTER, SHOW_FEEDBACK_TRUE,
+    GREEN, RED
 } from '../../helpers/constants';
 
 class FirstTask extends React.Component {
@@ -54,8 +55,8 @@ class FirstTask extends React.Component {
                         {(showFeedback === SHOW_FEEDBACK_TRUE)
                             ? <div style={{ textAlign: "center" }}>
                                 {/* if correct Answer */}
-                                {showFeedbackCorrectAnswer ? <FontAwesomeIcon color="green" icon={faSmile} size="4x" />
-                                    : <FontAwesomeIcon color="red" icon={faFrown} size="4x" />}
+                                {showFeedbackCorrectAnswer ? <FontAwesomeIcon color={GREEN} icon={faSmile} size="4x" />
+                                    : <FontAwesomeIcon color={RED} icon={faFrown} size="4x" />}
                             </div>
                             : <></>
                         }

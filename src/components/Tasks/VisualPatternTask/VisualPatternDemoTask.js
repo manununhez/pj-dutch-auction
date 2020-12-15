@@ -28,7 +28,7 @@ import {
     VISUAL_PATTERN_RESULTS_PRESS_SPACE
 } from '../../../helpers/constants';
 
-import { randomNumber } from '../../../helpers/utils';
+import { getAppMessage, randomNumber } from '../../../helpers/utils';
 
 import './VisualPatternTask.css'
 
@@ -275,12 +275,21 @@ class VisualPatternDemoTask extends React.Component {
     }
 
     render() {
+
         const { showInitMessage } = this.state;
+        const VISUAL_PATTERN_RESULTS_PRESS_SPACE_MESSAGE = getAppMessage(VISUAL_PATTERN_RESULTS_PRESS_SPACE, this.props.appMessages)
+        const VISUAL_PATTERN_RESULTS_FAILED_MESSAGE = getAppMessage(VISUAL_PATTERN_RESULTS_FAILED, this.props.appMessages)
+        const VISUAL_PATTERN_RESULTS_CORRECT_MESSAGE = getAppMessage(VISUAL_PATTERN_RESULTS_CORRECT, this.props.appMessages)
+        const VISUAL_PATTERN_TEXT_START_PRESS_SPACE_MESSAGE = getAppMessage(VISUAL_PATTERN_TEXT_START_PRESS_SPACE, this.props.appMessages)
+        const VISUAL_PATTERN_TEXT2_MESSAGE = getAppMessage(VISUAL_PATTERN_TEXT2, this.props.appMessages)
+
         return (
             <>
                 {showInitMessage ?
-                    <h2 className="pressSpace">{VISUAL_PATTERN_RESULTS_PRESS_SPACE}</h2> :
-                    displayTable(this.state, this.handleClick)}
+                    <h2 className="pressSpace">{VISUAL_PATTERN_RESULTS_PRESS_SPACE_MESSAGE}</h2> :
+                    displayTable(this.state, this.handleClick, VISUAL_PATTERN_RESULTS_PRESS_SPACE_MESSAGE,
+                        VISUAL_PATTERN_RESULTS_FAILED_MESSAGE, VISUAL_PATTERN_RESULTS_CORRECT_MESSAGE,
+                        VISUAL_PATTERN_TEXT_START_PRESS_SPACE_MESSAGE, VISUAL_PATTERN_TEXT2_MESSAGE)}
             </>
         );
     }
@@ -291,7 +300,8 @@ class VisualPatternDemoTask extends React.Component {
  * @param {*} state 
  * @param {*} handleClick 
  */
-function displayTable(state, handleClick) {
+function displayTable(state, handleClick, pressSpaceMessage, resultFailedMessage,
+    resultSuccessMessage, startPressSpaceMessage, textMessage) {
     const { showCompletedTable, visualTaskData, matrixResult, matrixCheckResult, showResults } = state;
     const { row, column, matrix } = visualTaskData;
 
@@ -299,7 +309,8 @@ function displayTable(state, handleClick) {
         <Container className="justify-content-md-center">
             {showCompletedTable ?
                 getDemoTable(row, column, matrix) :
-                getTable(row, column, matrix, matrixResult, matrixCheckResult, handleClick, showResults)}
+                getTable(row, column, matrix, matrixResult, matrixCheckResult, handleClick,
+                    showResults, pressSpaceMessage, resultFailedMessage, resultSuccessMessage, startPressSpaceMessage, textMessage)}
         </Container>)
 }
 
@@ -313,11 +324,13 @@ function displayTable(state, handleClick) {
  * @param {*} handleClick 
  * @param {*} showResults 
  */
-function getTable(TRow, TColumn, matrix, matrixResult, matrixCheckResult, handleClick, showResults) {
+function getTable(TRow, TColumn, matrix, matrixResult, matrixCheckResult, handleClick,
+    showResults, pressSpaceMessage, resultFailedMessage, resultSuccessMessage, startPressSpaceMessage, textMessage) {
     if (showResults) {
-        return getTableResults(TRow, TColumn, matrix, matrixResult, matrixCheckResult)
+        return getTableResults(TRow, TColumn, matrix, matrixResult, matrixCheckResult,
+            pressSpaceMessage, resultFailedMessage, resultSuccessMessage)
     } else {
-        return getTableTask(TRow, TColumn, matrixResult, handleClick)
+        return getTableTask(TRow, TColumn, matrixResult, handleClick, startPressSpaceMessage, textMessage)
     }
 }
 
@@ -329,7 +342,7 @@ function getTable(TRow, TColumn, matrix, matrixResult, matrixCheckResult, handle
  * @param {*} matrixResult 
  * @param {*} matrixCheckResult 
  */
-function getTableResults(TRow, TColumn, matrix, matrixResult, matrixCheckResult) {
+function getTableResults(TRow, TColumn, matrix, matrixResult, matrixCheckResult, pressSpaceMessage, resultFailedMessage, resultSuccessMessage) {
     let areErrorsInTable = matrixCheckResult.filter((item) => item === TILE_ERROR).length > 0;
     let areLeftTilesInTable = matrixCheckResult.filter((item) => item === TILE_LEFT).length > 0;
 
@@ -337,7 +350,7 @@ function getTableResults(TRow, TColumn, matrix, matrixResult, matrixCheckResult)
         return (
             <>
                 <Row className="justify-content-center">
-                    <h4 style={{ textAlign: "center" }}>{VISUAL_PATTERN_RESULTS_FAILED}</h4>
+                    <h4 style={{ textAlign: "center" }}>{resultFailedMessage}</h4>
                 </Row>
                 <Row className="justify-content-center">
                     <Card body style={{ marginTop: "20px", marginBottom: "20px" }}>
@@ -364,14 +377,14 @@ function getTableResults(TRow, TColumn, matrix, matrixResult, matrixCheckResult)
                     </Card>
                 </Row>
                 <Row className="justify-content-center">
-                    <h4 style={{ textAlign: "center" }}>{VISUAL_PATTERN_RESULTS_PRESS_SPACE}</h4>
+                    <h4 style={{ textAlign: "center" }}>{pressSpaceMessage}</h4>
                 </Row>
             </>);
     } else { //SUCESS
         return (
             <>
                 <Row className="justify-content-center">
-                    <h4 style={{ textAlign: "center" }}>{VISUAL_PATTERN_RESULTS_CORRECT}</h4>
+                    <h4 style={{ textAlign: "center" }}>{resultSuccessMessage}</h4>
                 </Row>
                 <Row className="justify-content-center">
                     <Card style={{ marginBottom: "20px" }}>
@@ -383,7 +396,7 @@ function getTableResults(TRow, TColumn, matrix, matrixResult, matrixCheckResult)
                     </Card>
                 </Row>
                 <Row className="justify-content-center">
-                    <h4 style={{ textAlign: "center" }}>{VISUAL_PATTERN_RESULTS_PRESS_SPACE}</h4>
+                    <h4 style={{ textAlign: "center" }}>{pressSpaceMessage}</h4>
                 </Row>
             </>);
     }
@@ -450,7 +463,7 @@ function getResultColumns(row, TRow, TColumn, matrixToDraw) {
  * @param {*} matrixToDraw 
  * @param {*} handleClick 
  */
-function getTableTask(TRow, TColumn, matrixToDraw, handleClick) {
+function getTableTask(TRow, TColumn, matrixToDraw, handleClick, startPressSpaceMessage, textMessage) {
     let children = [];
 
     for (let i = 0; i < TRow; i++) {
@@ -464,7 +477,7 @@ function getTableTask(TRow, TColumn, matrixToDraw, handleClick) {
     return (
         <>
             <Row className="justify-content-center">
-                <h4 style={{ textAlign: "center" }}>{VISUAL_PATTERN_TEXT2}</h4>
+                <h4 style={{ textAlign: "center" }}>{textMessage}</h4>
             </Row>
             <Row className="justify-content-center">
                 <Card style={{ marginTop: "20px", marginBottom: "20px" }}>
@@ -478,7 +491,7 @@ function getTableTask(TRow, TColumn, matrixToDraw, handleClick) {
                 </Card>
             </Row>
             <Row className="justify-content-center">
-                <h4 style={{ textAlign: "center" }}>{VISUAL_PATTERN_TEXT_START_PRESS_SPACE}</h4>
+                <h4 style={{ textAlign: "center" }}>{startPressSpaceMessage}</h4>
             </Row>
         </>);
 }

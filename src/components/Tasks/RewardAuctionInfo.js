@@ -9,12 +9,14 @@ import {
     AUCTION_REWARD_BONUS_MESSAGE
 } from '../../helpers/constants';
 
+import { getAppMessage } from '../../helpers/utils';
+
 class RewardAuctionInfo extends React.Component {
     render() {
         return (
             <Container fluid="md">
                 <Row className="justify-content-md-center" style={{ padding: "20px" }}>
-                    {totalReward(this.props.data, this.props.sex, this.props.reward)}
+                    {totalReward(this.props.data, this.props.sex, this.props.reward, this.props.appMessages)}
                 </Row>
             </Container>
         )
@@ -26,20 +28,29 @@ class RewardAuctionInfo extends React.Component {
  * @param {*} data 
  * @param {*} sex 
  */
-function totalReward(data, sex, reward) {
+function totalReward(data, sex, reward, appMessages) {
     const savedMoney = data
         .map(li => (li.priceStart - li.bid))
         .reduce((sum, val) => sum + val, 0);
 
-    const textToDisplay = (sex === FEMALE_VALUE) ? getFormattedText(AUCTION_REWARD_RESULT_MESSAGE_FEMALE(savedMoney)) :
-        getFormattedText(AUCTION_REWARD_RESULT_MESSAGE_MALE(savedMoney))
-
     const threshold = parseInt(reward.threshold)
+
+    let textToDisplay = ""
+    if (sex === FEMALE_VALUE) {
+        let tmp = getAppMessage(AUCTION_REWARD_RESULT_MESSAGE_FEMALE, appMessages).replace("$(result)", savedMoney)
+        textToDisplay = getFormattedText(tmp)
+    } else {
+        let tmp = getAppMessage(AUCTION_REWARD_RESULT_MESSAGE_MALE, appMessages).replace("$(result)", savedMoney)
+        textToDisplay = getFormattedText(tmp)
+    }
+
+    // ${result}
 
     let bonus = ""
 
     if (savedMoney >= threshold) {
-        bonus = AUCTION_REWARD_BONUS_MESSAGE(reward.bonusPoint)
+        let tmp = getAppMessage(AUCTION_REWARD_BONUS_MESSAGE, appMessages)
+        bonus = tmp.replace("$(bonus)", reward.bonusPoint)
     }
 
     return (<div style={{ textAlign: "justify" }}>

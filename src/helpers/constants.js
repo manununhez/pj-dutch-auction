@@ -1,6 +1,8 @@
 export const LIGHT_GRAY = "#e9ecef"; //lighter
 export const WHITE = "white";
 export const BLUE = "#123abc";
+export const GREEN = "green";
+export const RED = "red";
 
 export const TEXT_EMPTY = "";
 
@@ -191,6 +193,7 @@ export const USER_GENERAL_DATA_SHEETNAME = "usergeneraldata";
 export const VERSIONS_SHEETNAME = "input-versions";
 export const INPUT_ALL_SHEETNAME = "input-all";
 export const INPUT_ALL_WARMUP_SHEETNAME = "input-all-warmup";
+export const INPUT_APP_MESSAGES = "input-app-messages";
 export const APP_TEXT_FEMALE_SHEETNAME = "input-text-female";
 export const APP_TEXT_MALE_SHEETNAME = "input-text-male";
 export const USER_AUCTION_BIDS_SHEETNAME = "auction-bids"
@@ -200,32 +203,31 @@ export const PSFORM_SHEETNAME = "input-psychologyform";
 export const INPUT_REWARD_SHEETNAME = "input-reward";
 
 
-//Error
-export const ERROR_1 = "Prosimy o dokonanie wyboru.";//"You have to select a choice first!"
-export const ERROR_2 = "Wiek powinien mieścić się w zakresie od 19 do 76 lat.";//Age should be in range 19 to 76 years!
-export const ERROR_3 = "Liczba lat formalnej edukacji powinna mieścić się w zakresie od 11 do 18 lat.";//Years of formal education should be in range 10 to 18 years! 
-export const ERROR_5 = "Pole Wiek nie może pozostać puste.";//Age field cannot be empty
-export const ERROR_6 = "Pole Lata formalnej edukacji nie może pozostać puste.";//Years Education field cannot be empty!
-export const ERROR_14 = "Pole Sex nie może pozostać puste.";//Age field cannot be empty
-export const ERROR_7 = "Pole Zawód nie może pozostać puste.";//Profession field cannot be empty!
-export const ERROR_8 = "Proszę najpierw ocenić wszystkie opcje.";//Please rate all the options first!
-export const ERROR_9 = "Najpierw należy odpowiedzieć na wszystkie pytania.";//You need to complete the questions first!
-export const ERROR_10 = "Proszę upewnić się, że odpowiedź na pytanie została zaznaczona.";//Please verify all the questions were checked
-export const ERROR_11 = "Proszę wybrać poziom wykształcenia.";//You need to select an education level
-export const ERROR_12 = "Przepraszamy, ale niestety nie spełniasz wszystkich warunków uczestnictwa w badaniu lub przekroczona jest liczbę osób, która może wziąć w nim udział."; //We are sorry, but unfortunately you do not meet all the conditions for participating in the study or the number of eligible participants is already exceeded
-export const ERROR_13 = "Proszę najpierw wybrać conajmniej jedną opcję.";//Please rate all the options first!
-export const REWARD_BONUS_MESSAGE = (bonus) => { return `W nagrodę otrzymasz dodatkowo ${bonus} punktów. Dodatkowe punkty zostaną doliczone do Twojego konta za kilka tygodni po zakończeniu cyklu badań.`};
-export const REWARD_RESULT_MESSAGE = (result) => { return `Udało Ci się poprawnie rozwiązać ${result}% zadań dotyczących wyboru pralek.` } //`You’ve solved ${result}% decision tasks correctly.`
-export const AUCTION_FOOTER_TEXT = "Naciśnij SPACJĘ, aby rozpocząć aukcję."
-export const AUCTION_GAIN_TEXT = (value) => { return `Brawo, udało Ci się zarezerwować ten pokój.<br><br>Zaoszczędziłeś ${value} zł. <br><br> Naciśnij ENTER, aby przejść do następnej aukcji.` };
-export const AUCTION_LOSE_TEXT = (value) => { return `Ktoś inny zarezerwował ten pokój. Musisz zapłacić pełną cenę:  ${value} zł. <br><br> Naciśnij ENTER, aby przejść do następnej aukcji.` };
-export const AUCTION_REWARD_RESULT_MESSAGE_FEMALE = (result) => { return `Dziękujemy, to już koniec tego zadania. W sumie zaoszczędziłaś ${result} zł.<br><br> Pozostań proszę na miejscu, eksperymentator zaraz do Ciebie podejdzie.` }
-export const AUCTION_REWARD_RESULT_MESSAGE_MALE = (result) => { return `Dziękujemy, to już koniec tego zadania. W sumie zaoszczędziłeś ${result} zł.<br><br> Pozostań proszę na miejscu, eksperymentator zaraz do Ciebie podejdzie.` }
-export const AUCTION_REWARD_BONUS_MESSAGE = (bonus) => { return `W nagrodę otrzymasz dodatkowo ${bonus} punktów. Dodatkowe punkty zostaną doliczone do Twojego konta za kilka tygodni po zakończeniu cyklu badań.`};
-export const VISUAL_PATTERN_TEXT2 = "Spróbuj odtworzyć wzór wyświetlony na poprzednim ekranie. Zaznaczasz i odznaczasz pola klikając na nie lewym przyciskiem myszy.";
-export const VISUAL_PATTERN_TEXT_START_PRESS_SPACE = "Naciśnij spację, aby przesłać swoje rozwiązanie.";
-export const VISUAL_PATTERN_RESULTS_CORRECT = "Brawo! Udało Ci się poprawnie zaznaczyć wszystkie pola.";
-export const VISUAL_PATTERN_RESULTS_FAILED = "Niestety nie udało Ci się poprawnie zaznaczyć wszystkich pól.";
-export const VISUAL_PATTERN_RESULTS_PRESS_SPACE = "Naciśnij spację, aby przejść do kolejnej planszy.";
-export const SESSION_TIMEOUT_MESSAGE = "Z powodu upływu czasu sesja została zamknięta";
-export const AUCTION_EXHAUSTED_QUOTA_MESSAGE = "No more space for Scenarios participants!";
+//General App messages KEYS
+export const REWARD_RESULT_MESSAGE = "REWARD_RESULT_MESSAGE";
+export const REWARD_BONUS_MESSAGE = "REWARD_BONUS_MESSAGE";
+export const AUCTION_GAIN_TEXT = "AUCTION_GAIN_TEXT"
+export const AUCTION_LOSE_TEXT = "AUCTION_LOSE_TEXT"
+export const AUCTION_FOOTER_TEXT = "AUCTION_FOOTER_TEXT"
+export const AUCTION_EXHAUSTED_QUOTA_MESSAGE = "AUCTION_EXHAUSTED_QUOTA_MESSAGE";
+export const AUCTION_REWARD_BONUS_MESSAGE = "AUCTION_REWARD_BONUS_MESSAGE";
+export const AUCTION_REWARD_RESULT_MESSAGE_MALE = "AUCTION_REWARD_RESULT_MESSAGE_MALE"
+export const AUCTION_REWARD_RESULT_MESSAGE_FEMALE = "AUCTION_REWARD_RESULT_MESSAGE_FEMALE"
+export const ERROR_1 = "ERROR_1";//"You have to select a choice first!"
+export const ERROR_5 = "ERROR_5";//Age field cannot be empty
+export const ERROR_6 = "ERROR_6";//Years Education field cannot be empty!
+export const ERROR_7 = "ERROR_7";//Profession field cannot be empty!
+export const ERROR_8 = "ERROR_8";//Please rate all the options first!
+export const ERROR_9 = "ERROR_9";//You need to complete the questions first!
+export const ERROR_10 = "ERROR_10";//Please verify all the questions were checked
+export const ERROR_11 = "ERROR_11";//You need to select an education level
+export const ERROR_12 = "ERROR_12"; //We are sorry, but unfortunately you do not meet all the conditions for participating in the study or the number of eligible participants is already exceeded
+export const ERROR_13 = "ERROR_13";//Please rate all the options first!
+export const ERROR_14 = "ERROR_14";//Age field cannot be empty
+export const SESSION_TIMEOUT_MESSAGE = "SESSION_TIMEOUT_MESSAGE";
+export const VISUAL_PATTERN_RESULTS_PRESS_SPACE = "VISUAL_PATTERN_RESULTS_PRESS_SPACE";
+export const VISUAL_PATTERN_RESULTS_FAILED = "VISUAL_PATTERN_RESULTS_FAILED";
+export const VISUAL_PATTERN_RESULTS_CORRECT = "VISUAL_PATTERN_RESULTS_CORRECT";
+export const VISUAL_PATTERN_TEXT_START_PRESS_SPACE = "VISUAL_PATTERN_TEXT_START_PRESS_SPACE";
+export const VISUAL_PATTERN_TEXT2 = "VISUAL_PATTERN_TEXT2";
+

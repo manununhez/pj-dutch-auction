@@ -378,6 +378,36 @@ export function fetchRewardData(callback) {
         });
 }
 
+/**
+ * Load reward info data from the spreadsheet
+ * @param {*} callback 
+ */
+export function fetchAppGeneralMessages(callback) {
+
+    let spreadsheetName = constant.INPUT_APP_MESSAGES;
+    let row = "A2";
+    let column = "B";
+
+    get(fetch_sheet_url, { spreadSheetName: spreadsheetName, column: row, row: column })
+        .then((response) => {
+            const data = response.rows;
+            let result = data.map((version, i) => {
+
+                const indexKey = 0
+                const indexValue = 1
+
+                return {
+                    key: version[indexKey],
+                    value: version[indexValue]
+                };
+            });
+
+            callback({ result });
+        }, (response) => {
+            callback(false, response.result.error);
+        });
+}
+
 
 /**
  * Write results to GSheets

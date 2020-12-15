@@ -15,8 +15,12 @@ import {
     BID_STATE_NOT_STARTED,
     BID_STATE_RUNNING,
     BID_STATE_FINISHED,
-    AUCTION_FOOTER_TEXT
+    AUCTION_FOOTER_TEXT,
+    GREEN,
+    RED
 } from '../../../helpers/constants';
+
+import { getAppMessage } from '../../../helpers/utils';
 
 import "./AuctionTask.css";
 
@@ -171,14 +175,21 @@ class AuctionTask extends React.Component {
 
         const hotelName = this.props.data[counterAuction].hotelName
         const hotelDescription = this.props.data[counterAuction].hotelDescription
+        const appMessages = this.props.appMessages
+
+        const AUCTION_FOOTER_TEXT_MESSAGE = getAppMessage(AUCTION_FOOTER_TEXT, appMessages)
+        const AUCTION_GAIN_TEXT_MESSAGE = getAppMessage(AUCTION_GAIN_TEXT, appMessages).replace("$(value)", (priceStart - bid))
+        const AUCTION_LOSE_TEXT_MESSAGE = getAppMessage(AUCTION_LOSE_TEXT, appMessages).replace("$(value)", (priceStart))
+
+        const MODAL_BID_TEXT_COLOR = (isBidGain ? GREEN : RED)
+        const AUCTION_AFTER_BID_MESSAGE = isBidGain ? getFormattedText(AUCTION_GAIN_TEXT_MESSAGE) : getFormattedText(AUCTION_LOSE_TEXT_MESSAGE)
+
         return (
             <Container className="themed-container" fluid="xl">
                 <Modal returnFocusAfterClose={modalOpen} isOpen={modalOpen} size="lg" centered={true}>
                     <ModalBody className="modal-body">
-                        <div style={{ color: (isBidGain ? "green" : "red") }}>
-                            {isBidGain ?
-                                getFormattedText(AUCTION_GAIN_TEXT(priceStart - bid))
-                                : getFormattedText(AUCTION_LOSE_TEXT(priceStart))}
+                        <div style={{ color: MODAL_BID_TEXT_COLOR }}>
+                            {AUCTION_AFTER_BID_MESSAGE}
                         </div>
                         <br />
                     </ModalBody>
@@ -206,7 +217,7 @@ class AuctionTask extends React.Component {
                     </Col>
                 </Row>
                 <Row>
-                    {(bidState === BID_STATE_NOT_STARTED) ? <FooterV1 text={AUCTION_FOOTER_TEXT} /> : <></>}
+                    {(bidState === BID_STATE_NOT_STARTED) ? <FooterV1 text={AUCTION_FOOTER_TEXT_MESSAGE} /> : <></>}
                 </Row>
             </Container>
         );
@@ -218,7 +229,7 @@ function getFormattedText(text) { //TODO when FirstTask, we should cache the tex
 
     text.split('<br>').forEach((item, index) => { //replace \n with <br>
         if (item !== "")
-            children.push(<><br /><div className="hotel-description" key={"KEY_"+index}>{item}</div></>)
+            children.push(<><br /><div className="hotel-description" key={"KEY_" + index}>{item}</div></>)
     });
 
     return children;
