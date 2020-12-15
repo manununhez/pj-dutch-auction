@@ -26,9 +26,9 @@ import ThirdTask from "../Tasks/ThirdTask";
 import FourthTask from "../Tasks/FourthTask";
 import FifthTask from "../Tasks/FifthTask";
 import FinalTask from "../Tasks/FinalTask";
-import Instruction from "../Tasks/Instruction"
+import Instruction from "../Tasks/Instruction/Instruction"
 import UserForm from "../Tasks/UserForm/UserForm";
-import AuctionTask from "../Tasks/AuctionTask";
+import AuctionTask from "../Tasks/AuctionTask/AuctionTask";
 import VisualPatternTask from "../Tasks/VisualPatternTask";
 import VisualPatternDemoTask from "../Tasks/VisualPatternDemoTask";
 import PSForm from "../Tasks/PSForm";
@@ -2365,11 +2365,11 @@ function getTextForCurrentScreen(inputTextInstructions, screen) { //TODO when Fi
     let children = inputTextInstructions
         .filter((instruction) => instruction.screen === screen)
         .map((instruction) => {
-            return instruction.text.split('\\n').map(function (item, key) { //replace \n with <br>
-                return (
-                    getFontSize(item, instruction.size, key + "_" + screen)
-                )
+            let txtFormatted = instruction.text.split('\\n').map(function (item, key) { //replace \n with <br> 
+                return (<>{item}<br /></>)
             })
+
+            return getFontSize(txtFormatted, instruction.size)
         });
 
     return children;
@@ -2381,34 +2381,26 @@ function getTextForCurrentScreen(inputTextInstructions, screen) { //TODO when Fi
  * @param {*} fontSize 
  * @param {*} key 
  */
-function getFontSize(item, fontSize, key) {
-    let children = [];
-
+function getFontSize(item, fontSize) {
     if (item !== constant.TEXT_EMPTY) {
         switch (fontSize) {
             case constant.FONT_SIZE_HEADING1:
-                children.push(<div key={key} style={{ textAlign: "justify" }}><h1>{item}</h1><br /></div>)
-                break;
+                return (<div className="instr-h1">{item}</div>)
             case constant.FONT_SIZE_HEADING2:
-                children.push(<div key={key} style={{ textAlign: "justify" }}><h2>{item}</h2><br /></div>)
-                break;
+                return (<div className="instr-h2">{item}</div>)
             case constant.FONT_SIZE_HEADING3:
-                children.push(<div key={key} style={{ textAlign: "justify" }}><h3>{item}</h3><br /></div>)
-                break;
+                return (<div className="instr-h3">{item}</div>)
             case constant.FONT_SIZE_HEADING4:
-                children.push(<div key={key} style={{ textAlign: "justify" }}><h4>{item}</h4><br /></div>)
-                break;
+                return (<div className="instr-h4">{item}</div>)
             case constant.FONT_SIZE_HEADING5:
-                children.push(<div key={key} style={{ textAlign: "justify" }}><h5>{item}</h5><br /></div>)
-                break;
+                return (<div className="instr-h5">{item}</div>)
             case constant.FONT_SIZE_HEADING6:
-                children.push(<div key={key} style={{ textAlign: "justify" }}><h6>{item}</h6><br /></div>)
-                break;
+                return (<div className="instr-h6">{item}</div>)
             default:
+                return (<div className="instr-h3">{item}</div>)
         }
-    }
 
-    return children;
+    }
 }
 
 export default Experiment;

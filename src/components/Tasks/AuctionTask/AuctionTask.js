@@ -1,6 +1,6 @@
 import React from "react";
 import {
-    Container, Row, Col, Media, Modal, ModalHeader
+    Container, Row, Col, Media, Modal, ModalBody
 } from "reactstrap";
 
 import {
@@ -16,11 +16,11 @@ import {
     BID_STATE_RUNNING,
     BID_STATE_FINISHED,
     AUCTION_FOOTER_TEXT
-} from '../../helpers/constants';
+} from '../../../helpers/constants';
 
 import "./AuctionTask.css";
 
-import FooterV1 from "../Footers/FooterV1.0";
+import FooterV1 from "../../Footers/FooterV1.0";
 
 const DEBUG = (process.env.REACT_APP_DEBUG_LOG === "true") ? true : false;
 
@@ -173,24 +173,23 @@ class AuctionTask extends React.Component {
         const hotelDescription = this.props.data[counterAuction].hotelDescription
         return (
             <Container className="themed-container" fluid="xl">
-                <Modal returnFocusAfterClose={modalOpen} isOpen={modalOpen} size="lg" centered={true}
-                    style={{ position: "fixed", top: "30%", left: "45%", transform: "translate(-40%, -40%)" }}>
-                    <ModalHeader style={{ padding: "4em" }}>
-                        <div style={{ textAlign: "center", color: (isBidGain ? "green" : "red") }}>
+                <Modal returnFocusAfterClose={modalOpen} isOpen={modalOpen} size="lg" centered={true}>
+                    <ModalBody className="modal-body">
+                        <div style={{ color: (isBidGain ? "green" : "red") }}>
                             {isBidGain ?
                                 getFormattedText(AUCTION_GAIN_TEXT(priceStart - bid))
                                 : getFormattedText(AUCTION_LOSE_TEXT(priceStart))}
                         </div>
                         <br />
-                    </ModalHeader>
+                    </ModalBody>
                 </Modal>
-                <Row className="justify-content-md-center" style={{ padding: "20px" }}>
-                    <h2>{hotelName}</h2>
+                <Row className="justify-content-md-center">
+                    <div className="hotel-name">{hotelName}</div>
                 </Row>
                 <Row>
                     <Col xs="3" style={{ textAlign: "center" }}>
                         <div className="strikethrough">{priceStart}</div>
-                        <div style={{ display: "inline-block", fontSize: "27pt", fontWeight: "bold" }}>KUP TERAZ ZA</div>
+                        <div className="title">KUP TERAZ ZA</div>
                         <div className="auction-bid">{bid}</div>
                     </Col>
                     <Col xs="9">
@@ -198,10 +197,10 @@ class AuctionTask extends React.Component {
                             {getFormattedText(hotelDescription)}
                         </Row>
                         <Row className="justify-content-md-center">
-                            <div style={{ display: "flex", marginTop: "1em", marginBottom: "1em" }}>
-                                <Media object src={imgA} style={{ height: "150px", paddingLeft: "1em", paddingRight: "0.5em" }} alt="Generic placeholder image" />
-                                <Media object src={imgB} style={{ height: "150px", paddingLeft: "0.5em", paddingRight: "0.5em" }} alt="Generic placeholder image" />
-                                <Media object src={imgC} style={{ height: "150px", paddingLeft: "0.5em", paddingRight: "1em" }} alt="Generic placeholder image" />
+                            <div className="img-container">
+                                <Media object src={imgA} className="img-left" />
+                                <Media object src={imgB} className="img-middle" />
+                                <Media object src={imgC} className="img-right" />
                             </div>
                         </Row>
                     </Col>
@@ -219,7 +218,7 @@ function getFormattedText(text) { //TODO when FirstTask, we should cache the tex
 
     text.split('<br>').forEach(item => { //replace \n with <br>
         if (item !== "")
-            children.push(<><br /><h4>{item}</h4></>)
+            children.push(<><br /><div className="hotel-description">{item}</div></>)
     });
 
     return children;

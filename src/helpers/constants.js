@@ -161,6 +161,8 @@ export const FIFTH_TASK_SCREEN = "FifthTask";
 export const FINAL_TASK_SCREEN = "FinalTask";
 export const INSTRUCTION_SCREEN = "Instruction";
 export const SECOND_INSTRUCTION_SCREEN = "SecondInstruction";
+export const AUCTION_INSTRUCTION_DEMO_SCREEN = "AuctionInstructionDemo";
+export const AUCTION_INSTRUCTION_SCREEN = "AuctionInstruction";
 export const AUCTION_TASK_SCREEN = "AuctionTask";
 export const AUCTION_TASK_DEMO_SCREEN = "AuctionDemoTask";
 export const PSFORM_SCREEN = "PsychologyForm";
@@ -216,7 +218,6 @@ export const AUCTION_GAIN_TEXT = (value) => { return `Brawo, udało Ci się zare
 export const AUCTION_LOSE_TEXT = (value) => { return `Ktoś inny zarezerwował ten pokój. Musisz zapłacić pełną cenę:  ${value} zł. <br><br> Naciśnij ENTER, aby przejść do następnej aukcji.` };
 export const AUCTION_REWARD_RESULT_MESSAGE_FEMALE = (result) => { return `Dziękujemy, to już koniec tego zadania. W sumie zaoszczędziłaś ${result} zł.<br><br> Pozostań proszę na miejscu, eksperymentator zaraz do Ciebie podejdzie.` }
 export const AUCTION_REWARD_RESULT_MESSAGE_MALE = (result) => { return `Dziękujemy, to już koniec tego zadania. W sumie zaoszczędziłeś ${result} zł.<br><br> Pozostań proszę na miejscu, eksperymentator zaraz do Ciebie podejdzie.` }
-export const VISUAL_PATTERN_TEXT1 = "Naciśnij spację, aby przejść do kolejnej planszy.";
 export const VISUAL_PATTERN_TEXT2 = "Spróbuj odtworzyć wzór wyświetlony na poprzednim ekranie. Zaznaczasz i odznaczasz pola klikając na nie lewym przyciskiem myszy.";
 export const VISUAL_PATTERN_TEXT_START_PRESS_SPACE = "Naciśnij spację, aby przesłać swoje rozwiązanie.";
 export const VISUAL_PATTERN_RESULTS_CORRECT = "Brawo! Udało Ci się poprawnie zaznaczyć wszystkie pola.";

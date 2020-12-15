@@ -82,7 +82,7 @@ function getQuestions(data, questions, action, selectedAnswer, validateInput) {
 
             return (
                 <Card>
-                    <CardBody style={{ paddingLeft: '20px', paddingRight: '20px' }} key={data.questionCode}>{questionScheme}</CardBody>
+                    <CardBody style={{ padding: '2em' }} key={data.questionCode}>{questionScheme}</CardBody>
                 </Card>);// marginTop: '20px',
         });
 
@@ -98,20 +98,22 @@ function getQuestions(data, questions, action, selectedAnswer, validateInput) {
  */
 function getMultipleOptions(answers, questionCode, action, selectedAnswer) {
     let children = answers.map((answer) => {
-        return <Col><FormGroup>
-            <Label check>
-                <Input type="radio"
-                    id={questionCode}
-                    name="radio-button-demo"
-                    value={answer}
-                    onChange={action}
-                    checked={isSelected(questionCode, selectedAnswer, answer)} />{' '}
-                <h5 style={{ margin: '0px', alignSelf: 'center' }}>{answer}</h5>
-            </Label>
-        </FormGroup></Col>
+        return (
+            <FormGroup check>
+                <Label>
+                    <Input type="radio"
+                        id={questionCode}
+                        name="radio-button-demo"
+                        value={answer}
+                        onChange={action}
+                        checked={isSelected(questionCode, selectedAnswer, answer)} />{' '}
+                    {answer}
+                </Label>
+            </FormGroup>
+        )
     });
 
-    return (children)
+    return (<Col lg="auto" style={{ marginTop: '1.5em' }}>{children}</Col>)
 }
 
 /**

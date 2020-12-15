@@ -21,7 +21,6 @@ import {
     TILE_LEFT,
     SPACE_KEY_CODE,
     EVENT_KEY_DOWN,
-    VISUAL_PATTERN_TEXT1,
     VISUAL_PATTERN_TEXT2,
     VISUAL_PATTERN_TEXT_START_PRESS_SPACE,
     VISUAL_PATTERN_RESULTS_CORRECT,
@@ -278,10 +277,10 @@ class VisualPatternTask extends React.Component {
         return (
             <>
                 {showInitMessage ?
-                    <h1 style={{
+                    <h2 style={{
                         position: "fixed", top: "40%", left: "45%", textAlign: "center",
                         transform: "translate(-40%, -40%)"
-                    }}>{VISUAL_PATTERN_TEXT1}</h1> :
+                    }}>{VISUAL_PATTERN_RESULTS_PRESS_SPACE}</h2> :
                     displayTable(this.state, this.handleClick)}
             </>
         );
