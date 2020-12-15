@@ -148,41 +148,19 @@ class Experiment extends Component {
             modalOpen: false
         };
 
-        //page event handlers
-        this.handleKeyDownEvent = this._handleKeyDownEvent.bind(this);
-        this.handleWindowClose = this._handleWindowClose.bind(this)
-
         //session timer
         this.idleTimer = null
-        this.onAction = this._onAction.bind(this)
-        this.onActive = this._onActive.bind(this)
-        this.onIdle = this._onIdle.bind(this)
-
-        //Components handlers (manage and control data from respective components)
-        this.formHandler = this._formHandler.bind(this)
-        this.firstTaskHandler = this._firstTaskHandler.bind(this)
-        this.firstTaskDemoHandler = this._firstTaskDemoHandler.bind(this)
-        this.secondTaskHandler = this._secondTaskHandler.bind(this)
-        this.thirdTaskHandler = this._thirdTaskHandler.bind(this)
-        this.fourthTaskHandler = this._fourthTaskHandler.bind(this)
-        this.fifthTaskHandler = this._fifthTaskHandler.bind(this)
-        this.finalTaskHandler = this._finalTaskHandler.bind(this)
-        this.psFormHandler = this._psFormHandler.bind(this)
-        this.auctionTaskHandler = this._auctionTaskHandler.bind(this)
-        this.auctionTaskDemoHandler = this._auctionTaskDemoHandler.bind(this)
-        this.visualPatternTaskHandler = this._visualPatternTaskHandler.bind(this)
-        this.visualPatternDemoTaskHandler = this._visualPatternDemoTaskHandler.bind(this)
 
         if (DEBUG) console.log(`ARIADNA_REDIRECT_REJECT:${ARIADNA_REDIRECT_REJECT}`);
         if (DEBUG) console.log(`ARIADNA_REDIRECT_ACCEPTED:${ARIADNA_REDIRECT_ACCEPTED}`);
         if (DEBUG) console.log(`Debug:${DEBUG}`);
     }
 
-    _onAction(e) {
+    onAction = (e) => {
         // if(DEBUG) console.log('user did something', e)
     }
 
-    _onActive(e) {
+    onActive = (e) => {
         // if(DEBUG) console.log('user is active', e)
         // if(DEBUG) console.log('time remaining', this.idleTimer.getRemainingTime())
 
@@ -192,7 +170,7 @@ class Experiment extends Component {
         }
     }
 
-    _onIdle(e) {
+    onIdle = (e) => {
         // if(DEBUG) console.log('user is idle', e)
         // if(DEBUG) console.log('last active', this.idleTimer.getLastActiveTime())
     }
@@ -791,7 +769,7 @@ class Experiment extends Component {
      * UserForm component (UserForm.js)
      * @param {*} evt 
      */
-    _formHandler(formData) {
+    formHandler = (formData) => {
         const { generalOutput, userID } = this.state
         const now = Date.now();
 
@@ -836,7 +814,7 @@ class Experiment extends Component {
      * FirstTask component (FirstTask.js)
      * @param {*} selectedNumber 
      */
-    _firstTaskHandler(selectedNumber) {
+    firstTaskHandler = (selectedNumber) => {
         const { currentScreenNumber, inputNavigation, inputFirstTask, outputFirstTask,
             generalOutput, userID } = this.state;
         const { questionID, questionNumber, selectedAnswer, isCorrectAnswer } = outputFirstTask;
@@ -885,7 +863,7 @@ class Experiment extends Component {
      * FirstTask component (FirstTask.js)
      * @param {*} selectedNumber 
      */
-    _firstTaskDemoHandler(selectedNumber) {
+    firstTaskDemoHandler = (selectedNumber) => {
         const { currentScreenNumber, inputNavigation, inputFirstTaskDemo, outputFirstTaskDemo,
             userID, generalOutput } = this.state;
         const { questionID, questionNumber, selectedAnswer, isCorrectAnswer } = outputFirstTaskDemo;
@@ -936,7 +914,7 @@ class Experiment extends Component {
      * @param {*} rating 
      * @param {*} id 
      */
-    _secondTaskHandler(selectedRatings) {
+    secondTaskHandler = (selectedRatings) => {
         if (DEBUG) console.log(selectedRatings)
 
         const { generalOutput, userID } = this.state
@@ -982,7 +960,7 @@ class Experiment extends Component {
      * @param {*} rating 
      * @param {*} id 
      */
-    _thirdTaskHandler(brand) {
+    thirdTaskHandler = (brand) => {
         if (DEBUG) console.log(`Brand:${brand}`)
         const { generalOutput, userID } = this.state
         const now = Date.now();
@@ -1027,7 +1005,7 @@ class Experiment extends Component {
      * @param {*} rating 
      * @param {*} id 
      */
-    _fourthTaskHandler(selectedRatings) {
+    fourthTaskHandler = (selectedRatings) => {
         if (DEBUG) console.log(selectedRatings)
         const { generalOutput, userID } = this.state
         const now = Date.now();
@@ -1066,7 +1044,7 @@ class Experiment extends Component {
         });
     }
 
-    _fifthTaskHandler(selectValue) {
+    fifthTaskHandler = (selectValue) => {
 
         if (DEBUG) console.log(selectValue)
         const { generalOutput, userID } = this.state
@@ -1111,7 +1089,7 @@ class Experiment extends Component {
      * FinalTask component (FinalTask.js)
      * @param {*} selectedAnswer 
      */
-    _finalTaskHandler(selectedAnswer) {
+    finalTaskHandler = (selectedAnswer) => {
         const { inputNavigation, currentScreenNumber, outputFinalTask,
             generalOutput, userID } = this.state;
         const now = Date.now();
@@ -1164,7 +1142,7 @@ class Experiment extends Component {
  * PSFORM component (PSForm.js)
  * @param {*} evt 
  */
-    _psFormHandler(evt) {
+    psFormHandler = (evt) => {
         const { outputPSForm, generalOutput, userID } = this.state;
         const now = Date.now();
 
@@ -1229,7 +1207,7 @@ class Experiment extends Component {
      * 
      * @param {*} results 
      */
-    _auctionTaskHandler(results) {
+    auctionTaskHandler = (results) => {
         if (DEBUG) console.log(results)
         const { generalOutput, userID, outputAuctionTask } = this.state;
         const now = Date.now();
@@ -1260,7 +1238,7 @@ class Experiment extends Component {
      * Manage results comming from VisualPattern component (VisualPatternTask.js)
      * @param {*} results 
      */
-    _visualPatternTaskHandler(results) {
+    visualPatternTaskHandler = (results) => {
         if (DEBUG) console.log(results)
 
         const { generalOutput, userID } = this.state;
@@ -1288,7 +1266,7 @@ class Experiment extends Component {
      * Manage results comming from VisualPatternDemo component (VisualPatternDemoTask.js)
      * @param {*} results 
      */
-    _visualPatternDemoTaskHandler(results) {
+    visualPatternDemoTaskHandler = (results) => {
         if (DEBUG) console.log(results)
         const { generalOutput, userID } = this.state;
         const now = Date.now();
@@ -1315,7 +1293,7 @@ class Experiment extends Component {
      * 
      * @param {*} results 
      */
-    _auctionTaskDemoHandler(results) {
+    auctionTaskDemoHandler = (results) => {
         if (DEBUG) console.log(results)
         const { generalOutput, userID, outputAuctionDemoTask } = this.state;
         const now = Date.now();
@@ -2075,7 +2053,7 @@ class Experiment extends Component {
      * Manage keyboard user interactions
      * @param {*} event 
      */
-    _handleKeyDownEvent(event) {
+    handleKeyDownEvent = (event) => {
         if (event.keyCode === constant.SPACE_KEY_CODE) { //Transition between screens
             this._validatePressedSpaceKeyToNextPage()
         } else if (event.keyCode === constant.ENTER_KEY_CODE) {
@@ -2087,7 +2065,7 @@ class Experiment extends Component {
      * Manage the state when the browser window is closing
      * @param {*} event 
      */
-    _handleWindowClose(event) {
+    handleWindowClose = (event) => {
         if (this.state.showAlertWindowsClosing) { //we redirect without showing closing window alert
             let message = "Alerted Browser Close";
             event.preventDefault()
@@ -2133,16 +2111,14 @@ class Experiment extends Component {
     render() {
         const { progressBarNow, loading, loadingSyncData, showPagination, page } = this.state;
         const timeout = 1000 * 60 * (60 * 3); //3horas
+
         return (
             <main ref="main">
                 <div>
                     <Progress value={progressBarNow} />
                 </div>
                 <section className="section-sm" style={{ marginTop: "20px", marginBottom: "20px", minHeight: "500px" }}>
-                    {changePages(this.state, this.formHandler, this.firstTaskHandler, this.firstTaskDemoHandler,
-                        this.secondTaskHandler, this.thirdTaskHandler, this.fourthTaskHandler, this.fifthTaskHandler,
-                        this.finalTaskHandler, this.psFormHandler, this.auctionTaskHandler, this.auctionTaskDemoHandler,
-                        this.visualPatternTaskHandler, this.visualPatternDemoTaskHandler)}
+                    {changePages(this.state, this)}
                 </section>
                 <div>
                     <IdleTimer
@@ -2221,9 +2197,7 @@ function isFooterShownInCurrentScreen(state) {
  * @param {*} secondTaskHandler 
  * @param {*} finalTaskHandler 
  */
-function changePages(state, formHandler, firstTaskHandler, firstTaskDemoHandler,
-    secondTaskHandler, thirdTaskHandler, fourthTaskHandler, fifthTaskHandler, finalTaskHandler, psFormHandler,
-    auctionTaskHandler, auctionTaskDemoHandler, visualPatternTaskHandler, visualPatternDemoTaskHandler) {
+function changePages(state, context) {
 
     const { currentScreenNumber,
         inputNavigation,
@@ -2253,7 +2227,7 @@ function changePages(state, formHandler, firstTaskHandler, firstTaskDemoHandler,
         if (currentScreenNumber < totalLength) { //To prevent keep transition between pages
             if (currentScreen === constant.USER_FORM_SCREEN) {
                 return <UserForm
-                    action={formHandler}
+                    action={context.formHandler}
                     error={error}
                 />;
             } else if (currentScreen.includes(constant.INSTRUCTION_SCREEN)) {
@@ -2264,7 +2238,7 @@ function changePages(state, formHandler, firstTaskHandler, firstTaskDemoHandler,
                 />;
             } else if (currentScreen === constant.FIRST_TASK_SCREEN) {
                 return <FirstTask
-                    action={firstTaskHandler}
+                    action={context.firstTaskHandler}
                     text={text}
                     data={inputFirstTask}
                     result={outputFirstTask}
@@ -2274,7 +2248,7 @@ function changePages(state, formHandler, firstTaskHandler, firstTaskDemoHandler,
                 />;
             } else if (currentScreen === constant.FIRST_TASK_DEMO_SCREEN) {
                 return <FirstTask
-                    action={firstTaskDemoHandler}
+                    action={context.firstTaskDemoHandler}
                     text={text}
                     data={inputFirstTaskDemo}
                     result={outputFirstTaskDemo}
@@ -2283,67 +2257,74 @@ function changePages(state, formHandler, firstTaskHandler, firstTaskDemoHandler,
                     modalOpen={modalOpen}
                 />;
             } else if (currentScreen === constant.REWARD_INFO_SCREEN) {
+                let reward = getRewardDataForCurrentScreen(inputRewardData, constant.REWARD_AUCTION_INFO_SCREEN)
                 return <RewardInfo
                     data={outputFirstTask}
-                    config={inputRewardData}
+                    reward={reward}
                 />;
             } else if (currentScreen === constant.SECOND_TASK_SCREEN) {
                 return <SecondTask
-                    action={secondTaskHandler}
+                    action={context.secondTaskHandler}
                     text={text}
                     error={error}
                 />;
             } else if (currentScreen === constant.THIRD_TASK_SCREEN) {
                 return <ThirdTask
-                    action={thirdTaskHandler}
+                    action={context.thirdTaskHandler}
                     text={text}
                     error={error} />;
             } else if (currentScreen === constant.FOURTH_TASK_SCREEN) {
                 return <FourthTask
-                    action={fourthTaskHandler}
+                    action={context.fourthTaskHandler}
                     text={text}
                     error={error}
                 />;
             } else if (currentScreen === constant.FIFTH_TASK_SCREEN) {
                 return <FifthTask
-                    action={fifthTaskHandler}
+                    action={context.fifthTaskHandler}
                     text={text}
                     error={error}
                 />;
             } else if (currentScreen === constant.FINAL_TASK_SCREEN) {
                 return <FinalTask
-                    action={finalTaskHandler}
+                    action={context.finalTaskHandler}
                     text={text}
                     counter={pageID}
                     error={error}
                 />;//pageID goes from 1 to n, so we need to discount 1 to get the value in the array
             } else if (currentScreen === constant.AUCTION_TASK_SCREEN) {
                 return <AuctionTask
+                    action={context.auctionTaskHandler}
                     imageIndex={0}
                     data={inputAuctionTask}
-                    action={auctionTaskHandler}
                 />;
             } else if (currentScreen === constant.AUCTION_TASK_DEMO_SCREEN) {
                 return <AuctionTask
+                    action={context.auctionTaskDemoHandler}
                     imageIndex={inputAuctionTask.length} //demo image index starts in 30, after the real auctions
                     data={inputAuctionDemoTask}
-                    action={auctionTaskDemoHandler}
                 />;
             } else if (currentScreen === constant.REWARD_AUCTION_INFO_SCREEN) {
+                let reward = getRewardDataForCurrentScreen(inputRewardData, constant.REWARD_AUCTION_INFO_SCREEN)
                 return <RewardAuctionInfo
                     sex={outputFormData.sex}
                     data={outputAuctionTask}
+                    reward={reward}
                 />;
             } else if (currentScreen === constant.VISUAL_PATTERN_SCREEN) {
-                return <VisualPatternTask action={visualPatternTaskHandler} />;
+                return <VisualPatternTask 
+                    action={context.visualPatternTaskHandler} 
+                />;
             } else if (currentScreen === constant.VISUAL_PATTERN_DEMO_SCREEN) {
-                return <VisualPatternDemoTask action={visualPatternDemoTaskHandler} />;
+                return <VisualPatternDemoTask 
+                    action={context.visualPatternDemoTaskHandler}
+                />;
             } else if (currentScreen === constant.PSFORM_SCREEN) {
                 const currentPSForm = inputPSForm[pageID - 1];
                 if (inputPSForm.length > 0) { //if we have received already the input data for psform
                     const textPSForm = getTextForCurrentScreen(inputTextInstructions, currentPSForm.screen);
                     return <PSForm
-                        action={psFormHandler}
+                        action={context.psFormHandler}
                         text={textPSForm}
                         data={currentPSForm}
                         questionsText={inputTextInstructions}
@@ -2354,6 +2335,18 @@ function changePages(state, formHandler, firstTaskHandler, firstTaskDemoHandler,
             }
         }
     }
+}
+
+/**
+ * 
+ * @param {*} inputTextInstructions 
+ * @param {*} screen 
+ */
+function getRewardDataForCurrentScreen(inputRewardData, screen) {
+    let children = inputRewardData
+        .filter((reward) => reward.screen === screen)
+
+    return children[0]
 }
 
 /**
@@ -2399,7 +2392,6 @@ function getFontSize(item, fontSize) {
             default:
                 return (<div className="instr-h3">{item}</div>)
         }
-
     }
 }
 

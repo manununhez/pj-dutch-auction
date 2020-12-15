@@ -13,16 +13,16 @@ class RewardInfo extends React.Component {
         return (
             <Container fluid="md">
                 <Row className="justify-content-md-center" style={{ padding: "20px" }}>
-                {parserResults(this.props.data, this.props.config)}
+                {parserResults(this.props.data, this.props.reward)}
                 </Row>
             </Container>
         )
     };
 }
 
-function parserResults(data, config) {
-    const threshold = parseFloat(config[0].threshold)
-    const bonusPoint = config[0].bonusPoint
+function parserResults(data, reward) {
+    const threshold = parseFloat(reward.threshold)
+    const bonusPoint = reward.bonusPoint
     const totalTasks = parseFloat(data.isCorrectAnswer.length);
     const totalCorrect = parseFloat(data.isCorrectAnswer.filter(item => item).length)
     let result = (totalCorrect / totalTasks) * 100;

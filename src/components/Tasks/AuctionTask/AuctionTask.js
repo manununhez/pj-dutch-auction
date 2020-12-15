@@ -15,7 +15,8 @@ import {
     BID_STATE_NOT_STARTED,
     BID_STATE_RUNNING,
     BID_STATE_FINISHED,
-    AUCTION_FOOTER_TEXT
+    AUCTION_FOOTER_TEXT,
+    AUCTION_REWARD_BONUS_MESSAGE
 } from '../../../helpers/constants';
 
 import "./AuctionTask.css";

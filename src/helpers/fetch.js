@@ -354,17 +354,19 @@ export function fetchRewardData(callback) {
 
     let spreadsheetName = constant.INPUT_REWARD_SHEETNAME;
     let row = "A2";
-    let column = "B";
+    let column = "C";
 
     get(fetch_sheet_url, { spreadSheetName: spreadsheetName, column: row, row: column })
         .then((response) => {
             const data = response.rows;
             let result = data.map((version, i) => {
 
-                const indexThreshold = 0
-                const indexBonusPoints = 1
+                const indexScreen = 0
+                const indexThreshold = 1
+                const indexBonusPoints = 2
 
                 return {
+                    screen: version[indexScreen],
                     threshold: version[indexThreshold],
                     bonusPoint: version[indexBonusPoints]
                 };
