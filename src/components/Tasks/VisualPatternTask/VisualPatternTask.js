@@ -55,7 +55,12 @@ class VisualPatternTask extends React.Component {
             isLevelFinished: false,
             showCompletedTable: true,
             showResults: false,
-            showInitMessage: true
+            showInitMessage: true,
+            resultsPressSpace: getAppMessage(VISUAL_PATTERN_RESULTS_PRESS_SPACE, this.props.appMessages),
+            resultsFailed: getAppMessage(VISUAL_PATTERN_RESULTS_FAILED, this.props.appMessages),
+            resultsCorrect: getAppMessage(VISUAL_PATTERN_RESULTS_CORRECT, this.props.appMessages),
+            startPressSpace: getAppMessage(VISUAL_PATTERN_TEXT_START_PRESS_SPACE, this.props.appMessages),
+            textInstruction: getAppMessage(VISUAL_PATTERN_TEXT2, this.props.appMessages)
         };
 
         this.handleClick = this._handleClick.bind(this);
@@ -275,21 +280,15 @@ class VisualPatternTask extends React.Component {
     }
 
     render() {
-        const { showInitMessage } = this.state;
-        const VISUAL_PATTERN_RESULTS_PRESS_SPACE_MESSAGE = getAppMessage(VISUAL_PATTERN_RESULTS_PRESS_SPACE, this.props.appMessages)
-        const VISUAL_PATTERN_RESULTS_FAILED_MESSAGE = getAppMessage(VISUAL_PATTERN_RESULTS_FAILED, this.props.appMessages)
-        const VISUAL_PATTERN_RESULTS_CORRECT_MESSAGE = getAppMessage(VISUAL_PATTERN_RESULTS_CORRECT, this.props.appMessages)
-        const VISUAL_PATTERN_TEXT_START_PRESS_SPACE_MESSAGE = getAppMessage(VISUAL_PATTERN_TEXT_START_PRESS_SPACE, this.props.appMessages)
-        const VISUAL_PATTERN_TEXT2_MESSAGE = getAppMessage(VISUAL_PATTERN_TEXT2, this.props.appMessages)
+        const { showInitMessage, resultsPressSpace, resultsFailed, resultsCorrect, startPressSpace, textInstruction } = this.state;
 
         return (
             <>
                 {showInitMessage ?
-                    <h2 className="pressSpace">{VISUAL_PATTERN_RESULTS_PRESS_SPACE_MESSAGE}</h2> :
-                    displayTable(this.state, this.handleClick, VISUAL_PATTERN_RESULTS_PRESS_SPACE_MESSAGE,
-                        VISUAL_PATTERN_RESULTS_FAILED_MESSAGE, VISUAL_PATTERN_RESULTS_CORRECT_MESSAGE,
-                        VISUAL_PATTERN_TEXT_START_PRESS_SPACE_MESSAGE,
-                        VISUAL_PATTERN_TEXT2_MESSAGE)}
+                    <h2 className="pressSpace">{resultsPressSpace}</h2> :
+                    displayTable(this.state, this.handleClick, resultsPressSpace,
+                        resultsFailed, resultsCorrect,
+                        startPressSpace, textInstruction)}
             </>
         );
     }

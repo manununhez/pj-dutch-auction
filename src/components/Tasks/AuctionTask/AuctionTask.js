@@ -42,7 +42,10 @@ class AuctionTask extends React.Component {
             modalOpen: false,
             isBidGain: false,
             bidStartTimestamp: 0,
-            bidStopTimestamp: 0
+            bidStopTimestamp: 0,
+            footerTextMessage: getAppMessage(AUCTION_FOOTER_TEXT, this.props.appMessages),
+            gainText: getAppMessage(AUCTION_GAIN_TEXT, this.props.appMessages),
+            looseText: getAppMessage(AUCTION_LOSE_TEXT, this.props.appMessages)
         };
 
         this.handleKeyDownEvent = this._handleKeyDownEvent.bind(this);
@@ -167,7 +170,7 @@ class AuctionTask extends React.Component {
     }
 
     render() {
-        const { counterAuction, bid, modalOpen, isBidGain, priceStart, bidState } = this.state
+        const { counterAuction, bid, modalOpen, isBidGain, priceStart, bidState, footerTextMessage, gainText, looseText } = this.state
         const counterHotel = counterAuction + 1 + this.props.imageIndex
         const imgA = `http://nielek.home.pl/psychology/pictures/h${counterHotel}a.jpg`
         const imgB = `http://nielek.home.pl/psychology/pictures/h${counterHotel}b.jpg`
@@ -175,11 +178,9 @@ class AuctionTask extends React.Component {
 
         const hotelName = this.props.data[counterAuction].hotelName
         const hotelDescription = this.props.data[counterAuction].hotelDescription
-        const appMessages = this.props.appMessages
 
-        const AUCTION_FOOTER_TEXT_MESSAGE = getAppMessage(AUCTION_FOOTER_TEXT, appMessages)
-        const AUCTION_GAIN_TEXT_MESSAGE = getAppMessage(AUCTION_GAIN_TEXT, appMessages).replace("$(value)", (priceStart - bid))
-        const AUCTION_LOSE_TEXT_MESSAGE = getAppMessage(AUCTION_LOSE_TEXT, appMessages).replace("$(value)", (priceStart))
+        const AUCTION_GAIN_TEXT_MESSAGE = gainText.replace("$(value)", (priceStart - bid))
+        const AUCTION_LOSE_TEXT_MESSAGE = looseText.replace("$(value)", (priceStart))
 
         const MODAL_BID_TEXT_COLOR = (isBidGain ? GREEN : RED)
         const AUCTION_AFTER_BID_MESSAGE = isBidGain ? getFormattedText(AUCTION_GAIN_TEXT_MESSAGE) : getFormattedText(AUCTION_LOSE_TEXT_MESSAGE)
@@ -217,8 +218,8 @@ class AuctionTask extends React.Component {
                     </Col>
                 </Row>
                 <Row>
-                    {(bidState === BID_STATE_NOT_STARTED) ? <FooterV1 text={AUCTION_FOOTER_TEXT_MESSAGE} /> : <></>}
-                </Row>
+                    {(bidState === BID_STATE_NOT_STARTED) ? <FooterV1 text={footerTextMessage} /> : <></>}
+                </Row> 
             </Container>
         );
     }

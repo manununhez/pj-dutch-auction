@@ -1494,9 +1494,10 @@ class Experiment extends Component {
         }
 
         const { inputAppGeneralMessages, outputSecondTask } = this.state
-
-        const ERROR_8 = getAppMessage(constant.ERROR_8, inputAppGeneralMessages)
+        
         if (outputSecondTask.length === 0) { //not results loaded yet
+            const ERROR_8 = getAppMessage(constant.ERROR_8, inputAppGeneralMessages)
+
             data.isValid = false;
             data.showError = true;
             data.textError = ERROR_8;
@@ -1516,9 +1517,10 @@ class Experiment extends Component {
         }
 
         const { outputThirdTask, inputAppGeneralMessages } = this.state;
-        const ERROR_13 = getAppMessage(constant.ERROR_13, inputAppGeneralMessages)
 
         if (outputThirdTask.length === 0) {
+            const ERROR_13 = getAppMessage(constant.ERROR_13, inputAppGeneralMessages)
+
             data.isValid = false;
             data.showError = true;
             data.textError = ERROR_13;
@@ -1538,9 +1540,10 @@ class Experiment extends Component {
         }
 
         const { outputFourthTask, inputAppGeneralMessages } = this.state
-        const ERROR_8 = getAppMessage(constant.ERROR_8, inputAppGeneralMessages)
 
         if (outputFourthTask.length === 0) { //not results loaded yet
+            const ERROR_8 = getAppMessage(constant.ERROR_8, inputAppGeneralMessages)
+
             data.isValid = false;
             data.showError = true;
             data.textError = ERROR_8;
@@ -1560,8 +1563,10 @@ class Experiment extends Component {
         }
 
         const { inputAppGeneralMessages, outputFifthTask } = this.state
-        const ERROR_9 = getAppMessage(constant.ERROR_9, inputAppGeneralMessages)
+
         if (outputFifthTask === constant.TEXT_EMPTY) { //not results loaded yet
+            const ERROR_9 = getAppMessage(constant.ERROR_9, inputAppGeneralMessages)
+
             data.isValid = false;
             data.showError = true;
             data.textError = ERROR_9;
@@ -1623,8 +1628,6 @@ class Experiment extends Component {
      */
     validatePSForm() {
         const { currentScreenNumber, inputNavigation, inputPSForm, inputAppGeneralMessages, outputPSForm } = this.state
-        const ERROR_9 = getAppMessage(constant.ERROR_9, inputAppGeneralMessages)
-        const ERROR_10 = getAppMessage(constant.ERROR_10, inputAppGeneralMessages)
 
         let data = {
             isValid: true,
@@ -1635,6 +1638,8 @@ class Experiment extends Component {
         let currentInputPSForm = inputPSForm[currentPSFormNumber];
 
         if (outputPSForm.length === 0) {
+            const ERROR_9 = getAppMessage(constant.ERROR_9, inputAppGeneralMessages)
+
             data.isValid = false;
             data.textError = ERROR_9;
             data.showError = true;
@@ -1648,6 +1653,8 @@ class Experiment extends Component {
             }
 
             if (!found) {
+                const ERROR_10 = getAppMessage(constant.ERROR_10, inputAppGeneralMessages)
+
                 data.isValid = false;
                 data.textError = ERROR_10;
                 data.showError = true;
