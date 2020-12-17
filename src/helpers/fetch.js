@@ -74,7 +74,7 @@ function save(spreadSheetName, row, column, data, callback) {
     }).then((response) => {
         callback({ response });
     }, function (reason) {
-        callback(false, reason.result.error);
+        callback(false, reason);
     });
 }
 

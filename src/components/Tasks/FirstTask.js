@@ -60,7 +60,7 @@ class FirstTask extends React.Component {
                             </div>
                             : <></>
                         }
-                        <br /><div><h4>{TEXT_FOOTER}</h4></div>
+                        <div style={{ marginTop: "25px" }}><h4>{TEXT_FOOTER}</h4></div>
                     </ModalHeader>
                 </Modal>
                 <Row className="justify-content-center">

@@ -361,11 +361,11 @@ function getTableResults(TRow, TColumn, matrix, matrixResult, matrixCheckResult,
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td style={{ textAlign: '-webkit-center' }}>
+                                    <tr style={{ textAlign: '-webkit-center' }}>
+                                        <td style={{ textAlign: "-moz-center" }}>
                                             {getTableResultsBody(TRow, TColumn, matrix)}
                                         </td>
-                                        <td style={{ textAlign: '-webkit-center' }}>
+                                        <td style={{ textAlign: "-moz-center" }}>
                                             {getTableResultsBody(TRow, TColumn, matrixResult)}
                                         </td>
                                     </tr>
@@ -418,7 +418,7 @@ function getTableResultsBody(TRow, TColumn, matrixToDraw) {
     }
 
     return (
-        <Table responsive bordered size="sm" style={{ width: "50%", marginBottom: "0" }}>
+        <Table responsive bordered size="sm" style={{ width: "auto", marginBottom: "0" }}>
             <tbody>
                 {children}
             </tbody>

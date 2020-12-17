@@ -2405,8 +2405,8 @@ function getTextForCurrentScreen(inputTextInstructions, screen) { //TODO when Fi
     let children = inputTextInstructions
         .filter((instruction) => instruction.screen === screen)
         .map((instruction, index) => {
-            let txtFormatted = instruction.text.split('\\n').map(function (item, key) { //replace \n with <br> 
-                return (<div key={key}>{item}<br /></div>)
+            let txtFormatted = instruction.text.split('\\n').map(function (item, key) { //replace \n with margin bottom to emulate break line
+                return (<div className="instr" key={key}>{item}</div>)
             })
             let key = "KEY_" + txtFormatted.length + "_" + index
 

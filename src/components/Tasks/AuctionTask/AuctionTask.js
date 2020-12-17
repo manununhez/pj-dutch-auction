@@ -189,10 +189,9 @@ class AuctionTask extends React.Component {
             <Container className="themed-container" fluid="xl">
                 <Modal returnFocusAfterClose={modalOpen} isOpen={modalOpen} size="lg" centered={true}>
                     <ModalBody className="modal-body">
-                        <div style={{ color: MODAL_BID_TEXT_COLOR }}>
+                        <div style={{ paddingTop: "25px", color: MODAL_BID_TEXT_COLOR }}>
                             {AUCTION_AFTER_BID_MESSAGE}
                         </div>
-                        <br />
                     </ModalBody>
                 </Modal>
                 <Row className="justify-content-md-center">
@@ -204,7 +203,7 @@ class AuctionTask extends React.Component {
                         <div className="title">KUP TERAZ ZA</div>
                         <div className="auction-bid">{bid}</div>
                     </Col>
-                    <Col xs="9">
+                    <Col xs="8">
                         <Row className="justify-content-md-left">
                             {getFormattedText(hotelDescription)}
                         </Row>
@@ -228,9 +227,9 @@ class AuctionTask extends React.Component {
 function getFormattedText(text) { //TODO when FirstTask, we should cache the text so we dont iterate every time
     let children = []
 
-    text.split('<br>').forEach((item, index) => { //replace \n with <br>
+    text.split('<br>').forEach((item, index) => { //replace \n with margin bottom to emulate break line
         if (item !== "")
-            children.push(<><br /><div className="hotel-description" key={"KEY_" + index}>{item}</div></>)
+            children.push(<><div className="hotel-description" key={"KEY_" + index}>{item}</div></>)
     });
 
     return children;

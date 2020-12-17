@@ -55,7 +55,7 @@ function totalReward(data, sex, reward, appMessages) {
 
     return (<div style={{ textAlign: "justify" }}>
         {textToDisplay}
-        { bonus !== "" ? <><br /><h3>{bonus}</h3></> : <></>}
+        { bonus !== "" ? <><h3 style={{ marginTop:"25px" }}>{bonus}</h3></> : <></>}
     </div>);
 }
 
