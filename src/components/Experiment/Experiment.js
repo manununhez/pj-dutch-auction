@@ -28,6 +28,7 @@ import FinalTask from "../Tasks/FinalTask";
 import Instruction from "../Tasks/Instruction/Instruction"
 import UserForm from "../Tasks/UserForm/UserForm";
 import AuctionTask from "../Tasks/AuctionTask/AuctionTask";
+import AuctionInfo from "../Tasks/AuctionTask/AuctionInfo";
 import VisualPatternTask from "../Tasks/VisualPatternTask/VisualPatternTask";
 import VisualPatternDemoTask from "../Tasks/VisualPatternTask/VisualPatternDemoTask";
 import PSForm from "../Tasks/PSForm";
@@ -1066,6 +1067,10 @@ class Experiment extends Component {
         });
     }
 
+    /**
+     * 
+     * @param {*} selectValue 
+     */
     fifthTaskHandler = (selectValue) => {
 
         if (DEBUG) console.log(selectValue)
@@ -1160,10 +1165,10 @@ class Experiment extends Component {
     }
 
     /**
- * Manage results comming from Psychology questionaries
- * PSFORM component (PSForm.js)
- * @param {*} evt 
- */
+     * Manage results comming from Psychology questionaries
+     * PSFORM component (PSForm.js)
+     * @param {*} evt 
+     */
     psFormHandler = (evt) => {
         const { outputPSForm, generalOutput, userID } = this.state;
         const now = Date.now();
@@ -1257,6 +1262,38 @@ class Experiment extends Component {
     }
 
     /**
+     * 
+     * @param {*} results 
+     */
+    auctionTaskDemoHandler = (results) => {
+        if (DEBUG) console.log(results)
+        const { generalOutput, userID, outputAuctionDemoTask } = this.state;
+        const now = Date.now();
+
+        generalOutput.push({
+            userID: userID,
+            task: constant.AUCTION_TASK_DEMO_SCREEN,
+            data: results,
+            timestamp: now,
+            sync: constant.STATE_NOT_SYNC
+        })
+
+        outputAuctionDemoTask.push(results)
+
+
+        //save results
+        this.setState({
+            outputAuctionDemoTask: outputAuctionDemoTask,
+            generalOutput: generalOutput
+        }, () => {
+            this._checkSyncGeneralData()
+
+            //we simulate a space btn pressed because Auction task already finishes with a space btn pressed
+            this._validatePressedSpaceKeyToNextPage()
+        })
+    }
+
+    /**
      * Manage results comming from VisualPattern component (VisualPatternTask.js)
      * @param {*} results 
      */
@@ -1307,38 +1344,6 @@ class Experiment extends Component {
             generalOutput: generalOutput
         }, () => {
             //we simulate a space btn pressed because VisualPattern already finishes with a space btn pressed
-            this._validatePressedSpaceKeyToNextPage()
-        })
-    }
-
-    /**
-     * 
-     * @param {*} results 
-     */
-    auctionTaskDemoHandler = (results) => {
-        if (DEBUG) console.log(results)
-        const { generalOutput, userID, outputAuctionDemoTask } = this.state;
-        const now = Date.now();
-
-        generalOutput.push({
-            userID: userID,
-            task: constant.AUCTION_TASK_DEMO_SCREEN,
-            data: results,
-            timestamp: now,
-            sync: constant.STATE_NOT_SYNC
-        })
-
-        outputAuctionDemoTask.push(results)
-
-
-        //save results
-        this.setState({
-            outputAuctionDemoTask: outputAuctionDemoTask,
-            generalOutput: generalOutput
-        }, () => {
-            this._checkSyncGeneralData()
-
-            //we simulate a space btn pressed because Auction task already finishes with a space btn pressed
             this._validatePressedSpaceKeyToNextPage()
         })
     }
@@ -1494,7 +1499,7 @@ class Experiment extends Component {
         }
 
         const { inputAppGeneralMessages, outputSecondTask } = this.state
-        
+
         if (outputSecondTask.length === 0) { //not results loaded yet
             const ERROR_8 = getAppMessage(constant.ERROR_8, inputAppGeneralMessages)
 
@@ -1624,6 +1629,33 @@ class Experiment extends Component {
     }
 
     /**
+    * Validate Auction task results
+    */
+    validateAuctionDemoTask() {
+        if (DEBUG) console.log("validateAuctionDemoTask")
+
+        const { outputAuctionDemoTask, inputAuctionDemoTask } = this.state;
+
+        let data = {
+            isValid: false,
+            textError: constant.TEXT_EMPTY,
+            showError: false
+        }
+
+        if (DEBUG) console.log(outputAuctionDemoTask)
+        if (outputAuctionDemoTask.length > 0 && outputAuctionDemoTask.length === inputAuctionDemoTask.length) {
+            data.isValid = true;
+        } else {
+            data.textError = "Finish the task first!";
+            data.showError = true;
+        }
+
+        if (DEBUG) console.log(data)
+
+        return data;
+    }
+
+    /**
      * Validate PS Form questionaries results
      */
     validatePSForm() {
@@ -1664,35 +1696,8 @@ class Experiment extends Component {
     }
 
     /**
-   * Validate Auction task results
-   */
-    validateAuctionDemoTask() {
-        if (DEBUG) console.log("validateAuctionDemoTask")
-
-        const { outputAuctionDemoTask, inputAuctionDemoTask } = this.state;
-
-        let data = {
-            isValid: false,
-            textError: constant.TEXT_EMPTY,
-            showError: false
-        }
-
-        if (DEBUG) console.log(outputAuctionDemoTask)
-        if (outputAuctionDemoTask.length > 0 && outputAuctionDemoTask.length === inputAuctionDemoTask.length) {
-            data.isValid = true;
-        } else {
-            data.textError = "Finish the task first!";
-            data.showError = true;
-        }
-
-        if (DEBUG) console.log(data)
-
-        return data;
-    }
-
-    /**
-  * Validate Visual Pattern task results
-  */
+     * Validate Visual Pattern task results
+     */
     validateVisualPattern() {
         const { outputVisualPattern } = this.state;
 
@@ -1744,7 +1749,15 @@ class Experiment extends Component {
         let totalLength = inputNavigation.length;
 
         if (currentScreenNumber < totalLength) { //To prevent keep transition between pages
-            if (currentScreen === constant.FIRST_TASK_DEMO_SCREEN) {
+
+            console.log("Current Screen:")
+            console.log(currentScreen)
+            if (currentScreen.includes(constant.INSTRUCTION_SCREEN) ||
+                currentScreen === constant.REWARD_INFO_SCREEN ||
+                currentScreen === constant.REWARD_AUCTION_INFO_SCREEN ||
+                currentScreen === constant.AUCTION_TASK_FINISH_SCREEN) {
+                this._goToNextTaskInInputNavigation();
+            } else if (currentScreen === constant.FIRST_TASK_DEMO_SCREEN) {
                 let data = this.validateFirstTaskDemo();
                 if (data.isValid) this._goToNextTaskInInputNavigation();
                 else {
@@ -1768,12 +1781,6 @@ class Experiment extends Component {
                         }
                     });
                 }
-            } else if (currentScreen === constant.REWARD_INFO_SCREEN) {
-                this._goToNextTaskInInputNavigation();
-            } else if (currentScreen === constant.REWARD_AUCTION_INFO_SCREEN) {
-                this._goToNextTaskInInputNavigation();
-            } else if (currentScreen.includes(constant.INSTRUCTION_SCREEN)) {
-                this._goToNextTaskInInputNavigation();
             } else if (currentScreen === constant.SECOND_TASK_SCREEN) {
                 let data = this.validateSecondTask();
                 if (data.isValid) this._goToNextTaskInInputNavigation();
@@ -2020,6 +2027,7 @@ class Experiment extends Component {
         const { currentScreenNumber, inputNavigation, logTimestamp, inputFirstTask,
             inputFirstTaskDemo, showAlertWindowsClosing } = this.state;
 
+        console.log("_goToNextTaskInInputNavigation")
         let currentScreen = inputNavigation[currentScreenNumber].screen;
         let loading = (currentScreen === constant.USER_FORM_SCREEN); //show loading if we are leaving user form, because text is being call
         let now = Date.now();
@@ -2355,6 +2363,12 @@ function changePages(state, context) {
                     data={outputAuctionTask}
                     appMessages={inputAppGeneralMessages}
                     reward={reward}
+                />;
+            } else if (currentScreen === constant.AUCTION_TASK_FINISH_SCREEN) {
+                return <AuctionInfo
+                    sex={outputFormData.sex}
+                    data={outputAuctionTask}
+                    appMessages={inputAppGeneralMessages}
                 />;
             } else if (currentScreen === constant.VISUAL_PATTERN_SCREEN) {
                 return <VisualPatternTask

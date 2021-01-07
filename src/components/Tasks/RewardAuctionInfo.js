@@ -4,8 +4,10 @@ import { Container, Row } from "reactstrap";
 
 import {
     FEMALE_VALUE,
-    AUCTION_REWARD_RESULT_MESSAGE_FEMALE,
-    AUCTION_REWARD_RESULT_MESSAGE_MALE,
+    AUCTION_REWARD_RESULT_MESSAGE_MALE_PART1,
+    AUCTION_REWARD_RESULT_MESSAGE_MALE_PART2,
+    AUCTION_REWARD_RESULT_MESSAGE_FEMALE_PART1,
+    AUCTION_REWARD_RESULT_MESSAGE_FEMALE_PART2,
     AUCTION_REWARD_BONUS_MESSAGE
 } from '../../helpers/constants';
 
@@ -35,13 +37,14 @@ function totalReward(data, sex, reward, appMessages) {
 
     const threshold = parseInt(reward.threshold)
 
-    let textToDisplay = ""
+    let textToDisplay1 = ""
+    let textToDisplay2 = ""
     if (sex === FEMALE_VALUE) {
-        let tmp = getAppMessage(AUCTION_REWARD_RESULT_MESSAGE_FEMALE, appMessages).replace("$(result)", savedMoney)
-        textToDisplay = getFormattedText(tmp)
+        textToDisplay1 = getFormattedText(getAppMessage(AUCTION_REWARD_RESULT_MESSAGE_FEMALE_PART1, appMessages))
+        textToDisplay2 = getFormattedText(getAppMessage(AUCTION_REWARD_RESULT_MESSAGE_FEMALE_PART2, appMessages))
     } else {
-        let tmp = getAppMessage(AUCTION_REWARD_RESULT_MESSAGE_MALE, appMessages).replace("$(result)", savedMoney)
-        textToDisplay = getFormattedText(tmp)
+        textToDisplay1 = getFormattedText(getAppMessage(AUCTION_REWARD_RESULT_MESSAGE_MALE_PART1, appMessages))
+        textToDisplay2 = getFormattedText(getAppMessage(AUCTION_REWARD_RESULT_MESSAGE_MALE_PART2, appMessages))
     }
 
     // ${result}
@@ -50,12 +53,13 @@ function totalReward(data, sex, reward, appMessages) {
 
     if (savedMoney >= threshold) {
         let tmp = getAppMessage(AUCTION_REWARD_BONUS_MESSAGE, appMessages)
-        bonus = tmp.replace("$(bonus)", reward.bonusPoint)
+        bonus = tmp.replace("$(bonus)", reward.bonusPoint).replace("$(result)", savedMoney)
     }
 
     return (<div style={{ textAlign: "justify" }}>
-        {textToDisplay}
-        { bonus !== "" ? <><h3 style={{ marginTop:"25px" }}>{bonus}</h3></> : <></>}
+        {textToDisplay1}
+        { bonus !== "" ? <><h3 style={{ marginTop: "25px" }}>{bonus}</h3></> : <></>}
+        {textToDisplay2}
     </div>);
 }
 
