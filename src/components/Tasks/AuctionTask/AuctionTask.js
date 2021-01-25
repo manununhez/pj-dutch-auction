@@ -183,7 +183,7 @@ class AuctionTask extends React.Component {
         const AUCTION_LOSE_TEXT_MESSAGE = looseText.replace("$(value)", (priceStart))
 
         const MODAL_BID_TEXT_COLOR = (isBidGain ? GREEN : RED)
-        const AUCTION_AFTER_BID_MESSAGE = isBidGain ? getFormattedText(AUCTION_GAIN_TEXT_MESSAGE) : getFormattedText(AUCTION_LOSE_TEXT_MESSAGE)
+        const AUCTION_AFTER_BID_MESSAGE = isBidGain ? getModalFormattedText(AUCTION_GAIN_TEXT_MESSAGE) : getModalFormattedText(AUCTION_LOSE_TEXT_MESSAGE)
 
         return (
             <Container className="themed-container" fluid="xl">
@@ -194,19 +194,18 @@ class AuctionTask extends React.Component {
                         </div>
                     </ModalBody>
                 </Modal>
-                <Row className="justify-content-md-center">
-                    <div className="hotel-name">{hotelName}</div>
-                </Row>
-                <Row>
-                    <Col xs="3" style={{ textAlign: "center" }}>
+
+                <Row className="justify-content-md-left">
+                    <Col xs="3" style={{ textAlign: "center", marginTop: "2em" }}>
                         <div className="strikethrough">{priceStart}</div>
                         <div className="title">KUP TERAZ ZA</div>
                         <div className="auction-bid">{bid}</div>
                     </Col>
                     <Col xs="8">
-                        <Row className="justify-content-md-left">
-                            {getFormattedText(hotelDescription)}
+                        <Row className="justify-content-md-center">
+                            <div className="hotel-name">{hotelName}</div>
                         </Row>
+                        {getFormattedText(hotelDescription)}
                         <Row className="justify-content-md-center">
                             <div className="img-container">
                                 <Media object src={imgA} className="img-left" />
@@ -218,7 +217,7 @@ class AuctionTask extends React.Component {
                 </Row>
                 <Row>
                     {(bidState === BID_STATE_NOT_STARTED) ? <FooterV1 text={footerTextMessage} /> : <></>}
-                </Row> 
+                </Row>
             </Container>
         );
     }
@@ -230,6 +229,17 @@ function getFormattedText(text) { //TODO when FirstTask, we should cache the tex
     text.split('<br>').forEach((item, index) => { //replace \n with margin bottom to emulate break line
         if (item !== "")
             children.push(<><div className="hotel-description" key={"KEY_" + index}>{item}</div></>)
+    });
+
+    return children;
+}
+
+function getModalFormattedText(text) { //TODO when FirstTask, we should cache the text so we dont iterate every time
+    let children = []
+
+    text.split('<br>').forEach((item, index) => { //replace \n with margin bottom to emulate break line
+        if (item !== "")
+            children.push(<><div className="modal-text" key={"KEY_" + index}>{item}</div></>)
     });
 
     return children;
