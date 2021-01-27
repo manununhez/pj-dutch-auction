@@ -133,7 +133,8 @@ class AuctionTask extends React.Component {
                     this._initConfig(); //start timer
                 });
             } else if (bidState === BID_STATE_RUNNING) { //bid currently running
-                this._finishBidAndSaveData(true)
+                let isBidGain = bid < priceStart
+                this._finishBidAndSaveData(isBidGain)
             }
 
             if (DEBUG) console.log(this.state)
