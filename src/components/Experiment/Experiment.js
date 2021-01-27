@@ -669,6 +669,11 @@ class Experiment extends Component {
         const selectedQuestionCode = evt.target.id;
         const selectedQuestionValue = evt.target.value;
 
+        console.log(selectedQuestionCode)
+        console.log(selectedQuestionValue)
+
+        if (selectedQuestionCode === constant.TEXT_EMPTY || selectedQuestionValue === constant.TEXT_EMPTY) return
+
         const psFormValue = { questionCode: selectedQuestionCode, answer: selectedQuestionValue };
 
         let outputPSFormIndex = -1;

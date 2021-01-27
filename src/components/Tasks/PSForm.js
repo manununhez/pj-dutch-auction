@@ -20,15 +20,16 @@ class PSForm extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = {
-            selectedOption: false
-        }
-
         this.validateInput = this._validateInput.bind(this);
     }
 
     _validateInput(id, numberFormat) {
-        let e = { target: { id: id, value: numberFormat.formattedValue } }
+        const value = numberFormat.formattedValue
+
+        if (isNaN(value) || value === constant.TEXT_EMPTY) return
+
+        let e = { target: { id: id, value: value } }
+
         this.props.action(e)
     }
 
