@@ -37,17 +37,26 @@ class PSForm extends React.Component {
         return (
             <Container fluid="md">
                 <Row className="justify-content-md-center" style={{ padding: "10px" }}>
-                    {this.props.text}
+                    {formatTitle(this.props.data)}
                 </Row>
                 <Alert style={{ fontSize: "1.0rem" }} color="warning" isOpen={this.props.error.showError}>
                     <span className="alert-inner--text ml-1">
                         {this.props.error.textError}
                     </span>
                 </Alert>
-                {getQuestions(this.props.data, this.props.questionsText, this.props.action, this.props.output, this.validateInput)}
+                {getQuestions(this.props.data, this.props.action, this.props.output, this.validateInput)}
             </Container>
         )
     };
+}
+
+function formatTitle(question) {
+    let txtFormatted = question.title.split('\\n').map(function (item, key) { //replace \n with margin bottom to emulate break line
+        return (<div className="instr" key={key}>{item}</div>)
+    })
+    let key = "KEY_" + txtFormatted.length
+
+    return getFontSizeTitle(txtFormatted, question.titleFontSize, key)
 }
 
 /**
@@ -58,36 +67,31 @@ class PSForm extends React.Component {
  * @param {*} selectedAnswer 
  * @param {*} validateInput 
  */
-function getQuestions(data, questions, action, selectedAnswer, validateInput) {
-    let children = questions
-        .filter((question) => data.questionCode === question.screen)
-        .map((question, i) => {
-            let questionScheme = []
-            // pregunta
-            questionScheme.push(
-                getFontSize(question.text, question.size, i)
-            );
-            // respuesta
-            if (data.type === constant.INPUT_TYPE) {
-                questionScheme.push(
-                    <div style={{ display: "flex", alignItems: 'center' }}>
-                        <NumberFormat id={data.questionCode} autoFocus={true} onValueChange={validateInput.bind(this, data.questionCode)} decimalSeparator="," />
-                        <pre style={{ margingBottom: '0rem' }}> <h6>{data.answer}</h6></pre>
-                    </div>
-                );
-            } else if (data.type === constant.MULTIPLE_CHOICES_TYPE) {
-                questionScheme.push(
-                    getMultipleOptions(data.answer, data.questionCode, action, selectedAnswer)
-                );
-            }
+function getQuestions(question, action, selectedAnswer, validateInput) {
 
-            return (
-                <Card>
-                    <CardBody style={{ padding: '2em' }} key={data.questionCode}>{questionScheme}</CardBody>
-                </Card>);// marginTop: '20px',
-        });
+    let questionScheme = []
+    // pregunta
+    questionScheme.push(
+        getFontSizeQuestion(question.question, question.questionFontSize, question.questionCode)
+    );
+    // respuesta
+    if (question.type === constant.INPUT_TYPE) {
+        questionScheme.push(
+            <div style={{ display: "flex", alignItems: 'center' }}>
+                <NumberFormat id={question.questionCode} autoFocus={true} onValueChange={validateInput.bind(this, question.questionCode)} decimalSeparator="," />
+                <pre style={{ margingBottom: '0rem' }}> <h6>{question.answer}</h6></pre>
+            </div>
+        );
+    } else if (question.type === constant.MULTIPLE_CHOICES_TYPE) {
+        questionScheme.push(
+            getMultipleOptions(question.answer, question.questionCode, action, selectedAnswer)
+        );
+    }
 
-    return children;
+    return (
+        <Card>
+            <CardBody style={{ padding: '2em' }} key={question.questionCode}>{questionScheme}</CardBody>
+        </Card>);// marginTop: '20px',
 }
 
 /**
@@ -141,34 +145,55 @@ function isSelected(questionCode, selectedAnswer, answer) {
  * @param {*} fontSize 
  * @param {*} key 
  */
-function getFontSize(item, fontSize, key) {
+function getFontSizeQuestion(item, fontSize, key) {
     let children = [];
 
     if (item !== constant.TEXT_EMPTY) {
         switch (fontSize) {
             case constant.FONT_SIZE_HEADING1:
-                children.push(<h1 className="mb-2" key={key}>{item}</h1>)
+                children.push(<h1 className="mb-2" key={"KEY_" + key}>{item}</h1>)
                 break;
             case constant.FONT_SIZE_HEADING2:
-                children.push(<h2 className="mb-2" key={key}>{item}</h2>)
+                children.push(<h2 className="mb-2" key={"KEY_" + key}>{item}</h2>)
                 break;
             case constant.FONT_SIZE_HEADING3:
-                children.push(<h3 className="mb-2" key={key}>{item}</h3>)
+                children.push(<h3 className="mb-2" key={"KEY_" + key}>{item}</h3>)
                 break;
             case constant.FONT_SIZE_HEADING4:
-                children.push(<h4 className="mb-2" key={key}>{item}</h4>)
+                children.push(<h4 className="mb-2" key={"KEY_" + key}>{item}</h4>)
                 break;
             case constant.FONT_SIZE_HEADING5:
-                children.push(<h5 className="mb-2" key={key}>{item}</h5>)
+                children.push(<h5 className="mb-2" key={"KEY_" + key}>{item}</h5>)
                 break;
             case constant.FONT_SIZE_HEADING6:
-                children.push(<h6 className="mb-2" key={key}>{item}</h6>)
+                children.push(<h6 className="mb-2" key={"KEY_" + key}>{item}</h6>)
                 break;
             default:
         }
     }
 
     return children;
+}
+
+function getFontSizeTitle(item, fontSize, key) {
+    if (item !== constant.TEXT_EMPTY) {
+        switch (fontSize) {
+            case constant.FONT_SIZE_HEADING1:
+                return (<div className="instr-h1" key={key}>{item}</div>)
+            case constant.FONT_SIZE_HEADING2:
+                return (<div className="instr-h2" key={key}>{item}</div>)
+            case constant.FONT_SIZE_HEADING3:
+                return (<div className="instr-h3" key={key}>{item}</div>)
+            case constant.FONT_SIZE_HEADING4:
+                return (<div className="instr-h4" key={key}>{item}</div>)
+            case constant.FONT_SIZE_HEADING5:
+                return (<div className="instr-h5" key={key}>{item}</div>)
+            case constant.FONT_SIZE_HEADING6:
+                return (<div className="instr-h6" key={key}>{item}</div>)
+            default:
+                return (<div className="instr-h3" key={key}>{item}</div>)
+        }
+    }
 }
 
 export default PSForm;

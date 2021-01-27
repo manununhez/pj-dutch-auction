@@ -295,8 +295,8 @@ class Experiment extends Component {
             })
 
             if (DEBUG) console.log(data)
-            if (DEBUG) console.log("Fetch PSFormData");
-            request.fetchPSFormData(this._onLoadPSFormCallback.bind(this))
+            if (DEBUG) console.log("Fetch RewardData");
+            request.fetchRewardData(this._onLoadRewardDataCallback.bind(this))
         }
         else {
             this.setState({
@@ -347,9 +347,6 @@ class Experiment extends Component {
             }, () => {
                 if (DEBUG) console.log(this.state)
             });
-
-            if (DEBUG) console.log("Fetch RewardData");
-            request.fetchRewardData(this._onLoadRewardDataCallback.bind(this))
         }
         else {
             this.setState({
@@ -669,8 +666,8 @@ class Experiment extends Component {
         const selectedQuestionCode = evt.target.id;
         const selectedQuestionValue = evt.target.value;
 
-        console.log(selectedQuestionCode)
-        console.log(selectedQuestionValue)
+        if (DEBUG) console.log(selectedQuestionCode)
+        if (DEBUG) console.log(selectedQuestionValue)
 
         if (selectedQuestionCode === constant.TEXT_EMPTY || selectedQuestionValue === constant.TEXT_EMPTY) return
 
@@ -1204,10 +1201,8 @@ class Experiment extends Component {
 
         let groupAge = 0
         //We are leaving user form screen, so we called texts whatever next page is (not only instructions)          
-        if (sex === constant.FEMALE_VALUE)
-            request.fetchAppTextFemale(this._onLoadAppTextCallBack.bind(this));
-        else
-            request.fetchAppTextMale(this._onLoadAppTextCallBack.bind(this));
+        request.fetchAppText(sex, this._onLoadAppTextCallBack.bind(this));
+        request.fetchPSFormData(sex, this._onLoadPSFormCallback.bind(this));
 
         if (age >= parseInt(firstGroupAgeLimit.minAge) &&
             age <= parseInt(firstGroupAgeLimit.maxAge)) { //firstGroup
@@ -1551,12 +1546,9 @@ function changePages(state, context) {
             } else if (currentScreen === constant.PSFORM_SCREEN) {
                 const currentPSForm = inputPSForm[pageID - 1];
                 if (inputPSForm.length > 0) { //if we have received already the input data for psform
-                    const textPSForm = getTextForCurrentScreen(inputTextInstructions, currentPSForm.screen);
                     return <PSForm
                         action={context.psFormHandler}
-                        text={textPSForm}
                         data={currentPSForm}
-                        questionsText={inputTextInstructions}
                         output={outputPSForm}
                         error={error}
                     />;

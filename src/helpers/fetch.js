@@ -160,11 +160,11 @@ export function fetchVersions(callback) {
  * Load psychology questionaries input data from the spreadsheet
  * @param {*} callback 
  */
-export function fetchPSFormData(callback) {
+export function fetchPSFormData(sex, callback) {
 
-    let spreadsheetName = constant.PSFORM_SHEETNAME;
+    let spreadsheetName = sex === constant.FEMALE_VALUE ? constant.INPUT_PSFORM_FEMALE_SHEETNAME : constant.INPUT_PSFORM_MALE_SHEETNAME;
     let row = "A2";
-    let column = "J";
+    let column = "L";
 
     get(fetch_sheet_url, { spreadSheetName: spreadsheetName, column: row, row: column })
         .then((response) => {
@@ -172,17 +172,23 @@ export function fetchPSFormData(callback) {
             let result = data.map((version, i) => {
                 let answersValues = []
 
-                const indexScreen = 0
-                const indexQuestionCode = 1
-                const indexType = 2
-                const indexAnswerStart = 3
+                const indexMainTitle = 0
+                const indexMainTitleFontSize = 1
+                const indexQuestionCode = 2
+                const indexQuestionTitle = 3
+                const indexQuestionFontSize = 4
+                const indexType = 5
+                const indexAnswerStart = 6
 
                 for (let i = indexAnswerStart; i < version.length; i++)
                     answersValues.push(version[i])
 
                 return {
-                    screen: version[indexScreen],
+                    title: version[indexMainTitle],
+                    titleFontSize: version[indexMainTitleFontSize],
                     questionCode: version[indexQuestionCode],
+                    question: version[indexQuestionTitle],
+                    questionFontSize: version[indexQuestionFontSize],
                     type: version[indexType],
                     answer: answersValues
                 };
@@ -198,31 +204,8 @@ export function fetchPSFormData(callback) {
  * Load all the necessary Text structure for the app from the spreadsheet
  * @param {*} callback 
  */
-export function fetchAppTextFemale(callback) {
-    let spreadsheetName = constant.APP_TEXT_FEMALE_SHEETNAME;
-    let row = "A2";
-    let column = "C";
-
-    get(fetch_sheet_url, { spreadSheetName: spreadsheetName, column: row, row: column })
-        .then((response) => {
-            const data = response.rows;
-
-            let appText = data.map((version, i) => {
-                return { screen: version[0], size: version[1], text: version[2] };
-            });
-
-            callback({ appText });
-        }, (response) => {
-            callback(false, response.result.error);
-        });
-}
-
-/**
- * Load all the necessary Text structure for the app from the spreadsheet
- * @param {*} callback 
- */
-export function fetchAppTextMale(callback) {
-    let spreadsheetName = constant.APP_TEXT_MALE_SHEETNAME;
+export function fetchAppText(sex, callback) {
+    let spreadsheetName = sex === constant.FEMALE_VALUE ? constant.APP_TEXT_FEMALE_SHEETNAME : constant.APP_TEXT_MALE_SHEETNAME;
     let row = "A2";
     let column = "C";
 

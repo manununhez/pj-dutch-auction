@@ -90,7 +90,6 @@ export const USER_INFO_SCREEN = "UserInfo";
 export const USER_FORM_SCREEN = "UserForm";
 export const REWARD_AUCTION_INFO_SCREEN = "RewardAuctionScreen";
 export const INSTRUCTION_SCREEN = "Instruction";
-export const SECOND_INSTRUCTION_SCREEN = "SecondInstruction";
 export const AUCTION_INSTRUCTION_DEMO_SCREEN = "AuctionInstructionDemo";
 export const AUCTION_INSTRUCTION_SCREEN = "AuctionInstruction";
 export const AUCTION_TASK_SCREEN = "AuctionTask";
@@ -116,7 +115,8 @@ export const APP_TEXT_MALE_SHEETNAME = "input-text-male";
 export const USER_AUCTION_BIDS_SHEETNAME = "auction-bids"
 export const USER_VISUAL_PATTERN_SHEETNAME = "uservisualpattern";
 export const USER_PSFORM_SHEETNAME = "userpsform";
-export const PSFORM_SHEETNAME = "input-psychologyform";
+export const INPUT_PSFORM_MALE_SHEETNAME = "input-psychologyform-male";
+export const INPUT_PSFORM_FEMALE_SHEETNAME = "input-psychologyform-female";
 export const INPUT_REWARD_SHEETNAME = "input-reward";
 
 //General App messages KEYS
