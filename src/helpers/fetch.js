@@ -194,39 +194,6 @@ export function fetchPSFormData(callback) {
         });
 }
 
-
-/**
- * Load the input for the firs task as well as the first task demo from the spreadsheet
- * @param {*} callback 
- */
-export function fetchInputFirstTask(spreadsheetName, column, row, callback) {
-
-    get(fetch_sheet_url, { spreadSheetName: spreadsheetName, column: row, row: column })
-        .then((response) => {
-            const data = response.rows;
-
-            let tasks = data.map((version, i) => {
-                return {
-                    id: version[0],
-                    atributeId: version[1],
-                    p1: version[2],
-                    p2: version[3],
-                    p3: version[4],
-                    property: version[5],
-                    pralka1: version[6],
-                    pralka2: version[7],
-                    pralka3: version[8],
-                    correctAnswer: version[9],
-                    showFeedback: version[10]
-                };
-            });
-
-            callback({ tasks });
-        }, (response) => {
-            callback(false, response.result.error);
-        });
-}
-
 /**
  * Load all the necessary Text structure for the app from the spreadsheet
  * @param {*} callback 
@@ -442,63 +409,6 @@ export function saveUserPSForm(data, callback) {
  * @param {*} data 
  * @param {*} callback 
  */
-export function saveUserBrands(data, callback) {
-    let userdata = userbrands(data);
-    let spreadSheetName = constant.USER_BRANDS_SHEETNAME;
-    let row = "A2";
-    let column = "D";
-
-    save(spreadSheetName, row, column, userdata, callback)
-}
-
-
-/**
- * Write results to GSheets
- * @param {*} data 
- * @param {*} callback 
- */
-export function saveUserPralkaRating(data, callback) {
-    let userData = userpralkarating(data);
-    let spreadSheetName = constant.USER_PRALKA_RATING_SHEETNAME;
-    let row = "A2";
-    let column = "D";
-
-    save(spreadSheetName, row, column, userData, callback)
-}
-
-/**
- * Write results to GSheets
- * @param {*} data 
- * @param {*} callback 
- */
-export function saveUserPralkaSelections(data, callback) {
-    let userData = userpralkaselection(data);
-    let spreadSheetName = constant.USER_PRALKA_SELECTIONS_SHEETNAME;
-    let row = "A2";
-    let column = "D";
-
-    save(spreadSheetName, row, column, userData, callback)
-}
-
-/**
- * Write results to GSheets
- * @param {*} data 
- * @param {*} callback 
- */
-export function saveUserMobileTelephone(data, callback) {
-    let userData = usermobiletelephone(data);
-    let spreadSheetName = constant.USER_MOBILE_TELEPHONE_SHEETNAME;
-    let row = "A2";
-    let column = "D";
-
-    save(spreadSheetName, row, column, userData, callback)
-}
-
-/**
- * Write results to GSheets
- * @param {*} data 
- * @param {*} callback 
- */
 export function saveAuctionBids(data, callback) {
     let userData = userauctionbids(data);
     let spreadSheetName = constant.USER_AUCTION_BIDS_SHEETNAME;
@@ -521,21 +431,6 @@ export function saveUserInfo(data, callback) {
 
     save(spreadSheetName, row, column, userInfo, callback)
 }
-
-/**
- * Write results to GSheets
- * @param {*} data 
- * @param {*} callback 
- */
-export function saveUserProperties(data, callback) {
-    let userProperties = userproperties(data);
-    let spreadSheetName = constant.USER_PROPERTIES_SHEETNAME;
-    let row = "A2";
-    let column = "G";
-
-    save(spreadSheetName, row, column, userProperties, callback)
-}
-
 
 /**
  * Write results to GSheets
@@ -602,66 +497,6 @@ const usergeneraldata = (data, ariadnaUserID) => {
                 output.data.levelEduc,
                 output.data.typeAuction
             ]);
-        } else if (output.task === constant.FIRST_TASK_SCREEN || output.task === constant.FIRST_TASK_DEMO_SCREEN) {
-            result.push([
-                output.userID,
-                ariadnaUserID,
-                output.task,
-                output.timestamp, //created
-                output.data[0],
-                output.data[1],
-                output.data[2],
-                output.data[3]
-            ]);
-        } else if (output.task === constant.SECOND_TASK_SCREEN) {
-            for (let i = 0; i < output.data.length; i++) {
-                result.push([
-                    output.userID,
-                    ariadnaUserID,
-                    output.task,
-                    output.timestamp, //created
-                    constant.ATTRIBUTE_CUSTOM.data.id[i],
-                    output.data[i]
-                ]);
-            }
-        } else if (output.task === constant.THIRD_TASK_SCREEN) {
-            for (let i = 0; i < output.data.length; i++) {
-                result.push([
-                    output.userID,
-                    ariadnaUserID,
-                    output.task,
-                    output.timestamp, //created
-                    output.data[i]
-                ])
-            }
-        } else if (output.task === constant.FOURTH_TASK_SCREEN) {
-            for (let i = 0; i < output.data.length; i++) {
-                result.push([
-                    output.userID,
-                    ariadnaUserID,
-                    output.task,
-                    output.timestamp, //created
-                    constant.ATTRIBUTE_FOURTH_TASK.data.id[i],
-                    output.data[i]
-                ]);
-            }
-        } else if (output.task === constant.FIFTH_TASK_SCREEN) {
-            result.push([
-                output.userID,
-                ariadnaUserID,
-                output.task,
-                output.timestamp, //created
-                output.data
-            ]);
-        } else if (output.task === constant.FINAL_TASK_SCREEN) {
-            result.push([
-                output.userID,
-                ariadnaUserID,
-                output.task,
-                output.timestamp, //created
-                constant.ATTRIBUTE.data.id[output.data[0]],
-                output.data[1]
-            ]);
         } else if (output.task === constant.USER_INFO_SCREEN) {
             result.push([
                 output.userID,
@@ -726,29 +561,6 @@ const usergeneraldata = (data, ariadnaUserID) => {
     return result;
 }
 
-function userbrands(data) {
-    const { userID, outputThirdTask, outputFifthTask } = data;
-    const now = Date.now();
-
-    let result = outputThirdTask.map((output) => {
-        return [
-            userID,
-            constant.THIRD_TASK_SCREEN,
-            output,
-            now //created
-        ];
-    });
-
-    result.push([
-        userID,
-        constant.FIFTH_TASK_SCREEN,
-        outputFifthTask,
-        now //created
-    ])
-
-    return result;
-}
-
 function userinfo(data) {
     let result = [];
 
@@ -797,42 +609,6 @@ function userform(data) {
     return result;
 }
 
-function userpralkarating(data) {
-    let result = [];
-    // let data = this.props.data;
-    const { outputSecondTask, userID } = data;
-    const now = Date.now();
-
-    for (let i = 0; i < constant.ATTRIBUTE_CUSTOM.data.id.length; i++) {
-        result.push([
-            userID,
-            constant.ATTRIBUTE_CUSTOM.data.id[i],
-            outputSecondTask[i],
-            now //created
-        ]);
-    }
-
-    return result;
-}
-
-function usermobiletelephone(data) {
-    let result = [];
-    // let data = this.props.data;
-    const { outputFourthTask, userID } = data;
-    const now = Date.now();
-
-    for (let i = 0; i < constant.ATTRIBUTE_FOURTH_TASK.data.id.length; i++) {
-        result.push([
-            userID,
-            constant.ATTRIBUTE_FOURTH_TASK.data.id[i],
-            outputFourthTask[i],
-            now //created
-        ]);
-    }
-
-    return result;
-}
-
 function userauctionbids(data) {
     let result = [];
     // let data = this.props.data;
@@ -868,59 +644,6 @@ function userauctionbids(data) {
     }
 
     return result;
-}
-
-function userpralkaselection(data) {
-    let result = [];
-    // let data = this.props.data;
-    const { outputFinalTask, userID } = data;
-    const now = Date.now();
-
-    for (let i = 0; i < constant.ATTRIBUTE.data.id.length; i++) {
-        result.push([
-            userID,
-            constant.ATTRIBUTE.data.id[i],
-            outputFinalTask[i],
-            now //created
-        ]);
-    }
-
-    return result;
-}
-
-function userproperties(data) {
-    // UserID	QuestionID	QuestionNumber	SelectedAnswer
-    let result = [];
-    // let data = this.props.data;
-    const { outputFirstTask, outputFirstTaskDemo, userID } = data;
-    const now = Date.now();
-
-    for (let i = 0; i < outputFirstTaskDemo.questionID.length; i++) {
-        result.push([
-            userID,
-            constant.FIRST_TASK_DEMO_SCREEN,
-            outputFirstTaskDemo.questionID[i],
-            outputFirstTaskDemo.questionNumber[i],
-            outputFirstTaskDemo.selectedAnswer[i],
-            outputFirstTaskDemo.isCorrectAnswer[i],
-            now
-        ]);
-    }
-
-    for (let i = 0; i < outputFirstTask.questionID.length; i++) {
-        result.push([
-            userID,
-            constant.FIRST_TASK_SCREEN,
-            outputFirstTask.questionID[i],
-            outputFirstTask.questionNumber[i],
-            outputFirstTask.selectedAnswer[i],
-            outputFirstTask.isCorrectAnswer[i],
-            now
-        ]);
-    }
-
-    return result;
-
 }
 
 function userlogtime(data) {

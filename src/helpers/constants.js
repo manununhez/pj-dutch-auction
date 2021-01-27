@@ -70,74 +70,6 @@ export const FONT_SIZE_HEADING4 = "HEADING 4";
 export const FONT_SIZE_HEADING5 = "HEADING 5";
 export const FONT_SIZE_HEADING6 = "HEADING 6";
 
-//FirstTask button Values and feedback
-export const FIRST_RADIO_VALUE = "1";
-export const SECOND_RADIO_VALUE = "2";
-export const THIRD_RADIO_VALUE = "3";
-export const SHOW_FEEDBACK_TRUE = "YES";
-export const SHOW_FEEDBACK_NO = "NO";
-export const FIRST_TASK_PROPERTIES_TOTAL = 6;
-//First and Final Task related
-export const ATTRIBUTE = {
-    data:
-    {
-        id: ["A1", "A2", "A3", "A4", "A5", "A6"],
-        text: ["max prędkość wirowania (obr/min)", "pojemność bębna (kg)",
-            "klasa energetyczna", "poziom hałasu (db)", "zużycie wody (l)",
-            "program szybki"],
-        value: [
-            ["800", "1000", "1200", "1400", "1600"],
-            ["4", "5", "6", "7", "8", "9", "10"],
-            ["A", "A+", "A++", "A+++"],
-            ["70", "65", "60", "55", "50", "45", "40"],
-            ["70", "60", "50", "40", "30"],
-            ["brak", "jest"]
-        ],
-        prefix: ["Min ", "Min ", "Min ", "Max ", "Max ", ""],
-        sufix: [" obr/min", " kg", "", "db", "l", ""]
-    }
-}
-//SecondTask
-export const ATTRIBUTE_CUSTOM = {
-    data:
-    {
-        id: ["A7", "A3", "A5", "A4", "A6", "A2", "A1"],
-        position: [7, 3, 5, 4, 6, 2, 1],
-        text: [
-            "cena",
-            "klasa energetyczna",
-            "zużycie wody (l)",
-            "poziom hałasu (db)",
-            "program szybki",
-            "pojemność bębna (kg)",
-            "max prędkość wirowania (obr/min)"
-        ]
-    }
-}
-//ThirdTask
-export const BRANDS = [
-    "Electrolux", "Whirlpool", "Candy Hoover", "Bosch", "Siemens", "LG Electronics", "Samsung", "Miele", "Vestel",
-    "Amica", "Beko", "MPM", "Indesit", "SMEG"
-];
-//FourthTask
-export const ATTRIBUTE_FOURTH_TASK = {
-    data:
-    {
-        id: ["AFT1", "AFT2", "AFT3", "AFT4", "AFT5", "AFT6", "AFT7", "AFT8", "AFT9"],
-        text: [
-            "cena",
-            "marka",
-            "rozdzielczość aparatu (Mpix)",
-            "pojemność baterii (mAh)",
-            "pamięć RAM (GB)",
-            "przekątna wyświetlacza",
-            "rozdzielczość ekranu",
-            "liczba rdzeni procesora",
-            "ocena klientów"
-        ]
-    }
-}
-
 //Scenarios
 export const SCENARIO_HOTEL_REV = "hotels-rev"
 export const SCENARIO_HOTEL_NORMAL = "hotels"
@@ -156,15 +88,7 @@ export const EVENT_UNLOAD = "unload";
 //screen names
 export const USER_INFO_SCREEN = "UserInfo";
 export const USER_FORM_SCREEN = "UserForm";
-export const REWARD_INFO_SCREEN = "RewardScreen";
 export const REWARD_AUCTION_INFO_SCREEN = "RewardAuctionScreen";
-export const FIRST_TASK_SCREEN = "FirstTask";
-export const FIRST_TASK_DEMO_SCREEN = "FirstTask Demo";
-export const SECOND_TASK_SCREEN = "SecondTask";
-export const THIRD_TASK_SCREEN = "ThirdTask";
-export const FOURTH_TASK_SCREEN = "FourthTask";
-export const FIFTH_TASK_SCREEN = "FifthTask";
-export const FINAL_TASK_SCREEN = "FinalTask";
 export const INSTRUCTION_SCREEN = "Instruction";
 export const SECOND_INSTRUCTION_SCREEN = "SecondInstruction";
 export const AUCTION_INSTRUCTION_DEMO_SCREEN = "AuctionInstructionDemo";
@@ -181,19 +105,11 @@ export const VISUAL_PATTERN_INSTRUCTION_FINISH_SCREEN = "VisualPatternInstructio
 
 //Sheetnames
 export const USER_PARTICIPANTS_COUNTER_SHEETNAME = "input-userexperimentcount";
-export const USER_BRANDS_SHEETNAME = "userbrands";
 export const USER_INFO_SHEETNAME = "userinfo";
-export const USER_PROPERTIES_SHEETNAME = "userproperties";
-export const USER_PROPERTIES_LOGEVENT_SHEETNAME = "userproperties_logevent";
 export const USER_LOGTIME_SHEETNAME = "userlogtime";
 export const USER_FORM_SHEETNAME = "userform";
-export const USER_PRALKA_RATING_SHEETNAME = "userpralkarating";
-export const USER_PRALKA_SELECTIONS_SHEETNAME = "userpralkaselections";
-export const USER_MOBILE_TELEPHONE_SHEETNAME = "usermobiletelephone";
 export const USER_GENERAL_DATA_SHEETNAME = "usergeneraldata";
 export const VERSIONS_SHEETNAME = "input-versions";
-export const INPUT_ALL_SHEETNAME = "input-all";
-export const INPUT_ALL_WARMUP_SHEETNAME = "input-all-warmup";
 export const INPUT_APP_MESSAGES = "input-app-messages";
 export const APP_TEXT_FEMALE_SHEETNAME = "input-text-female";
 export const APP_TEXT_MALE_SHEETNAME = "input-text-male";
@@ -202,7 +118,6 @@ export const USER_VISUAL_PATTERN_SHEETNAME = "uservisualpattern";
 export const USER_PSFORM_SHEETNAME = "userpsform";
 export const PSFORM_SHEETNAME = "input-psychologyform";
 export const INPUT_REWARD_SHEETNAME = "input-reward";
-
 
 //General App messages KEYS
 export const REWARD_RESULT_MESSAGE = "REWARD_RESULT_MESSAGE";

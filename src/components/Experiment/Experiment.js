@@ -17,14 +17,7 @@ import SyncLoader from "react-spinners/SyncLoader";
 
 // Views
 import FooterV1 from "../Footers/FooterV1.0";
-import RewardInfo from "../Tasks/RewardInfo";
 import RewardAuctionInfo from "../Tasks/RewardAuctionInfo";
-import FirstTask from "../Tasks/FirstTask";
-import SecondTask from "../Tasks/SecondTask";
-import ThirdTask from "../Tasks/ThirdTask";
-import FourthTask from "../Tasks/FourthTask";
-import FifthTask from "../Tasks/FifthTask";
-import FinalTask from "../Tasks/FinalTask";
 import Instruction from "../Tasks/Instruction/Instruction"
 import UserForm from "../Tasks/UserForm/UserForm";
 import AuctionTask from "../Tasks/AuctionTask/AuctionTask";
@@ -88,8 +81,6 @@ class Experiment extends Component {
             inputTextInstructions: [],
             inputAuctionTask: [],
             inputAuctionDemoTask: [],
-            inputFirstTask: [],
-            inputFirstTaskDemo: [],
             inputParticipants: [],
             inputPSForm: [],
             inputRewardData: [],
@@ -98,23 +89,6 @@ class Experiment extends Component {
             generalOutput: generalOutputDefault,
             generalOutputIndexes: [],
             outputFormData: userFormDefault,
-            outputFirstTask: {
-                questionID: [],
-                questionNumber: [],
-                selectedAnswer: [],
-                isCorrectAnswer: []
-            },
-            outputFirstTaskDemo: {
-                questionID: [],
-                questionNumber: [],
-                selectedAnswer: [],
-                isCorrectAnswer: []
-            },
-            outputSecondTask: [],
-            outputThirdTask: [],
-            outputFourthTask: [],
-            outputFifthTask: constant.TEXT_EMPTY,
-            outputFinalTask: Array(constant.FIRST_TASK_PROPERTIES_TOTAL).fill(constant.TEXT_EMPTY), //initialize and set to empty. This array of size 6, corresponds to each property selected value (A1, A2, ...)
             outputPSForm: [],
             outputVisualPattern: [],
             outputVisualPatternDemo: [],
@@ -136,8 +110,7 @@ class Experiment extends Component {
             error: {
                 showError: false,
                 textError: constant.TEXT_EMPTY
-            },
-            modalOpen: false
+            }
         };
 
         //session timer
@@ -175,9 +148,8 @@ class Experiment extends Component {
      ** Sequence calling:
     * fetchNavScreens
     * fetchParticipantsCounter
-    * fetchFirstTaskDemo
-    * fetchFirstTask
     * fetchPSForm
+    * fetchRewardData
      */
     _fetchExperimentInputData() {
         if (DEBUG) console.log("FETCH hotels tutorial")
@@ -194,19 +166,16 @@ class Experiment extends Component {
     * Save Data - Synchronously
     * 
     ** Sequence calling:
-    * request.saveUserPralkaRating()
-    * request.saveUserPralkaSelections()
     * request.saveUserInfo()
-    * request.saveUserProperties()
     * request.saveUserForm()
     * request.saveUserLogTime()
     * request.userVisualPattern()
-    * request.saveUserBrands()
+    * request.saveUserPSForm
      */
     _syncData() { //if the experiment is not completed, the data is still not sync
         if (DEBUG) console.log("Sync Data...");
 
-        request.saveUserPralkaRating(this.state, this._onSaveUserPralkaRatingCallBack.bind(this))
+        request.saveUserInfo(this.state, this._onSaveUserInfoCallBack.bind(this))
     }
 
     /**
@@ -326,8 +295,8 @@ class Experiment extends Component {
             })
 
             if (DEBUG) console.log(data)
-            if (DEBUG) console.log("Fetch InputFirstTaskDemo");
-            request.fetchInputFirstTask(constant.INPUT_ALL_WARMUP_SHEETNAME, "A2", "K", this._onLoadInputFirstTaskDemoCallBack.bind(this));
+            if (DEBUG) console.log("Fetch PSFormData");
+            request.fetchPSFormData(this._onLoadPSFormCallback.bind(this))
         }
         else {
             this.setState({
@@ -338,70 +307,6 @@ class Experiment extends Component {
                 }
             })
             if (DEBUG) console.log(error)
-        }
-    }
-
-    /**
-     * Once the input for the fist task demo have been loaded from the spreadsheet
-     * @param {*} data 
-     * @param {*} error 
-     */
-    _onLoadInputFirstTaskDemoCallBack(data, error) {
-        if (data) {
-            const { inputNavigation, currentScreenNumber } = this.state;
-            const totalTasks = data.tasks.length / constant.FIRST_TASK_PROPERTIES_TOTAL;
-
-            this.setState({
-                // loading: false, //Hide loading
-                inputFirstTaskDemo: data.tasks,
-                page: `${inputNavigation[currentScreenNumber].pageId}/${totalTasks}` /*we update the page text after we get the total number of tasks*/
-            })
-            if (DEBUG) console.log(data)
-            if (DEBUG) console.log("Fetch InputFirstTask");
-            request.fetchInputFirstTask(constant.INPUT_ALL_SHEETNAME, "A2", "K", this._onLoadInputFirstTaskCallBack.bind(this));
-
-        } else {
-            this.setState({
-                loading: false,
-                error: {
-                    showError: true,
-                    textError: `${error}. Please refresh page.`
-                }
-            })
-            if (DEBUG) console.log(error)
-
-        }
-    }
-
-    /**
-     * Once the input for the fist task have been loaded from the spreadsheet
-     * @param {*} data 
-     * @param {*} error 
-     */
-    _onLoadInputFirstTaskCallBack(data, error) {
-        if (data) {
-            const { inputNavigation, currentScreenNumber } = this.state;
-            const totalTasks = data.tasks.length / constant.FIRST_TASK_PROPERTIES_TOTAL;
-
-            this.setState({
-                loading: false, //Hide loading
-                inputFirstTask: data.tasks,
-                page: `${inputNavigation[currentScreenNumber].pageId}/${totalTasks}` /*we update the page text after we get the total number of tasks*/
-
-            })
-            if (DEBUG) console.log(data)
-            if (DEBUG) console.log("Fetch PSFormData");
-            request.fetchPSFormData(this._onLoadPSFormCallback.bind(this))
-        } else {
-            this.setState({
-                loading: false,
-                error: {
-                    showError: true,
-                    textError: `${error}. Please refresh page.`
-                }
-            })
-            if (DEBUG) console.log(error)
-
         }
     }
 
@@ -571,54 +476,6 @@ class Experiment extends Component {
      **********************************************************/
 
     /**
-     * Results from saving user pralka rating
-     * @param {*} data 
-     * @param {*} error 
-     */
-    _onSaveUserPralkaRatingCallBack(data, error) {
-        if (DEBUG) console.log(data);
-        if (data) {
-            if (DEBUG) console.log("SaveUserPralkaRating");
-            request.saveUserPralkaSelections(this.state, this._onSaveUserPralkaSelectionsCallBack.bind(this))
-        } else {
-            if (DEBUG) console.log("Error saving UserPralkaRating")
-            this.setState({ loading: false });
-        }
-    }
-
-    /**
-    * Results from saving user pralka selections
-    * @param {*} data 
-    * @param {*} error 
-    */
-    _onSaveUserPralkaSelectionsCallBack(data, error) {
-        if (DEBUG) console.log(data);
-        if (data) {
-            if (DEBUG) console.log("SaveUserPralkaSelections");
-            request.saveUserMobileTelephone(this.state, this._onSaveUserMobileTelephoneCallBack.bind(this))
-        } else {
-            if (DEBUG) console.log("Error saving UserPralkaSelections")
-            this.setState({ loading: false });
-        }
-    }
-
-    /**
-    * Results from saving user MobileTelephone
-    * @param {*} data 
-    * @param {*} error 
-    */
-    _onSaveUserMobileTelephoneCallBack(data, error) {
-        if (DEBUG) console.log(data);
-        if (data) {
-            if (DEBUG) console.log("SaveUserMobileTelephone");
-            request.saveUserInfo(this.state, this._onSaveUserInfoCallBack.bind(this))
-        } else {
-            if (DEBUG) console.log("Error saving UserMobileTelephone")
-            this.setState({ loading: false });
-        }
-    }
-
-    /**
      * Results from saving user info data
      * @param {*} data 
      * @param {*} error 
@@ -627,25 +484,9 @@ class Experiment extends Component {
         if (DEBUG) console.log(data);
         if (data) {
             if (DEBUG) console.log("SaveUserInfo");
-            request.saveUserProperties(this.state, this._onSaveUserPropertiesCallBack.bind(this))
-        } else {
-            if (DEBUG) console.log("Error saving user info")
-            this.setState({ loading: false });
-        }
-    }
-
-    /**
-     * Results from saving user properties data
-     * @param {*} data 
-     * @param {*} error 
-     */
-    _onSaveUserPropertiesCallBack(data, error) {
-        if (DEBUG) console.log(data);
-        if (data) {
-            if (DEBUG) console.log("SaveUserProperties");
             request.saveUserForm(this.state, this._onSaveUserFormCallBack.bind(this))
         } else {
-            if (DEBUG) console.log("Error saving user properties")
+            if (DEBUG) console.log("Error saving user info")
             this.setState({ loading: false });
         }
     }
@@ -707,25 +548,9 @@ class Experiment extends Component {
         if (DEBUG) console.log(data);
         if (data) {
             if (DEBUG) console.log("SaveUserVisualPattern");
-            request.saveUserBrands(this.state, this._onSaveUserBrandsCallBack.bind(this))
-        } else {
-            if (DEBUG) console.log("Error saving user visualPattern")
-            this.setState({ loading: false });
-        }
-    }
-
-    /**
-     * Results from saving user brands data
-     * @param {*} data 
-     * @param {*} error 
-     */
-    _onSaveUserBrandsCallBack(data, error) {
-        if (DEBUG) console.log(data);
-        if (data) {
-            if (DEBUG) console.log("SaveUserBrands");
             request.saveUserPSForm(this.state, this._onSaveUserPSFormCallBack.bind(this))
         } else {
-            if (DEBUG) console.log("Error saving user brands")
+            if (DEBUG) console.log("Error saving user visualPattern")
             this.setState({ loading: false });
         }
     }
@@ -830,338 +655,6 @@ class Experiment extends Component {
             outputFormData: formData,
             generalOutput: generalOutput
         })
-    }
-
-    /**
-     * Manage results comming from First Task
-     * FirstTask component (FirstTask.js)
-     * @param {*} selectedNumber 
-     */
-    firstTaskHandler = (selectedNumber) => {
-        const { currentScreenNumber, inputNavigation, inputFirstTask, outputFirstTask,
-            generalOutput, userID } = this.state;
-        const { questionID, questionNumber, selectedAnswer, isCorrectAnswer } = outputFirstTask;
-
-        const currentFirsTaskScreenNumber = parseInt(inputNavigation[currentScreenNumber].pageId);
-        const currentFirstTask = inputFirstTask[(currentFirsTaskScreenNumber - 1) * constant.FIRST_TASK_PROPERTIES_TOTAL];
-        const currentCorrectAnswer = currentFirstTask.correctAnswer;
-        const currentQuestionID = currentFirstTask.id;
-        const isCorrectSelectedAnswer = (selectedNumber === currentCorrectAnswer)
-        const now = Date.now();
-
-        if (DEBUG) console.log(`Correct answer:${currentCorrectAnswer}`);
-        if (DEBUG) console.log(`Selected answer:${selectedNumber}`);
-        if (DEBUG) console.log(isCorrectSelectedAnswer)
-
-        questionID.push(currentQuestionID);
-        questionNumber.push(currentFirsTaskScreenNumber);
-        selectedAnswer.push(selectedNumber);
-        isCorrectAnswer.push(isCorrectSelectedAnswer);
-
-        generalOutput.push({
-            userID: userID,
-            task: constant.FIRST_TASK_SCREEN,
-            data: [currentQuestionID, currentFirsTaskScreenNumber, selectedNumber, isCorrectSelectedAnswer],
-            timestamp: now,
-            sync: constant.STATE_NOT_SYNC
-        })
-
-        //save results
-        this.setState({
-            generalOutput: generalOutput,
-            outputFirstTask: {
-                questionID: questionID,
-                questionNumber: questionNumber,
-                selectedAnswer: selectedAnswer,
-                isCorrectAnswer: isCorrectAnswer
-            },
-            modalOpen: true
-        }, () => {
-            if (DEBUG) console.log(this.state)
-        });
-    }
-
-    /**
-     * Manage results comming from First Task Demo
-     * FirstTask component (FirstTask.js)
-     * @param {*} selectedNumber 
-     */
-    firstTaskDemoHandler = (selectedNumber) => {
-        const { currentScreenNumber, inputNavigation, inputFirstTaskDemo, outputFirstTaskDemo,
-            userID, generalOutput } = this.state;
-        const { questionID, questionNumber, selectedAnswer, isCorrectAnswer } = outputFirstTaskDemo;
-
-        const currentFirsTaskDemoScreenNumber = parseInt(inputNavigation[currentScreenNumber].pageId);
-        const currentFirstTaskDemo = inputFirstTaskDemo[(currentFirsTaskDemoScreenNumber - 1) * constant.FIRST_TASK_PROPERTIES_TOTAL];
-        const currentCorrectAnswer = currentFirstTaskDemo.correctAnswer;
-        const currentQuestionID = currentFirstTaskDemo.id;
-        const isCorrectSelectedAnswer = (selectedNumber === currentCorrectAnswer)
-        const now = Date.now();
-
-        if (DEBUG) console.log(`Correct answer:${currentCorrectAnswer}`);
-        if (DEBUG) console.log(`Selected answer:${selectedNumber}`);
-        if (DEBUG) console.log(isCorrectSelectedAnswer)
-
-
-        questionID.push(currentQuestionID);
-        questionNumber.push(currentFirsTaskDemoScreenNumber);
-        selectedAnswer.push(selectedNumber);
-        isCorrectAnswer.push(isCorrectSelectedAnswer);
-
-        generalOutput.push({
-            userID: userID,
-            task: constant.FIRST_TASK_DEMO_SCREEN,
-            data: [currentQuestionID, currentFirsTaskDemoScreenNumber, selectedNumber, isCorrectSelectedAnswer],
-            timestamp: now,
-            sync: constant.STATE_NOT_SYNC
-        })
-
-        //save results
-        this.setState({
-            generalOutput: generalOutput,
-            outputFirstTaskDemo: {
-                questionID: questionID,
-                questionNumber: questionNumber,
-                selectedAnswer: selectedAnswer,
-                isCorrectAnswer: isCorrectAnswer
-            },
-            modalOpen: true
-        }, () => {
-            if (DEBUG) console.log(this.state)
-        });
-    }
-
-    /**
-     * Manage results comming from Second Task
-     * SecondTask component (SecondTask.js)
-     * @param {*} rating 
-     * @param {*} id 
-     */
-    secondTaskHandler = (selectedRatings) => {
-        if (DEBUG) console.log(selectedRatings)
-
-        const { generalOutput, userID } = this.state
-        const now = Date.now();
-
-        //we find the index of userform to update the same element instead of adding a new one in array
-        let index = -1;
-        for (let i = 0; i < generalOutput.length; i++) {
-            if (generalOutput[i].task === constant.SECOND_TASK_SCREEN) {
-                index = i;
-                break;
-            }
-        }
-
-        if (index === -1) {
-            generalOutput.push({
-                userID: userID,
-                task: constant.SECOND_TASK_SCREEN,
-                data: selectedRatings,
-                timestamp: now,
-                sync: constant.STATE_NOT_SYNC
-            })
-        } else {
-            generalOutput[index] = {
-                userID: userID,
-                task: constant.SECOND_TASK_SCREEN,
-                data: selectedRatings,
-                timestamp: now,
-                sync: constant.STATE_NOT_SYNC
-            }
-        }
-
-        //save results
-        this.setState({
-            outputSecondTask: selectedRatings,
-            generalOutput: generalOutput
-        });
-    }
-
-    /**
-     * Manage results comming from Third Task
-     * ThirdTask component (ThirdTask.js)
-     * @param {*} rating 
-     * @param {*} id 
-     */
-    thirdTaskHandler = (brand) => {
-        if (DEBUG) console.log(`Brand:${brand}`)
-        const { generalOutput, userID } = this.state
-        const now = Date.now();
-
-        //we find the index of userform to update the same element instead of adding a new one in array
-        let index = -1;
-        for (let i = 0; i < generalOutput.length; i++) {
-            if (generalOutput[i].task === constant.THIRD_TASK_SCREEN) {
-                index = i;
-                break;
-            }
-        }
-
-        if (index === -1) {
-            generalOutput.push({
-                userID: userID,
-                task: constant.THIRD_TASK_SCREEN,
-                data: brand,
-                timestamp: now,
-                sync: constant.STATE_NOT_SYNC
-            })
-        } else {
-            generalOutput[index] = {
-                userID: userID,
-                task: constant.THIRD_TASK_SCREEN,
-                data: brand,
-                timestamp: now,
-                sync: constant.STATE_NOT_SYNC
-            }
-        }
-
-        //save results
-        this.setState({
-            outputThirdTask: brand,
-            generalOutput: generalOutput
-        });
-    }
-
-    /**
-     * Manage results comming from Fourth Task
-     * FourthTask component (FourthTask.js)
-     * @param {*} rating 
-     * @param {*} id 
-     */
-    fourthTaskHandler = (selectedRatings) => {
-        if (DEBUG) console.log(selectedRatings)
-        const { generalOutput, userID } = this.state
-        const now = Date.now();
-
-        //we find the index of userform to update the same element instead of adding a new one in array
-        let index = -1;
-        for (let i = 0; i < generalOutput.length; i++) {
-            if (generalOutput[i].task === constant.FOURTH_TASK_SCREEN) {
-                index = i;
-                break;
-            }
-        }
-
-        if (index === -1) {
-            generalOutput.push({
-                userID: userID,
-                task: constant.FOURTH_TASK_SCREEN,
-                data: selectedRatings,
-                timestamp: now,
-                sync: constant.STATE_NOT_SYNC
-            })
-        } else {
-            generalOutput[index] = {
-                userID: userID,
-                task: constant.FOURTH_TASK_SCREEN,
-                data: selectedRatings,
-                timestamp: now,
-                sync: constant.STATE_NOT_SYNC
-            }
-        }
-
-        //save results
-        this.setState({
-            outputFourthTask: selectedRatings,
-            generalOutput: generalOutput
-        });
-    }
-
-    /**
-     * 
-     * @param {*} selectValue 
-     */
-    fifthTaskHandler = (selectValue) => {
-
-        if (DEBUG) console.log(selectValue)
-        const { generalOutput, userID } = this.state
-        const now = Date.now();
-
-        //we find the index of userform to update the same element instead of adding a new one in array
-        let index = -1;
-        for (let i = 0; i < generalOutput.length; i++) {
-            if (generalOutput[i].task === constant.FIFTH_TASK_SCREEN) {
-                index = i;
-                break;
-            }
-        }
-
-        if (index === -1) {
-            generalOutput.push({
-                userID: userID,
-                task: constant.FIFTH_TASK_SCREEN,
-                data: selectValue,
-                timestamp: now,
-                sync: constant.STATE_NOT_SYNC
-            })
-        } else {
-            generalOutput[index] = {
-                userID: userID,
-                task: constant.FIFTH_TASK_SCREEN,
-                data: selectValue,
-                timestamp: now,
-                sync: constant.STATE_NOT_SYNC
-            }
-        }
-
-        //save results
-        this.setState({
-            outputFifthTask: selectValue,
-            generalOutput: generalOutput
-        });
-    }
-
-    /**
-     * Manage results comming from Final Task
-     * FinalTask component (FinalTask.js)
-     * @param {*} selectedAnswer 
-     */
-    finalTaskHandler = (selectedAnswer) => {
-        const { inputNavigation, currentScreenNumber, outputFinalTask,
-            generalOutput, userID } = this.state;
-        const now = Date.now();
-
-        if (DEBUG) console.log(selectedAnswer)
-
-        let currentFinalTaskScreenNumber = parseInt(inputNavigation[currentScreenNumber].pageId) - 1; //pageID goes from 1 to n, so we need to discount 1 to get the value in the array
-        let selectedValue = constant.ATTRIBUTE.data.value[currentFinalTaskScreenNumber][parseInt(selectedAnswer) - 1];
-
-        outputFinalTask[currentFinalTaskScreenNumber] = selectedValue; //The current selected answer is adjusted to the keyboard, to start from 1. So, in order to get the correct value, we substract 1 to start from 0.
-
-
-        //we find the index of userform to update the same element instead of adding a new one in array
-        let index = -1;
-        for (let i = 0; i < generalOutput.length; i++) {
-            if ((generalOutput[i].task === constant.FINAL_TASK_SCREEN) &&
-                (generalOutput[i].data[0] === currentFinalTaskScreenNumber)) {
-                index = i;
-                break;
-            }
-        }
-
-        if (index === -1) {
-            generalOutput.push({
-                userID: userID,
-                task: constant.FINAL_TASK_SCREEN,
-                data: [currentFinalTaskScreenNumber, selectedValue],
-                timestamp: now,
-                sync: constant.STATE_NOT_SYNC
-            })
-        } else {
-            generalOutput[index] = {
-                userID: userID,
-                task: constant.FINAL_TASK_SCREEN,
-                data: [currentFinalTaskScreenNumber, selectedValue],
-                timestamp: now,
-                sync: constant.STATE_NOT_SYNC
-            }
-        }
-
-        //save results
-        this.setState({
-            generalOutput: generalOutput,
-            outputFinalTask: outputFinalTask
-        });
     }
 
     /**
@@ -1442,169 +935,6 @@ class Experiment extends Component {
     }
 
     /**
-     * Validate First Task Demo results
-     */
-    validateFirstTaskDemo() {
-        const { currentScreenNumber, inputNavigation, inputAppGeneralMessages, outputFirstTaskDemo } = this.state;
-
-        let ERROR_1 = getAppMessage(constant.ERROR_1, inputAppGeneralMessages)
-        let data = {
-            isValid: false,
-            textError: ERROR_1,
-            showError: true
-        }
-        let currentFirsTaskDemoScreenNumber = parseInt(inputNavigation[currentScreenNumber].pageId);
-
-        if (currentFirsTaskDemoScreenNumber === outputFirstTaskDemo.selectedAnswer.length) { //We have selected an answer
-            data.isValid = true
-            data.textError = constant.TEXT_EMPTY
-            data.showError = false
-        }
-
-        return data;
-
-    }
-
-    /**
-     * Validate First Task results
-     */
-    validateFirstTask() {
-        const { currentScreenNumber, inputNavigation, inputAppGeneralMessages, outputFirstTask } = this.state;
-
-        let ERROR_1 = getAppMessage(constant.ERROR_1, inputAppGeneralMessages)
-        let data = {
-            isValid: false,
-            textError: ERROR_1,
-            showError: true
-        }
-        let currentFirsTaskDemoScreenNumber = parseInt(inputNavigation[currentScreenNumber].pageId);
-
-        if (currentFirsTaskDemoScreenNumber === outputFirstTask.selectedAnswer.length) { //We have selected an answer
-            data.isValid = true
-            data.textError = constant.TEXT_EMPTY
-            data.showError = false
-        }
-
-        return data;
-    }
-
-    /**
-     * Validate Second Task results
-     */
-    validateSecondTask() {
-        let data = {
-            isValid: true,
-            textError: constant.TEXT_EMPTY,
-            showError: false
-        }
-
-        const { inputAppGeneralMessages, outputSecondTask } = this.state
-
-        if (outputSecondTask.length === 0) { //not results loaded yet
-            const ERROR_8 = getAppMessage(constant.ERROR_8, inputAppGeneralMessages)
-
-            data.isValid = false;
-            data.showError = true;
-            data.textError = ERROR_8;
-        }
-
-        return data;
-    }
-
-    /**
-     * Validate Third Task results
-     */
-    validateThirdTask() {
-        let data = {
-            isValid: true,
-            textError: constant.TEXT_EMPTY,
-            showError: false
-        }
-
-        const { outputThirdTask, inputAppGeneralMessages } = this.state;
-
-        if (outputThirdTask.length === 0) {
-            const ERROR_13 = getAppMessage(constant.ERROR_13, inputAppGeneralMessages)
-
-            data.isValid = false;
-            data.showError = true;
-            data.textError = ERROR_13;
-        }
-
-        return data;
-    }
-
-    /**
-     * Validate Fourth Task results
-     */
-    validateFourthTask() {
-        let data = {
-            isValid: true,
-            textError: constant.TEXT_EMPTY,
-            showError: false
-        }
-
-        const { outputFourthTask, inputAppGeneralMessages } = this.state
-
-        if (outputFourthTask.length === 0) { //not results loaded yet
-            const ERROR_8 = getAppMessage(constant.ERROR_8, inputAppGeneralMessages)
-
-            data.isValid = false;
-            data.showError = true;
-            data.textError = ERROR_8;
-        }
-
-        return data;
-    }
-
-    /**
-     * Validate Fifth Task results
-     */
-    validateFifthTask() {
-        let data = {
-            isValid: true,
-            textError: constant.TEXT_EMPTY,
-            showError: false
-        }
-
-        const { inputAppGeneralMessages, outputFifthTask } = this.state
-
-        if (outputFifthTask === constant.TEXT_EMPTY) { //not results loaded yet
-            const ERROR_9 = getAppMessage(constant.ERROR_9, inputAppGeneralMessages)
-
-            data.isValid = false;
-            data.showError = true;
-            data.textError = ERROR_9;
-        }
-
-        return data;
-    }
-
-    /**
-     * Validate Final Task results
-     */
-    validateFinalTask() {
-        const { currentScreenNumber, inputNavigation, inputAppGeneralMessages, outputFinalTask } = this.state;
-
-        let ERROR_1 = getAppMessage(constant.ERROR_1, inputAppGeneralMessages)
-        let data = {
-            isValid: false,
-            textError: ERROR_1,
-            showError: true
-        }
-
-        let currentFinalTaskScreenNumber = parseInt(inputNavigation[currentScreenNumber].pageId) - 1; //pageID goes from 1 to n, so we need to discount 1 to get the value in the array
-
-        if (outputFinalTask[currentFinalTaskScreenNumber] !== constant.TEXT_EMPTY) {
-            data.isValid = true
-            data.textError = constant.TEXT_EMPTY
-            data.showError = false
-        }
-
-        return data;
-    }
-
-    /**
      * Validate Auction task results
      */
 
@@ -1753,94 +1083,9 @@ class Experiment extends Component {
             console.log("Current Screen:")
             console.log(currentScreen)
             if (currentScreen.includes(constant.INSTRUCTION_SCREEN) ||
-                currentScreen === constant.REWARD_INFO_SCREEN ||
                 currentScreen === constant.REWARD_AUCTION_INFO_SCREEN ||
                 currentScreen === constant.AUCTION_TASK_FINISH_SCREEN) {
                 this._goToNextTaskInInputNavigation();
-            } else if (currentScreen === constant.FIRST_TASK_DEMO_SCREEN) {
-                let data = this.validateFirstTaskDemo();
-                if (data.isValid) this._goToNextTaskInInputNavigation();
-                else {
-                    //Show errors!
-                    this.setState({
-                        error: {
-                            showError: data.showError,
-                            textError: data.textError
-                        }
-                    });
-                }
-            } else if (currentScreen === constant.FIRST_TASK_SCREEN) {
-                let data = this.validateFirstTask();
-                if (data.isValid) this._goToNextTaskInInputNavigation();
-                else {
-                    //Show errors!
-                    this.setState({
-                        error: {
-                            showError: data.showError,
-                            textError: data.textError
-                        }
-                    });
-                }
-            } else if (currentScreen === constant.SECOND_TASK_SCREEN) {
-                let data = this.validateSecondTask();
-                if (data.isValid) this._goToNextTaskInInputNavigation();
-                else {
-                    //Show errors!
-                    this.setState({
-                        error: {
-                            showError: data.showError,
-                            textError: data.textError
-                        }
-                    });
-                }
-            } else if (currentScreen === constant.THIRD_TASK_SCREEN) {
-                let data = this.validateThirdTask();
-                if (data.isValid) this._goToNextTaskInInputNavigation();
-                else {
-                    //Show errors!
-                    this.setState({
-                        error: {
-                            showError: data.showError,
-                            textError: data.textError
-                        }
-                    });
-                }
-            } else if (currentScreen === constant.FOURTH_TASK_SCREEN) {
-                let data = this.validateFourthTask();
-                if (data.isValid) this._goToNextTaskInInputNavigation();
-                else {
-                    //Show errors!
-                    this.setState({
-                        error: {
-                            showError: data.showError,
-                            textError: data.textError
-                        }
-                    });
-                }
-            } else if (currentScreen === constant.FIFTH_TASK_SCREEN) {
-                let data = this.validateFifthTask();
-                if (data.isValid) this._goToNextTaskInInputNavigation();
-                else {
-                    //Show errors!
-                    this.setState({
-                        error: {
-                            showError: data.showError,
-                            textError: data.textError
-                        }
-                    });
-                }
-            } else if (currentScreen === constant.FINAL_TASK_SCREEN) {
-                let data = this.validateFinalTask();
-                if (data.isValid) this._goToNextTaskInInputNavigation();
-                else {
-                    //Show errors!
-                    this.setState({
-                        error: {
-                            showError: data.showError,
-                            textError: data.textError
-                        }
-                    });
-                }
             } else if (currentScreen === constant.PSFORM_SCREEN) {
                 let data = this.validatePSForm();
                 if (data.isValid) this._goToNextTaskInInputNavigation();
@@ -2024,8 +1269,7 @@ class Experiment extends Component {
      * We move to next page, according to inputNavigation input data
      */
     _goToNextTaskInInputNavigation() {
-        const { currentScreenNumber, inputNavigation, logTimestamp, inputFirstTask,
-            inputFirstTaskDemo, showAlertWindowsClosing } = this.state;
+        const { currentScreenNumber, inputNavigation, logTimestamp, showAlertWindowsClosing } = this.state;
 
         console.log("_goToNextTaskInInputNavigation")
         let currentScreen = inputNavigation[currentScreenNumber].screen;
@@ -2035,27 +1279,19 @@ class Experiment extends Component {
         let timestamps = logTimestamp.timestamp;
         let showPagination = false; //default
         let totalLength = inputNavigation.length;
-        let firsTaskTotalLength = inputFirstTask.length / constant.FIRST_TASK_PROPERTIES_TOTAL;
-        let firsTaskDemoTotalLength = inputFirstTaskDemo.length / constant.FIRST_TASK_PROPERTIES_TOTAL;
         let page = constant.TEXT_EMPTY;
         let nextScreenNumber = currentScreenNumber + 1;
         let showAlertWindowsClosingTmp = showAlertWindowsClosing;
 
         if (nextScreenNumber < totalLength) {
             let nextScreen = inputNavigation[nextScreenNumber].screen;
-            let pageID = inputNavigation[nextScreenNumber].pageId;
+            // let pageID = inputNavigation[nextScreenNumber].pageId;
             let progressBarNow = ((currentScreenNumber / totalLength) * 100) + 1; //progressBarNow init value is 1, so now we add +1 in order to continue that sequence
 
             screens.push(nextScreen);//set timestamp
             timestamps.push(now);
 
-            if (nextScreen === constant.FIRST_TASK_SCREEN) {
-                showPagination = true;
-                page = `${pageID}/${firsTaskTotalLength}`;
-            } else if (nextScreen === constant.FIRST_TASK_DEMO_SCREEN) {
-                showPagination = true;
-                page = `${pageID}/${firsTaskDemoTotalLength}`;
-            } else if (nextScreenNumber === (totalLength - 1)) { //Last screen!
+            if (nextScreenNumber === (totalLength - 1)) { //Last screen!
                 // SYNC DATA
                 showAlertWindowsClosingTmp = false
                 loading = true //Show Loading
@@ -2218,13 +1454,7 @@ function isFooterShownInCurrentScreen(state) {
             currentScreen !== constant.VISUAL_PATTERN_INSTRUCTION_FINISH_SCREEN) {
             isFooterShown = true;
         }
-    } else if (currentScreen === constant.REWARD_INFO_SCREEN ||
-        currentScreen === constant.SECOND_TASK_SCREEN ||
-        currentScreen === constant.THIRD_TASK_SCREEN ||
-        currentScreen === constant.FOURTH_TASK_SCREEN ||
-        currentScreen === constant.FIFTH_TASK_SCREEN ||
-        currentScreen === constant.FINAL_TASK_SCREEN ||
-        currentScreen === constant.REWARD_AUCTION_INFO_SCREEN ||
+    } else if (currentScreen === constant.REWARD_AUCTION_INFO_SCREEN ||
         currentScreen === constant.USER_FORM_SCREEN ||
         currentScreen === constant.PSFORM_SCREEN) {
         isFooterShown = true;
@@ -2239,12 +1469,8 @@ function isFooterShownInCurrentScreen(state) {
 
 /**
  * Call to a specific component. Prepare the input data for the component
- * @param {*} state 
- * @param {*} formHandler 
- * @param {*} firstTaskHandler 
- * @param {*} firstTaskDemoHandler 
- * @param {*} secondTaskHandler 
- * @param {*} finalTaskHandler 
+ * @param {*} state
+ * @param {*} context
  */
 function changePages(state, context) {
 
@@ -2253,16 +1479,11 @@ function changePages(state, context) {
         inputTextInstructions,
         outputFormData,
         error,
-        inputFirstTask,
-        inputFirstTaskDemo,
         inputAuctionTask,
         inputAuctionDemoTask,
         outputAuctionTask,
-        outputFirstTask,
-        outputFirstTaskDemo,
         inputPSForm,
         outputPSForm,
-        modalOpen,
         inputRewardData,
         inputAppGeneralMessages } = state;
     const totalLength = inputNavigation.length;
@@ -2285,63 +1506,6 @@ function changePages(state, context) {
                     text={text}
                     name={currentScreen}
                 />;
-            } else if (currentScreen === constant.FIRST_TASK_SCREEN) {
-                return <FirstTask
-                    action={context.firstTaskHandler}
-                    text={text}
-                    data={inputFirstTask}
-                    result={outputFirstTask}
-                    counter={pageID}
-                    error={error}
-                    modalOpen={modalOpen}
-                />;
-            } else if (currentScreen === constant.FIRST_TASK_DEMO_SCREEN) {
-                return <FirstTask
-                    action={context.firstTaskDemoHandler}
-                    text={text}
-                    data={inputFirstTaskDemo}
-                    result={outputFirstTaskDemo}
-                    counter={pageID}
-                    error={error}
-                    modalOpen={modalOpen}
-                />;
-            } else if (currentScreen === constant.REWARD_INFO_SCREEN) {
-                let reward = getRewardDataForCurrentScreen(inputRewardData, constant.REWARD_AUCTION_INFO_SCREEN)
-                return <RewardInfo
-                    data={outputFirstTask}
-                    reward={reward}
-                    appMessages={inputAppGeneralMessages}
-                />;
-            } else if (currentScreen === constant.SECOND_TASK_SCREEN) {
-                return <SecondTask
-                    action={context.secondTaskHandler}
-                    text={text}
-                    error={error}
-                />;
-            } else if (currentScreen === constant.THIRD_TASK_SCREEN) {
-                return <ThirdTask
-                    action={context.thirdTaskHandler}
-                    text={text}
-                    error={error} />;
-            } else if (currentScreen === constant.FOURTH_TASK_SCREEN) {
-                return <FourthTask
-                    action={context.fourthTaskHandler}
-                    text={text}
-                    error={error}
-                />;
-            } else if (currentScreen === constant.FIFTH_TASK_SCREEN) {
-                return <FifthTask
-                    action={context.fifthTaskHandler}
-                    text={text}
-                    error={error}
-                />;
-            } else if (currentScreen === constant.FINAL_TASK_SCREEN) {
-                return <FinalTask
-                    action={context.finalTaskHandler}
-                    text={text}
-                    counter={pageID}
-                    error={error}
-                />;//pageID goes from 1 to n, so we need to discount 1 to get the value in the array
             } else if (currentScreen === constant.AUCTION_TASK_SCREEN) {
                 return <AuctionTask
                     action={context.auctionTaskHandler}
