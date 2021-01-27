@@ -65,8 +65,8 @@ class Experiment extends Component {
         const typeTask = this.props.match.params.version
         const userFormDefault = {
             sex: constant.TEXT_EMPTY,//default selected sex
-            age: constant.TEXT_EMPTY,
-            yearsEduc: constant.TEXT_EMPTY,
+            age: 0,
+            yearsEduc: 0,
             levelEduc: constant.FORM_LEVEL_EDUC_DEFAULT, //default selected 
             profession: constant.TEXT_EMPTY,
             typeAuction: constant.TEXT_EMPTY
@@ -863,8 +863,6 @@ class Experiment extends Component {
 
         const femaleParticipants = participants[0];
         const maleParticipants = participants[1];
-        // const scenario_1 = participants[3];
-        // const scenario_2 = participants[4];
 
         const indexFirstGroup = 0
         const indexSecondGroup = 1
@@ -883,7 +881,7 @@ class Experiment extends Component {
         let ageIncorrectIntervalFlag = false;
 
         // CONTROL OF EMPTY_TEXT
-        if (age === constant.TEXT_EMPTY) {
+        if (age === 0) {
             const ERROR_5 = getAppMessage(constant.ERROR_5, inputAppGeneralMessages)
             data.textError = ERROR_5;
             data.showError = true;
@@ -895,7 +893,7 @@ class Experiment extends Component {
             const ERROR_11 = getAppMessage(constant.ERROR_11, inputAppGeneralMessages)
             data.textError = ERROR_11;
             data.showError = true;
-        } else if (yearsEduc === constant.TEXT_EMPTY) {
+        } else if (yearsEduc === 0) {
             const ERROR_6 = getAppMessage(constant.ERROR_6, inputAppGeneralMessages)
             data.textError = ERROR_6;
             data.showError = true;
@@ -905,7 +903,7 @@ class Experiment extends Component {
             data.showError = true;
         }
 
-        if (data.showError) return data;
+        if (data.showError) return data
 
         // CONTROL OF AMOUNT OF PARTICIPANTS
         if (age >= parseInt(firstGroupAgeLimit.minAge) &&
@@ -920,6 +918,7 @@ class Experiment extends Component {
         } else {
             ageIncorrectIntervalFlag = true;
         }
+
 
         if (ageIncorrectIntervalFlag || parseInt(amountParticipant) >= participantsLimit ||
             levelEduc === constant.FORM_LEVEL_EDUC_INITIAL || yearsEduc < yearsEducLimit) {

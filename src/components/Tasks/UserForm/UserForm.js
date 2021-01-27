@@ -22,8 +22,8 @@ class UserForm extends React.Component {
     this.state = {
       formData: {
         sex: TEXT_EMPTY,//default selected sex
-        age: TEXT_EMPTY,
-        yearsEduc: TEXT_EMPTY,
+        age: 0,
+        yearsEduc: 0,
         levelEduc: FORM_LEVEL_EDUC_DEFAULT, //default selected 
         profession: TEXT_EMPTY
       }
@@ -43,15 +43,33 @@ class UserForm extends React.Component {
 
     //We save all fields from form data 
     if (formId === FORM_SEX) {
-      formData.sex = formInputValue
+      if (formInputValue === MALE_VALUE || formInputValue === FEMALE_VALUE) {
+        formData.sex = formInputValue
+      } else {
+        formData.sex = TEXT_EMPTY
+      }
     } else if (formId === FORM_AGE) {
-      formData.age = formInputValue
+      if (isNaN(formInputValue) || formInputValue === TEXT_EMPTY || formInputValue < 0) {
+        formData.age = 0
+      } else {
+        formData.age = parseInt(formInputValue)
+      }
     } else if (formId === FORM_PROFESSION) {
       formData.profession = formInputValue
     } else if (formId === FORM_YEARS_EDUC) {
-      formData.yearsEduc = formInputValue
+      if (isNaN(formInputValue) || formInputValue === TEXT_EMPTY || formInputValue < 0) {
+        formData.yearsEduc = 0
+      } else {
+        formData.yearsEduc = parseInt(formInputValue)
+      }
     } else if (formId === FORM_LEVEL_EDUC) {
-      formData.levelEduc = formInputValue
+      if (formInputValue === FORM_LEVEL_EDUC_DEFAULT || formInputValue === FORM_LEVEL_EDUC_INITIAL
+        || formInputValue === FORM_LEVEL_EDUC_MIDDLE || formInputValue === FORM_LEVEL_EDUC_SUPERIOR) {
+        formData.levelEduc = formInputValue
+      } else {
+        formData.levelEduc = FORM_LEVEL_EDUC_DEFAULT
+      }
+
     }
 
     this.setState({ formData: formData }, () => {
