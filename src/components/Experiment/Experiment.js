@@ -282,7 +282,7 @@ class Experiment extends Component {
         if (data) {
             this.setState({
                 loading: false, //Hide loading
-                inputParticipants: data
+                inputParticipants: data.participants
             }, () => {
                 if (DEBUG) console.log(this.state)
             });
@@ -787,17 +787,16 @@ class Experiment extends Component {
 
         const { outputFormData, inputParticipants } = this.state
         const { sex, age, yearsEduc, levelEduc, profession } = outputFormData;
-        const { participants, config, groups } = inputParticipants
-
+        const groups = constant.PARTICIPANTS_GROUPS
         const firstGroupAgeLimit = groups[0]
         const secondGroupAgeLimit = groups[1]
         const thirdGroupAgeLimit = groups[2]
 
-        const participantsLimit = parseInt(config.participantsLimit)
-        const yearsEducLimit = parseInt(config.yearsEducLimit)
+        const participantsLimit = constant.PARTICIPANTS_PER_SEX_PER_GROUP_LIMIT
+        const yearsEducLimit = constant.YEARS_EDUCATION_LIMIT
 
-        const femaleParticipants = participants[0];
-        const maleParticipants = participants[1];
+        const femaleParticipants = inputParticipants[0];
+        const maleParticipants = inputParticipants[1];
 
         const indexFirstGroup = 0
         const indexSecondGroup = 1
@@ -1114,10 +1113,9 @@ class Experiment extends Component {
     }
 
     _syncDataAfterUserValidation() {
-        const { inputParticipants, outputFormData } = this.state;
+        const { outputFormData } = this.state;
         const { sex, age } = outputFormData;
-        const { groups } = inputParticipants
-
+        const groups = constant.PARTICIPANTS_GROUPS
         const firstGroupAgeLimit = groups[0]
         const secondGroupAgeLimit = groups[1]
         const thirdGroupAgeLimit = groups[2]
@@ -1144,18 +1142,18 @@ class Experiment extends Component {
 
     _callAuctionHotelsData(groupAge) {
         const { inputParticipants, outputFormData } = this.state;
-        const { config, participants, scenarios } = inputParticipants
-        const { scenariosLimit } = config
+        const scenarios = constant.SCENARIOS
+        const scenariosLimit = constant.PARTICIPANTS_PER_SCENARIO_PER_GROUP_LIMIT
 
         let randomNumberGenerated = []
         let scenarioNumber = 0
 
         //Logic to assign and check scenarios availability
         while (true) {
-            scenarioNumber = randomNumber(0, (inputParticipants.scenarios.length - 1))
+            scenarioNumber = randomNumber(0, (scenarios.length - 1))
 
             if (randomNumberGenerated.includes(scenarioNumber)) { //If we already have generated a certain number, we do not check again scenario availability, we only check if we have seen all number options availables
-                if (randomNumberGenerated.length === inputParticipants.scenarios.length) {
+                if (randomNumberGenerated.length === scenarios.length) {
                     alert(constant.AUCTION_EXHAUSTED_QUOTA_MESSAGE);
                     this.setState({ showAlertWindowsClosing: false }, () => {
                         window.location.replace(ARIADNA_REDIRECT_REJECT);
@@ -1164,9 +1162,9 @@ class Experiment extends Component {
                 }
             } else { //if we generated a new number option, we add it to randomNumberGenerated and check that scenario availability 
                 randomNumberGenerated.push(scenarioNumber)
-                //Index in table for scenario_1 = 3 and scenario_2 = 4
-                //ScenarioNumber should be a random number between 0 and 1, so if we add 3, we have the correct table index with values for the scenario 
-                if (participants[scenarioNumber + 3][groupAge] < parseInt(scenariosLimit)) {
+                //Index in inputParticipant array is scenario_1 = 2 and scenario_2 = 3
+                //ScenarioNumber should be a random number between 0 and 1 (there are two scenarios), so if we add 2, we have the correct table index with values for the scenario 
+                if (inputParticipants[scenarioNumber + 2][groupAge] < parseInt(scenariosLimit)) {
                     break;
                 }
             }

@@ -118,7 +118,7 @@ export function fetchAuctionHotels(type, callback) {
  */
 export function fetchVersions(callback) {
 
-    let spreadsheetName = constant.VERSIONS_SHEETNAME;
+    let spreadsheetName = constant.INPUT_VERSIONS_SHEETNAME;
     let row = "A2";
     let column = "B";
 
@@ -184,7 +184,7 @@ export function fetchPSFormData(sex, callback) {
  * @param {*} callback 
  */
 export function fetchAppText(sex, callback) {
-    let spreadsheetName = sex === constant.FEMALE_VALUE ? constant.APP_TEXT_FEMALE_SHEETNAME : constant.APP_TEXT_MALE_SHEETNAME;
+    let spreadsheetName = sex === constant.FEMALE_VALUE ? constant.INPUT_APP_TEXT_FEMALE_SHEETNAME : constant.INPUT_APP_TEXT_MALE_SHEETNAME;
     let row = "A2";
     let column = "C";
 
@@ -231,45 +231,25 @@ export function fetchNavScreens(spreadsheetName, callback) {
  */
 export function fetchParticipantsCounter(callback) {
 
-    let spreadsheetName = constant.USER_PARTICIPANTS_COUNTER_SHEETNAME;
+    let spreadsheetName = constant.INPUT_USER_PARTICIPANTS_COUNTER_SHEETNAME;
     let row = "B2";
-    let column = "I";
+    let column = "D";
 
     get(fetch_sheet_url, { spreadSheetName: spreadsheetName, column: row, row: column })
         .then((response) => {
             const data = response.rows;
 
             let participants = []
-            let scenarios = []
-            let groups = []
-            let config = {
-                participantsLimit: "",
-                yearsEducLimit: "",
-                scenariosLimit: ""
-            }
 
             data.forEach(column => {
                 //Participants table from column B to D
                 if (column[0] !== "" && column[1] !== "" && column[2] !== "") {
                     participants.push([column[0], column[1], column[2]])
                 }
-
-                //Config parameters table from column G to I
-                if (column[5] === "participants_per_sex_per_group") {
-                    config.participantsLimit = column[6]
-                } else if (column[5] === "years_education_limit") {
-                    config.yearsEducLimit = column[6]
-                } else if (column[5] === "participants_per_scenario_per_group") {
-                    config.scenariosLimit = column[6]
-                } else if (column[5].includes("scenario_")) {
-                    scenarios.push(column[6])
-                } else if (column[5].includes("group_")) {
-                    groups.push({ minAge: column[6], maxAge: column[7] })
-                }
             });
 
 
-            callback({ participants, config, groups, scenarios });
+            callback({ participants });
         }, (response) => {
             callback(false, response.result.error);
         });

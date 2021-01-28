@@ -6,6 +6,17 @@ export const RED = "red";
 
 export const TEXT_EMPTY = "";
 
+//General config parameters
+export const PARTICIPANTS_PER_SEX_PER_GROUP_LIMIT = 30;
+export const YEARS_EDUCATION_LIMIT = 11;
+export const PARTICIPANTS_PER_SCENARIO_PER_GROUP_LIMIT = 30;
+export const SCENARIOS = ["hotels", "hotels - rev"]
+export const PARTICIPANTS_GROUPS = [
+    { minAge: 19, maxAge: 30 },
+    { minAge: 42, maxAge: 53 },
+    { minAge: 65, maxAge: 76 }
+]
+
 //Visual Pattern
 export const TILE_SUCCESS = 1;
 export const TILE_EMPTY = 0;
@@ -106,21 +117,22 @@ export const VISUAL_PATTERN_DEMO_INSTRUCTION_FINISH_SCREEN = "VisualPatternDemoI
 export const VISUAL_PATTERN_INSTRUCTION_FINISH_SCREEN = "VisualPatternInstructionFinish";
 
 //Sheetnames
-export const USER_PARTICIPANTS_COUNTER_SHEETNAME = "input-userexperimentcount";
+//-- SAVE
 export const USER_INFO_SHEETNAME = "userinfo";
 export const USER_LOGTIME_SHEETNAME = "userlogtime";
 export const USER_FORM_SHEETNAME = "userform";
 export const USER_GENERAL_DATA_SHEETNAME = "usergeneraldata";
-export const VERSIONS_SHEETNAME = "input-versions";
-export const INPUT_APP_MESSAGES = "input-app-messages";
-export const APP_TEXT_FEMALE_SHEETNAME = "input-text-female";
-export const APP_TEXT_MALE_SHEETNAME = "input-text-male";
 export const USER_AUCTION_BIDS_SHEETNAME = "auction-bids"
 export const USER_VISUAL_PATTERN_SHEETNAME = "uservisualpattern";
 export const USER_PSFORM_SHEETNAME = "userpsform";
+//-- INPUT
 export const INPUT_PSFORM_MALE_SHEETNAME = "input-psychologyform-male";
 export const INPUT_PSFORM_FEMALE_SHEETNAME = "input-psychologyform-female";
-export const INPUT_REWARD_SHEETNAME = "input-reward";
+export const INPUT_APP_TEXT_FEMALE_SHEETNAME = "input-text-female";
+export const INPUT_APP_TEXT_MALE_SHEETNAME = "input-text-male";
+export const INPUT_VERSIONS_SHEETNAME = "input-versions";
+export const INPUT_USER_PARTICIPANTS_COUNTER_SHEETNAME = "input-userexperimentcount";
+
 
 //General App messages KEYS
 export const AUCTION_GAIN_TEXT = "Brawo, udało Ci się zarezerwować ten pokój.<br><br>Zaoszczędziłeś $(value) zł. <br><br> Naciśnij ENTER, aby przejść do następnej aukcji."
