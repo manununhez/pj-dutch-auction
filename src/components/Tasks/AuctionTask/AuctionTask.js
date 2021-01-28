@@ -20,8 +20,6 @@ import {
     RED
 } from '../../../helpers/constants';
 
-import { getAppMessage } from '../../../helpers/utils';
-
 import "./AuctionTask.css";
 
 import FooterV1 from "../../Footers/FooterV1.0";
@@ -43,9 +41,9 @@ class AuctionTask extends React.Component {
             isBidGain: false,
             bidStartTimestamp: 0,
             bidStopTimestamp: 0,
-            footerTextMessage: getAppMessage(AUCTION_FOOTER_TEXT, this.props.appMessages),
-            gainText: getAppMessage(AUCTION_GAIN_TEXT, this.props.appMessages),
-            looseText: getAppMessage(AUCTION_LOSE_TEXT, this.props.appMessages)
+            footerTextMessage: AUCTION_FOOTER_TEXT,
+            gainText: AUCTION_GAIN_TEXT,
+            looseText: AUCTION_LOSE_TEXT
         };
 
         this.handleKeyDownEvent = this._handleKeyDownEvent.bind(this);

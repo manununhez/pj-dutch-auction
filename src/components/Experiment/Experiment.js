@@ -30,7 +30,7 @@ import "./Experiment.css"
 // helpers
 import * as request from '../../helpers/fetch';
 import * as constant from '../../helpers/constants';
-import { USER_INFO, randomNumber, getAppMessage } from '../../helpers/utils';
+import { USER_INFO, randomNumber } from '../../helpers/utils';
 
 const DEBUG = (process.env.REACT_APP_DEBUG_LOG === "true") ? true : false;
 const ARIADNA_REDIRECT_REJECT = process.env.REACT_APP_ARIADNA_REDIRECT_REJECT;
@@ -83,7 +83,6 @@ class Experiment extends Component {
             inputAuctionDemoTask: [],
             inputParticipants: [],
             inputPSForm: [],
-            inputAppGeneralMessages: [],
             //Variables for output data (results)
             generalOutput: generalOutputDefault,
             generalOutputIndexes: [],
@@ -129,9 +128,7 @@ class Experiment extends Component {
         // if(DEBUG) console.log('time remaining', this.idleTimer.getRemainingTime())
 
         if (this.idleTimer.getRemainingTime() === 0) {
-            const { inputAppGeneralMessages } = this.state;
-            const SESSION_TIMEOUT_MESSAGE = getAppMessage(constant.SESSION_TIMEOUT_MESSAGE, inputAppGeneralMessages)
-            alert(SESSION_TIMEOUT_MESSAGE);
+            alert(constant.SESSION_TIMEOUT_MESSAGE);
             document.location.reload();
         }
     }
@@ -152,9 +149,6 @@ class Experiment extends Component {
     _fetchExperimentInputData() {
         if (DEBUG) console.log("FETCH hotels tutorial")
         request.fetchAuctionHotels(constant.SCENARIO_HOTEL_TUTORIAL, this._onLoadAuctionHotelsDemoCallBack.bind(this))
-
-        if (DEBUG) console.log("FETCH app messages")
-        request.fetchAppGeneralMessages(this._onLoadAppMessagesCallBack.bind(this))
 
         if (DEBUG) console.log("Fetch navigationScreens");
         request.fetchNavScreens(this.state.typeTask, this._onLoadNavScreenCallBack.bind(this))
@@ -365,32 +359,6 @@ class Experiment extends Component {
             this.setState({
                 // loading: false, //Hide loading
                 inputAuctionDemoTask: data.hotels
-            })
-
-            if (DEBUG) console.log(data)
-        } else {
-            this.setState({
-                loading: false,
-                error: {
-                    showError: true,
-                    textError: `${error}. Please refresh page.`
-                }
-            })
-            if (DEBUG) console.log(error)
-        }
-    }
-
-    /**
-     * 
-     * @param {*} data 
-     * @param {*} error 
-     */
-    _onLoadAppMessagesCallBack(data, error) {
-        if (data) {
-            //Loggin the first screen of the navigation
-            this.setState({
-                // loading: false, //Hide loading
-                inputAppGeneralMessages: data.result
             })
 
             if (DEBUG) console.log(data)
@@ -817,7 +785,7 @@ class Experiment extends Component {
     */
     validateForm() {
 
-        const { outputFormData, inputParticipants, inputAppGeneralMessages } = this.state
+        const { outputFormData, inputParticipants } = this.state
         const { sex, age, yearsEduc, levelEduc, profession } = outputFormData;
         const { participants, config, groups } = inputParticipants
 
@@ -849,24 +817,19 @@ class Experiment extends Component {
 
         // CONTROL OF EMPTY_TEXT
         if (age === 0) {
-            const ERROR_5 = getAppMessage(constant.ERROR_5, inputAppGeneralMessages)
-            data.textError = ERROR_5;
+            data.textError = constant.ERROR_5;
             data.showError = true;
         } else if (profession === constant.TEXT_EMPTY) {
-            const ERROR_7 = getAppMessage(constant.ERROR_7, inputAppGeneralMessages)
-            data.textError = ERROR_7;
+            data.textError = constant.ERROR_7;
             data.showError = true;
         } else if (levelEduc === constant.FORM_LEVEL_EDUC_DEFAULT) {
-            const ERROR_11 = getAppMessage(constant.ERROR_11, inputAppGeneralMessages)
-            data.textError = ERROR_11;
+            data.textError = constant.ERROR_11;
             data.showError = true;
         } else if (yearsEduc === 0) {
-            const ERROR_6 = getAppMessage(constant.ERROR_6, inputAppGeneralMessages)
-            data.textError = ERROR_6;
+            data.textError = constant.ERROR_6;
             data.showError = true;
         } else if (sex === constant.TEXT_EMPTY) {
-            const ERROR_14 = getAppMessage(constant.ERROR_14, inputAppGeneralMessages)
-            data.textError = ERROR_14;
+            data.textError = constant.ERROR_14;
             data.showError = true;
         }
 
@@ -889,9 +852,8 @@ class Experiment extends Component {
 
         if (ageIncorrectIntervalFlag || parseInt(amountParticipant) >= participantsLimit ||
             levelEduc === constant.FORM_LEVEL_EDUC_INITIAL || yearsEduc < yearsEducLimit) {
-            const ERROR_12 = getAppMessage(constant.ERROR_12, inputAppGeneralMessages)
             data.redirect = true;
-            data.textError = ERROR_12;
+            data.textError = constant.ERROR_12;
         }
 
         if (!data.showError && !data.redirect) data.isValid = true;
@@ -955,7 +917,7 @@ class Experiment extends Component {
      * Validate PS Form questionaries results
      */
     validatePSForm() {
-        const { currentScreenNumber, inputNavigation, inputPSForm, inputAppGeneralMessages, outputPSForm } = this.state
+        const { currentScreenNumber, inputNavigation, inputPSForm, outputPSForm } = this.state
 
         let data = {
             isValid: true,
@@ -966,10 +928,8 @@ class Experiment extends Component {
         let currentInputPSForm = inputPSForm[currentPSFormNumber];
 
         if (outputPSForm.length === 0) {
-            const ERROR_9 = getAppMessage(constant.ERROR_9, inputAppGeneralMessages)
-
             data.isValid = false;
-            data.textError = ERROR_9;
+            data.textError = constant.ERROR_9;
             data.showError = true;
         } else {
             let found = false;
@@ -981,10 +941,8 @@ class Experiment extends Component {
             }
 
             if (!found) {
-                const ERROR_10 = getAppMessage(constant.ERROR_10, inputAppGeneralMessages)
-
                 data.isValid = false;
-                data.textError = ERROR_10;
+                data.textError = constant.ERROR_10;
                 data.showError = true;
             }
         }
@@ -1185,7 +1143,7 @@ class Experiment extends Component {
     }
 
     _callAuctionHotelsData(groupAge) {
-        const { inputParticipants, inputAppGeneralMessages, outputFormData } = this.state;
+        const { inputParticipants, outputFormData } = this.state;
         const { config, participants, scenarios } = inputParticipants
         const { scenariosLimit } = config
 
@@ -1198,8 +1156,7 @@ class Experiment extends Component {
 
             if (randomNumberGenerated.includes(scenarioNumber)) { //If we already have generated a certain number, we do not check again scenario availability, we only check if we have seen all number options availables
                 if (randomNumberGenerated.length === inputParticipants.scenarios.length) {
-                    let message = getAppMessage(constant.AUCTION_EXHAUSTED_QUOTA_MESSAGE, inputAppGeneralMessages);
-                    alert(message);
+                    alert(constant.AUCTION_EXHAUSTED_QUOTA_MESSAGE);
                     this.setState({ showAlertWindowsClosing: false }, () => {
                         window.location.replace(ARIADNA_REDIRECT_REJECT);
                     })
@@ -1447,8 +1404,7 @@ function changePages(state, context) {
         inputAuctionDemoTask,
         outputAuctionTask,
         inputPSForm,
-        outputPSForm,
-        inputAppGeneralMessages } = state;
+        outputPSForm } = state;
     const totalLength = inputNavigation.length;
 
     if (totalLength > 0) { //If input navigation has been called
@@ -1474,36 +1430,30 @@ function changePages(state, context) {
                     action={context.auctionTaskHandler}
                     imageIndex={0}
                     data={inputAuctionTask}
-                    appMessages={inputAppGeneralMessages}
                 />;
             } else if (currentScreen === constant.AUCTION_TASK_DEMO_SCREEN) {
                 return <AuctionTask
                     action={context.auctionTaskDemoHandler}
                     imageIndex={inputAuctionTask.length} //demo image index starts in 30, after the real auctions
                     data={inputAuctionDemoTask}
-                    appMessages={inputAppGeneralMessages}
                 />;
             } else if (currentScreen === constant.REWARD_AUCTION_INFO_SCREEN) {
                 return <RewardAuctionInfo
                     sex={outputFormData.sex}
                     data={outputAuctionTask}
-                    appMessages={inputAppGeneralMessages}
                 />;
             } else if (currentScreen === constant.AUCTION_TASK_FINISH_SCREEN) {
                 return <AuctionInfo
                     sex={outputFormData.sex}
                     data={outputAuctionTask}
-                    appMessages={inputAppGeneralMessages}
                 />;
             } else if (currentScreen === constant.VISUAL_PATTERN_SCREEN) {
                 return <VisualPatternTask
                     action={context.visualPatternTaskHandler}
-                    appMessages={inputAppGeneralMessages}
                 />;
             } else if (currentScreen === constant.VISUAL_PATTERN_DEMO_SCREEN) {
                 return <VisualPatternDemoTask
                     action={context.visualPatternDemoTaskHandler}
-                    appMessages={inputAppGeneralMessages}
                 />;
             } else if (currentScreen === constant.PSFORM_SCREEN) {
                 const currentPSForm = inputPSForm[pageID - 1];

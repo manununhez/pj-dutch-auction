@@ -47,8 +47,3 @@ export function isEmpty(obj) {
     }
     return true;
 }
-
-export function getAppMessage(key, data) {
-    let tmp = data.filter(item => item.key === key)
-    return tmp[0].value
-}

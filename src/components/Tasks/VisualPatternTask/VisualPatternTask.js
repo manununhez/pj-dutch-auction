@@ -21,14 +21,14 @@ import {
     TILE_LEFT,
     SPACE_KEY_CODE,
     EVENT_KEY_DOWN,
-    VISUAL_PATTERN_TEXT2,
+    VISUAL_PATTERN_INSTRUCTION,
     VISUAL_PATTERN_TEXT_START_PRESS_SPACE,
     VISUAL_PATTERN_RESULTS_CORRECT,
     VISUAL_PATTERN_RESULTS_FAILED,
     VISUAL_PATTERN_RESULTS_PRESS_SPACE
 } from '../../../helpers/constants';
 
-import { getAppMessage, randomNumber } from '../../../helpers/utils';
+import { randomNumber } from '../../../helpers/utils';
 
 import './VisualPatternTask.css'
 
@@ -56,11 +56,11 @@ class VisualPatternTask extends React.Component {
             showCompletedTable: true,
             showResults: false,
             showInitMessage: true,
-            resultsPressSpace: getAppMessage(VISUAL_PATTERN_RESULTS_PRESS_SPACE, this.props.appMessages),
-            resultsFailed: getAppMessage(VISUAL_PATTERN_RESULTS_FAILED, this.props.appMessages),
-            resultsCorrect: getAppMessage(VISUAL_PATTERN_RESULTS_CORRECT, this.props.appMessages),
-            startPressSpace: getAppMessage(VISUAL_PATTERN_TEXT_START_PRESS_SPACE, this.props.appMessages),
-            textInstruction: getAppMessage(VISUAL_PATTERN_TEXT2, this.props.appMessages)
+            resultsPressSpace: VISUAL_PATTERN_RESULTS_PRESS_SPACE,
+            resultsFailed: VISUAL_PATTERN_RESULTS_FAILED,
+            resultsCorrect: VISUAL_PATTERN_RESULTS_CORRECT,
+            startPressSpace: VISUAL_PATTERN_TEXT_START_PRESS_SPACE,
+            textInstruction: VISUAL_PATTERN_INSTRUCTION,
         };
 
         this.handleClick = this._handleClick.bind(this);

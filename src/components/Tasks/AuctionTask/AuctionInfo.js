@@ -8,14 +8,12 @@ import {
     AUCTION_BID_RESULT_MESSAGE_FEMALE
 } from '../../../helpers/constants';
 
-import { getAppMessage } from '../../../helpers/utils';
-
 class AuctionInfo extends React.Component {
     render() {
         return (
             <Container fluid="md">
                 <Row className="justify-content-md-center" style={{ padding: "20px" }}>
-                    {totalReward(this.props.data, this.props.sex, this.props.appMessages)}
+                    {totalReward(this.props.data, this.props.sex)}
                 </Row>
             </Container>
         )
@@ -27,13 +25,13 @@ class AuctionInfo extends React.Component {
  * @param {*} data 
  * @param {*} sex 
  */
-function totalReward(data, sex, appMessages) {
+function totalReward(data, sex) {
     const savedMoney = data
         .map(li => (li.priceStart - li.bid))
         .reduce((sum, val) => sum + val, 0);
 
     let message = sex === FEMALE_VALUE ? AUCTION_BID_RESULT_MESSAGE_FEMALE : AUCTION_BID_RESULT_MESSAGE_MALE
-    let tmp = getAppMessage(message, appMessages).replace("$(result)", savedMoney)
+    let tmp = message.replace("$(result)", savedMoney)
     let textToDisplay = getFormattedText(tmp)
 
     return (<div style={{ textAlign: "justify" }}>
