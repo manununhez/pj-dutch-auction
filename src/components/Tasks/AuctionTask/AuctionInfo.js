@@ -4,8 +4,8 @@ import { Container, Row } from "reactstrap";
 
 import {
     FEMALE_VALUE,
-    AUCTION_REWARD_RESULT_MESSAGE_FEMALE,
-    AUCTION_REWARD_RESULT_MESSAGE_MALE
+    AUCTION_BID_RESULT_MESSAGE_MALE,
+    AUCTION_BID_RESULT_MESSAGE_FEMALE
 } from '../../../helpers/constants';
 
 import { getAppMessage } from '../../../helpers/utils';
@@ -34,10 +34,10 @@ function totalReward(data, sex, appMessages) {
 
     let textToDisplay = ""
     if (sex === FEMALE_VALUE) {
-        let tmp = getAppMessage(AUCTION_REWARD_RESULT_MESSAGE_FEMALE, appMessages).replace("$(result)", savedMoney)
+        let tmp = getAppMessage(AUCTION_BID_RESULT_MESSAGE_FEMALE, appMessages).replace("$(result)", savedMoney)
         textToDisplay = getFormattedText(tmp)
     } else {
-        let tmp = getAppMessage(AUCTION_REWARD_RESULT_MESSAGE_MALE, appMessages).replace("$(result)", savedMoney)
+        let tmp = getAppMessage(AUCTION_BID_RESULT_MESSAGE_MALE, appMessages).replace("$(result)", savedMoney)
         textToDisplay = getFormattedText(tmp)
     }
 

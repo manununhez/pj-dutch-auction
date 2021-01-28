@@ -1490,7 +1490,6 @@ function changePages(state, context) {
     if (totalLength > 0) { //If input navigation has been called
         const currentScreen = inputNavigation[currentScreenNumber].screen
         const pageID = parseInt(inputNavigation[currentScreenNumber].pageId)
-        const text = getTextForCurrentScreen(inputTextInstructions, currentScreen);
 
         document.body.style.backgroundColor = currentScreen.includes(constant.INSTRUCTION_SCREEN) ? constant.WHITE : constant.LIGHT_GRAY;
 
@@ -1501,6 +1500,7 @@ function changePages(state, context) {
                     error={error}
                 />;
             } else if (currentScreen.includes(constant.INSTRUCTION_SCREEN)) {
+                const text = getTextForCurrentScreen(inputTextInstructions, currentScreen);
                 return <Instruction
                     text={text}
                     name={currentScreen}
