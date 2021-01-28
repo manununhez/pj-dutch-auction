@@ -216,7 +216,7 @@ export function fetchNavScreens(spreadsheetName, callback) {
         .then((response) => {
             const data = response.rows;
             let screens = data.map((version, i) => {
-                return { pageId: version[0], screen: version[1] };
+                return { screen: version[0] };
             });
 
             callback({ screens });

@@ -592,33 +592,26 @@ class Experiment extends Component {
      * PSFORM component (PSForm.js)
      * @param {*} evt 
      */
-    psFormHandler = (evt) => {
+    psFormHandler = (result) => {
         const { outputPSForm, generalOutput, userID } = this.state;
         const now = Date.now();
 
-        const selectedQuestionCode = evt.target.id;
-        const selectedQuestionValue = evt.target.value;
-
-        if (DEBUG) console.log(selectedQuestionCode)
-        if (DEBUG) console.log(selectedQuestionValue)
-
-        if (selectedQuestionCode === constant.TEXT_EMPTY || selectedQuestionValue === constant.TEXT_EMPTY) return
-
-        const psFormValue = { questionCode: selectedQuestionCode, answer: selectedQuestionValue };
+        if (DEBUG) console.log(result.questionCode)
+        if (DEBUG) console.log(result.answer)
 
         let outputPSFormIndex = -1;
         //if something already exists, we loop through to find the element
         for (let i = 0; i < outputPSForm.length; i++) {
-            if (outputPSForm[i].questionCode === selectedQuestionCode) {  //if it is something already selected, we find that code and updated it
+            if (outputPSForm[i].questionCode === result.questionCode) {  //if it is something already selected, we find that code and updated it
                 outputPSFormIndex = i;
                 break;
             }
         }
 
         if (outputPSFormIndex === -1) {
-            outputPSForm.push(psFormValue)
+            outputPSForm.push(result)
         } else {
-            outputPSForm[outputPSFormIndex] = psFormValue
+            outputPSForm[outputPSFormIndex] = result
         }
 
 
@@ -626,18 +619,17 @@ class Experiment extends Component {
         let generalOutputIndex = -1;
         for (let i = 0; i < generalOutput.length; i++) {
             if ((generalOutput[i].task === constant.PSFORM_SCREEN) &&
-                (generalOutput[i].data.questionCode === selectedQuestionCode)) {
+                (generalOutput[i].data.questionCode === result.questionCode)) {
                 generalOutputIndex = i;
                 break;
             }
         }
 
-
         if (generalOutputIndex === -1) {
             generalOutput.push({
                 userID: userID,
                 task: constant.PSFORM_SCREEN,
-                data: psFormValue,
+                data: result,
                 timestamp: now,
                 sync: constant.STATE_NOT_SYNC
             })
@@ -645,7 +637,7 @@ class Experiment extends Component {
             generalOutput[generalOutputIndex] = {
                 userID: userID,
                 task: constant.PSFORM_SCREEN,
-                data: psFormValue,
+                data: result,
                 timestamp: now,
                 sync: constant.STATE_NOT_SYNC
             }
@@ -655,6 +647,12 @@ class Experiment extends Component {
         this.setState({
             outputPSForm: outputPSForm,
             generalOutput: generalOutput
+        }, () => {
+            console.log(this.state)
+            this._checkSyncGeneralData()
+
+            //we simulate a space btn pressed because Auction task already finishes with a space btn pressed
+            this._validatePressedSpaceKeyToNextPage()
         })
     }
 
@@ -784,7 +782,6 @@ class Experiment extends Component {
     * Validate user form results
     */
     validateForm() {
-
         const { outputFormData, inputParticipants } = this.state
         const { sex, age, yearsEduc, levelEduc, profession } = outputFormData;
         const groups = constant.PARTICIPANTS_GROUPS
@@ -864,7 +861,6 @@ class Experiment extends Component {
     /**
      * Validate Auction task results
      */
-
     validateAuctionTask() {
         if (DEBUG) console.log("validateAuctionTask")
         const { outputAuctionTask, inputAuctionTask } = this.state;
@@ -916,35 +912,20 @@ class Experiment extends Component {
      * Validate PS Form questionaries results
      */
     validatePSForm() {
-        const { currentScreenNumber, inputNavigation, inputPSForm, outputPSForm } = this.state
+        const { inputPSForm, outputPSForm } = this.state
 
         let data = {
-            isValid: true,
-            textError: constant.TEXT_EMPTY,
-            showError: false
+            isValid: false,
+            textError: constant.ERROR_9,
+            showError: true
         }
-        let currentPSFormNumber = parseInt(inputNavigation[currentScreenNumber].pageId) - 1;
-        let currentInputPSForm = inputPSForm[currentPSFormNumber];
 
-        if (outputPSForm.length === 0) {
-            data.isValid = false;
-            data.textError = constant.ERROR_9;
-            data.showError = true;
-        } else {
-            let found = false;
-            for (let i = 0; i < outputPSForm.length; i++) {
-                if (currentInputPSForm.questionCode === outputPSForm[i].questionCode) {
-                    found = true;
-                    break;
-                }
-            }
-
-            if (!found) {
-                data.isValid = false;
-                data.textError = constant.ERROR_10;
-                data.showError = true;
-            }
+        if (outputPSForm.length === inputPSForm.length) {
+            data.isValid = true;
+            data.textError = constant.TEXT_EMPTY;
+            data.showError = false;
         }
+
         return data;
     }
 
@@ -1204,7 +1185,6 @@ class Experiment extends Component {
 
         if (nextScreenNumber < totalLength) {
             let nextScreen = inputNavigation[nextScreenNumber].screen;
-            // let pageID = inputNavigation[nextScreenNumber].pageId;
             let progressBarNow = ((currentScreenNumber / totalLength) * 100) + 1; //progressBarNow init value is 1, so now we add +1 in order to continue that sequence
 
             screens.push(nextScreen);//set timestamp
@@ -1401,13 +1381,11 @@ function changePages(state, context) {
         inputAuctionTask,
         inputAuctionDemoTask,
         outputAuctionTask,
-        inputPSForm,
-        outputPSForm } = state;
+        inputPSForm } = state;
     const totalLength = inputNavigation.length;
 
     if (totalLength > 0) { //If input navigation has been called
         const currentScreen = inputNavigation[currentScreenNumber].screen
-        const pageID = parseInt(inputNavigation[currentScreenNumber].pageId)
 
         document.body.style.backgroundColor = currentScreen.includes(constant.INSTRUCTION_SCREEN) ? constant.WHITE : constant.LIGHT_GRAY;
 
@@ -1454,13 +1432,10 @@ function changePages(state, context) {
                     action={context.visualPatternDemoTaskHandler}
                 />;
             } else if (currentScreen === constant.PSFORM_SCREEN) {
-                const currentPSForm = inputPSForm[pageID - 1];
                 if (inputPSForm.length > 0) { //if we have received already the input data for psform
                     return <PSForm
                         action={context.psFormHandler}
-                        data={currentPSForm}
-                        output={outputPSForm}
-                        error={error}
+                        data={inputPSForm}
                     />;
                 }
             }
