@@ -82,45 +82,24 @@ function save(spreadSheetName, row, column, data, callback) {
  * 
  * @param {*} callback 
  */
-export function fetchAuctionHotels(callback) {
+export function fetchAuctionHotels(type, callback) {
+    let url = ""
+    switch (type) {
+        case constant.SCENARIO_HOTEL_TUTORIAL:
+            url = fetch_hotels_tutorial_url
+            break;
+        case constant.SCENARIO_HOTEL_NORMAL:
+            url = fetch_hotels_url
+            break;
+        case constant.SCENARIO_HOTEL_REV:
+            url = fetch_hotels_rev_url
+            break;
+        default:
+            url = fetch_hotels_url
+            break;
+    }
 
-    get(fetch_hotels_url, {})
-        .then((response) => {
-            let hotels = [];
-
-            for (let value of Object.values(response)) {
-                hotels.push(value);
-            }
-            callback({ hotels });
-        }, (response) => {
-            callback(false, response);
-        });
-}
-
-/**
- * 
- * @param {*} callback 
- */
-export function fetchAuctionHotelsTutorial(callback) {
-    get(fetch_hotels_tutorial_url, {})
-        .then((response) => {
-            let hotels = [];
-
-            for (let value of Object.values(response)) {
-                hotels.push(value);
-            }
-            callback({ hotels });
-        }, (response) => {
-            callback(false, response);
-        });
-}
-
-/**
- * 
- * @param {*} callback 
- */
-export function fetchAuctionHotelsRev(callback) {
-    get(fetch_hotels_rev_url, {})
+    get(url, {})
         .then((response) => {
             let hotels = [];
 
@@ -291,38 +270,6 @@ export function fetchParticipantsCounter(callback) {
 
 
             callback({ participants, config, groups, scenarios });
-        }, (response) => {
-            callback(false, response.result.error);
-        });
-}
-
-/**
- * Load reward info data from the spreadsheet
- * @param {*} callback 
- */
-export function fetchRewardData(callback) {
-
-    let spreadsheetName = constant.INPUT_REWARD_SHEETNAME;
-    let row = "A2";
-    let column = "C";
-
-    get(fetch_sheet_url, { spreadSheetName: spreadsheetName, column: row, row: column })
-        .then((response) => {
-            const data = response.rows;
-            let result = data.map((version, i) => {
-
-                const indexScreen = 0
-                const indexThreshold = 1
-                const indexBonusPoints = 2
-
-                return {
-                    screen: version[indexScreen],
-                    threshold: version[indexThreshold],
-                    bonusPoint: version[indexBonusPoints]
-                };
-            });
-
-            callback({ result });
         }, (response) => {
             callback(false, response.result.error);
         });

@@ -32,6 +32,8 @@ export const FREQ_CHANGE_MS = 500;
 export const BID_STATE_NOT_STARTED = 0;
 export const BID_STATE_RUNNING = 1;
 export const BID_STATE_FINISHED = 2;
+export const BID_THRESHOLD = 2500
+export const BID_BONUS = 50
 
 //SYNC
 export const STATE_SYNCING = 2;
@@ -73,6 +75,7 @@ export const FONT_SIZE_HEADING6 = "HEADING 6";
 //Scenarios
 export const SCENARIO_HOTEL_REV = "hotels-rev"
 export const SCENARIO_HOTEL_NORMAL = "hotels"
+export const SCENARIO_HOTEL_TUTORIAL = "hotels-tutorial"
 
 //PSFORM
 export const INPUT_TYPE = "input";

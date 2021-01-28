@@ -32,14 +32,9 @@ function totalReward(data, sex, appMessages) {
         .map(li => (li.priceStart - li.bid))
         .reduce((sum, val) => sum + val, 0);
 
-    let textToDisplay = ""
-    if (sex === FEMALE_VALUE) {
-        let tmp = getAppMessage(AUCTION_BID_RESULT_MESSAGE_FEMALE, appMessages).replace("$(result)", savedMoney)
-        textToDisplay = getFormattedText(tmp)
-    } else {
-        let tmp = getAppMessage(AUCTION_BID_RESULT_MESSAGE_MALE, appMessages).replace("$(result)", savedMoney)
-        textToDisplay = getFormattedText(tmp)
-    }
+    let message = sex === FEMALE_VALUE ? AUCTION_BID_RESULT_MESSAGE_FEMALE : AUCTION_BID_RESULT_MESSAGE_MALE
+    let tmp = getAppMessage(message, appMessages).replace("$(result)", savedMoney)
+    let textToDisplay = getFormattedText(tmp)
 
     return (<div style={{ textAlign: "justify" }}>
         {textToDisplay}

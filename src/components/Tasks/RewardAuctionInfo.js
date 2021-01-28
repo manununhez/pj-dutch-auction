@@ -4,6 +4,8 @@ import { Container, Row } from "reactstrap";
 
 import {
     FEMALE_VALUE,
+    BID_THRESHOLD,
+    BID_BONUS,
     AUCTION_BID_REWARD_MESSAGE_MALE,
     AUCTION_BID_REWARD_MESSAGE_WITH_BONUS_MALE,
     AUCTION_BID_REWARD_MESSAGE_FEMALE,
@@ -17,7 +19,7 @@ class RewardAuctionInfo extends React.Component {
         return (
             <Container fluid="md">
                 <Row className="justify-content-md-center" style={{ padding: "20px" }}>
-                    {totalReward(this.props.data, this.props.sex, this.props.reward, this.props.appMessages)}
+                    {totalReward(this.props.data, this.props.sex, this.props.appMessages)}
                 </Row>
             </Container>
         )
@@ -29,19 +31,19 @@ class RewardAuctionInfo extends React.Component {
  * @param {*} data 
  * @param {*} sex 
  */
-function totalReward(data, sex, reward, appMessages) {
+function totalReward(data, sex, appMessages) {
     const savedMoney = data
         .map(li => (li.priceStart - li.bid))
         .reduce((sum, val) => sum + val, 0);
 
-    const threshold = parseInt(reward.threshold)
-    const isBonusAvailable = savedMoney >= threshold
+    const isBonusAvailable = savedMoney >= BID_THRESHOLD
 
     let textToDisplay = ""
     if (isBonusAvailable) {
         let message = sex === FEMALE_VALUE ? AUCTION_BID_REWARD_MESSAGE_WITH_BONUS_FEMALE : AUCTION_BID_REWARD_MESSAGE_WITH_BONUS_MALE
-        let tmp = getFormattedText(getAppMessage(message, appMessages))
-        textToDisplay = tmp.replace("$(bonus)", reward.bonusPoint).replace("$(result)", savedMoney)
+        let tmp = getAppMessage(message, appMessages).replace("$(bonus)", BID_BONUS).replace("$(result)", savedMoney)
+
+        textToDisplay = getFormattedText(tmp)
     } else {
         let message = sex === FEMALE_VALUE ? AUCTION_BID_REWARD_MESSAGE_FEMALE : AUCTION_BID_REWARD_MESSAGE_MALE
         textToDisplay = getFormattedText(getAppMessage(message, appMessages))

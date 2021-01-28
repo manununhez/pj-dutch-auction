@@ -83,7 +83,6 @@ class Experiment extends Component {
             inputAuctionDemoTask: [],
             inputParticipants: [],
             inputPSForm: [],
-            inputRewardData: [],
             inputAppGeneralMessages: [],
             //Variables for output data (results)
             generalOutput: generalOutputDefault,
@@ -149,11 +148,10 @@ class Experiment extends Component {
     * fetchNavScreens
     * fetchParticipantsCounter
     * fetchPSForm
-    * fetchRewardData
      */
     _fetchExperimentInputData() {
         if (DEBUG) console.log("FETCH hotels tutorial")
-        request.fetchAuctionHotelsTutorial(this._onLoadAuctionHotelsDemoCallBack.bind(this))
+        request.fetchAuctionHotels(constant.SCENARIO_HOTEL_TUTORIAL, this._onLoadAuctionHotelsDemoCallBack.bind(this))
 
         if (DEBUG) console.log("FETCH app messages")
         request.fetchAppGeneralMessages(this._onLoadAppMessagesCallBack.bind(this))
@@ -288,17 +286,13 @@ class Experiment extends Component {
      */
     _onLoadParticipantCountCallBack(data, error) {
         if (data) {
-            //Loggin the first screen of the navigation
             this.setState({
-                // loading: false, //Hide loading
+                loading: false, //Hide loading
                 inputParticipants: data
-            })
-
-            if (DEBUG) console.log(data)
-            if (DEBUG) console.log("Fetch RewardData");
-            request.fetchRewardData(this._onLoadRewardDataCallback.bind(this))
-        }
-        else {
+            }, () => {
+                if (DEBUG) console.log(this.state)
+            });
+        } else {
             this.setState({
                 loading: false,
                 error: {
@@ -333,62 +327,6 @@ class Experiment extends Component {
 
         }
     }
-
-    /**
-* Once the psychology questionnaries input have been loaded from the spreadsheet
-* @param {*} data 
-* @param {*} error 
-*/
-    _onLoadPSFormCallback(data, error) {
-        if (data) {
-            this.setState({
-                loading: false, //Hide loading
-                inputPSForm: data.result
-            }, () => {
-                if (DEBUG) console.log(this.state)
-            });
-        }
-        else {
-            this.setState({
-                loading: false,
-                error: {
-                    showError: true,
-                    textError: `${error}. Please refresh page.`
-                }
-            })
-            if (DEBUG) console.log(error);
-        }
-    }
-
-    /**
-* Once the reward info input have been loaded from the spreadsheet
-* @param {*} data 
-* @param {*} error 
-*/
-    _onLoadRewardDataCallback(data, error) {
-        if (data) {
-            this.setState({
-                loading: false, //Hide loading
-                inputRewardData: data.result
-            }, () => {
-                if (DEBUG) console.log(this.state)
-            });
-
-            if (DEBUG) console.log(data)
-            if (DEBUG) console.log("Fetch COMPLETED!!");
-        }
-        else {
-            this.setState({
-                loading: false,
-                error: {
-                    showError: true,
-                    textError: `${error}. Please refresh page.`
-                }
-            })
-            if (DEBUG) console.log(error);
-        }
-    }
-
 
     /**
      * 
@@ -468,6 +406,33 @@ class Experiment extends Component {
         }
     }
 
+    /**
+    * Once the psychology questionnaries input have been loaded from the spreadsheet
+    * @param {*} data 
+    * @param {*} error 
+    */
+    _onLoadPSFormCallback(data, error) {
+        if (data) {
+            this.setState({
+                loading: false, //Hide loading
+                inputPSForm: data.result
+            }, () => {
+                if (DEBUG) console.log(this.state)
+            });
+        }
+        else {
+            this.setState({
+                loading: false,
+                error: {
+                    showError: true,
+                    textError: `${error}. Please refresh page.`
+                }
+            })
+            if (DEBUG) console.log(error);
+        }
+    }
+
+
     /********************************************************** 
      *   Callbacks from async request - save data (see fetch.js)
      **********************************************************/
@@ -537,10 +502,10 @@ class Experiment extends Component {
     }
 
     /**
- * Results from saving user visual pattern data
- * @param {*} data 
- * @param {*} error 
- */
+     * Results from saving user visual pattern data
+     * @param {*} data 
+     * @param {*} error 
+     */
     _onSaveUserVisualPatternCallBack(data, error) {
         if (DEBUG) console.log(data);
         if (data) {
@@ -1253,11 +1218,11 @@ class Experiment extends Component {
         if (scenarios[scenarioNumber] === constant.SCENARIO_HOTEL_NORMAL) {
             outputFormData.typeAuction = constant.SCENARIO_HOTEL_NORMAL
             if (DEBUG) console.log("FETCH hotels normal")
-            request.fetchAuctionHotels(this._onLoadAuctionHotelsCallBack.bind(this))
+            request.fetchAuctionHotels(constant.SCENARIO_HOTEL_NORMAL, this._onLoadAuctionHotelsCallBack.bind(this))
         } else if (scenarios[scenarioNumber] === constant.SCENARIO_HOTEL_REV) {
             outputFormData.typeAuction = constant.SCENARIO_HOTEL_REV
             if (DEBUG) console.log("FETCH hotels reverse")
-            request.fetchAuctionHotelsRev(this._onLoadAuctionHotelsCallBack.bind(this))
+            request.fetchAuctionHotels(constant.SCENARIO_HOTEL_REV, this._onLoadAuctionHotelsCallBack.bind(this))
         }
 
         //we update select hotel value
@@ -1483,7 +1448,6 @@ function changePages(state, context) {
         outputAuctionTask,
         inputPSForm,
         outputPSForm,
-        inputRewardData,
         inputAppGeneralMessages } = state;
     const totalLength = inputNavigation.length;
 
@@ -1520,12 +1484,10 @@ function changePages(state, context) {
                     appMessages={inputAppGeneralMessages}
                 />;
             } else if (currentScreen === constant.REWARD_AUCTION_INFO_SCREEN) {
-                let reward = getRewardDataForCurrentScreen(inputRewardData, constant.REWARD_AUCTION_INFO_SCREEN)
                 return <RewardAuctionInfo
                     sex={outputFormData.sex}
                     data={outputAuctionTask}
                     appMessages={inputAppGeneralMessages}
-                    reward={reward}
                 />;
             } else if (currentScreen === constant.AUCTION_TASK_FINISH_SCREEN) {
                 return <AuctionInfo
@@ -1556,18 +1518,6 @@ function changePages(state, context) {
             }
         }
     }
-}
-
-/**
- * 
- * @param {*} inputTextInstructions 
- * @param {*} screen 
- */
-function getRewardDataForCurrentScreen(inputRewardData, screen) {
-    let children = inputRewardData
-        .filter((reward) => reward.screen === screen)
-
-    return children[0]
 }
 
 /**
