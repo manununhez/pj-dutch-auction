@@ -1,8 +1,5 @@
 import React, { Component } from "react";
 
-// core components
-import { Progress } from 'reactstrap';
-
 //UUID
 import { v4 as uuidv4 } from 'uuid'; // For version 4
 
@@ -76,6 +73,7 @@ class Experiment extends Component {
             ariadnaUserID: ariadnaUserID,
             userID: userID,
             userInfo: USER_INFO,
+            typeTask: typeTask,
             //Variables for input data
             inputNavigation: [],
             inputTextInstructions: [],
@@ -87,6 +85,8 @@ class Experiment extends Component {
             generalOutput: generalOutputDefault,
             generalOutputIndexes: [],
             outputFormData: userFormDefault,
+            outputAuctionTask: [],
+            outputAuctionDemoTask: [],
             outputPSForm: [],
             outputVisualPattern: [],
             outputVisualPatternDemo: [],
@@ -95,20 +95,11 @@ class Experiment extends Component {
                 screen: [],
                 timestamp: []
             },
-            outputAuctionTask: [],
-            outputAuctionDemoTask: [],
-            typeTask: typeTask,
-            showAlertWindowsClosing: true,
             currentScreenNumber: 0,
+            showAlertWindowsClosing: true,
             loading: false,
             loadingSyncData: false,
-            progressBarNow: 1,
-            showPagination: false,
-            page: constant.TEXT_EMPTY,
-            error: {
-                showError: false,
-                textError: constant.TEXT_EMPTY
-            }
+            page: constant.TEXT_EMPTY
         };
 
         //session timer
@@ -263,13 +254,10 @@ class Experiment extends Component {
         else {
             this.setState({
                 loading: false,
-                error: {
-                    showError: true,
-                    textError: `${error}. Please refresh page.`
-                }
+            }, () => {
+                alert(`${error}. Please refresh page.`)
+                if (DEBUG) console.log(error)
             })
-            if (DEBUG) console.log(error)
-
         }
     }
 
@@ -289,12 +277,10 @@ class Experiment extends Component {
         } else {
             this.setState({
                 loading: false,
-                error: {
-                    showError: true,
-                    textError: `${error}. Please refresh page.`
-                }
+            }, () => {
+                alert(`${error}. Please refresh page.`)
+                if (DEBUG) console.log(error)
             })
-            if (DEBUG) console.log(error)
         }
     }
 
@@ -314,10 +300,11 @@ class Experiment extends Component {
         }
         else {
             this.setState({
-                loading: false, //Hide loading
-                error: error
+                loading: false,
+            }, () => {
+                alert(`${error}. Please refresh page.`)
+                if (DEBUG) console.log(error)
             })
-            if (DEBUG) console.log(error)
 
         }
     }
@@ -339,12 +326,10 @@ class Experiment extends Component {
         } else {
             this.setState({
                 loading: false,
-                error: {
-                    showError: true,
-                    textError: `${error}. Please refresh page.`
-                }
+            }, () => {
+                alert(`${error}. Please refresh page.`)
+                if (DEBUG) console.log(error)
             })
-            if (DEBUG) console.log(error)
         }
     }
 
@@ -365,12 +350,10 @@ class Experiment extends Component {
         } else {
             this.setState({
                 loading: false,
-                error: {
-                    showError: true,
-                    textError: `${error}. Please refresh page.`
-                }
+            }, () => {
+                alert(`${error}. Please refresh page.`)
+                if (DEBUG) console.log(error)
             })
-            if (DEBUG) console.log(error)
         }
     }
 
@@ -391,12 +374,10 @@ class Experiment extends Component {
         else {
             this.setState({
                 loading: false,
-                error: {
-                    showError: true,
-                    textError: `${error}. Please refresh page.`
-                }
+            }, () => {
+                alert(`${error}. Please refresh page.`)
+                if (DEBUG) console.log(error)
             })
-            if (DEBUG) console.log(error);
         }
     }
 
@@ -527,13 +508,11 @@ class Experiment extends Component {
         }
         else {
             this.setState({
-                loadingSyncData: false,
-                error: {
-                    showError: true,
-                    textError: `${error}. Please refresh page.`
-                }
+                loading: false,
+            }, () => {
+                alert(`${error}. Please refresh page.`)
+                if (DEBUG) console.log(error)
             })
-            if (DEBUG) console.log(error)
         }
     }
 
@@ -584,6 +563,8 @@ class Experiment extends Component {
         this.setState({
             outputFormData: formData,
             generalOutput: generalOutput
+        }, () => {
+            this._validatePressedEnterButtonToNextPage()
         })
     }
 
@@ -783,7 +764,7 @@ class Experiment extends Component {
     */
     validateForm() {
         const { outputFormData, inputParticipants } = this.state
-        const { sex, age, yearsEduc, levelEduc, profession } = outputFormData;
+        const { sex, age, yearsEduc, levelEduc } = outputFormData;
         const groups = constant.PARTICIPANTS_GROUPS
         const firstGroupAgeLimit = groups[0]
         const secondGroupAgeLimit = groups[1]
@@ -803,33 +784,11 @@ class Experiment extends Component {
         if (DEBUG) console.log(outputFormData)
         let data = {
             isValid: false,
-            textError: constant.TEXT_EMPTY,
-            showError: false,
             redirect: false
         }
 
         let amountParticipant = 0;
         let ageIncorrectIntervalFlag = false;
-
-        // CONTROL OF EMPTY_TEXT
-        if (age === 0) {
-            data.textError = constant.ERROR_5;
-            data.showError = true;
-        } else if (profession === constant.TEXT_EMPTY) {
-            data.textError = constant.ERROR_7;
-            data.showError = true;
-        } else if (levelEduc === constant.FORM_LEVEL_EDUC_DEFAULT) {
-            data.textError = constant.ERROR_11;
-            data.showError = true;
-        } else if (yearsEduc === 0) {
-            data.textError = constant.ERROR_6;
-            data.showError = true;
-        } else if (sex === constant.TEXT_EMPTY) {
-            data.textError = constant.ERROR_14;
-            data.showError = true;
-        }
-
-        if (data.showError) return data
 
         // CONTROL OF AMOUNT OF PARTICIPANTS
         if (age >= parseInt(firstGroupAgeLimit.minAge) &&
@@ -849,7 +808,6 @@ class Experiment extends Component {
         if (ageIncorrectIntervalFlag || parseInt(amountParticipant) >= participantsLimit ||
             levelEduc === constant.FORM_LEVEL_EDUC_INITIAL || yearsEduc < yearsEducLimit) {
             data.redirect = true;
-            data.textError = constant.ERROR_12;
         }
 
         if (!data.showError && !data.redirect) data.isValid = true;
@@ -862,50 +820,18 @@ class Experiment extends Component {
      * Validate Auction task results
      */
     validateAuctionTask() {
-        if (DEBUG) console.log("validateAuctionTask")
         const { outputAuctionTask, inputAuctionTask } = this.state;
 
-        let data = {
-            isValid: false,
-            textError: constant.TEXT_EMPTY,
-            showError: false
-        }
-
-        if (outputAuctionTask.length > 0 && outputAuctionTask.length === inputAuctionTask.length) {
-            data.isValid = true;
-        } else {
-            data.textError = "Finish the task first!";
-            data.showError = true;
-        }
-
-        return data;
+        return { isValid: (outputAuctionTask.length > 0 && outputAuctionTask.length === inputAuctionTask.length) }
     }
 
     /**
     * Validate Auction task results
     */
     validateAuctionDemoTask() {
-        if (DEBUG) console.log("validateAuctionDemoTask")
-
         const { outputAuctionDemoTask, inputAuctionDemoTask } = this.state;
 
-        let data = {
-            isValid: false,
-            textError: constant.TEXT_EMPTY,
-            showError: false
-        }
-
-        if (DEBUG) console.log(outputAuctionDemoTask)
-        if (outputAuctionDemoTask.length > 0 && outputAuctionDemoTask.length === inputAuctionDemoTask.length) {
-            data.isValid = true;
-        } else {
-            data.textError = "Finish the task first!";
-            data.showError = true;
-        }
-
-        if (DEBUG) console.log(data)
-
-        return data;
+        return { isValid: (outputAuctionDemoTask.length > 0 && outputAuctionDemoTask.length === inputAuctionDemoTask.length) }
     }
 
     /**
@@ -914,19 +840,7 @@ class Experiment extends Component {
     validatePSForm() {
         const { inputPSForm, outputPSForm } = this.state
 
-        let data = {
-            isValid: false,
-            textError: constant.ERROR_9,
-            showError: true
-        }
-
-        if (outputPSForm.length === inputPSForm.length) {
-            data.isValid = true;
-            data.textError = constant.TEXT_EMPTY;
-            data.showError = false;
-        }
-
-        return data;
+        return { isValid: (outputPSForm.length === inputPSForm.length) }
     }
 
     /**
@@ -935,20 +849,7 @@ class Experiment extends Component {
     validateVisualPattern() {
         const { outputVisualPattern } = this.state;
 
-        let data = {
-            isValid: false,
-            textError: constant.TEXT_EMPTY,
-            showError: false
-        }
-
-        if (outputVisualPattern.length > 0) {
-            data.isValid = true;
-        } else {
-            data.textError = "Finish the task first!";
-            data.showError = true;
-        }
-
-        return data;
+        return { isValid: (outputVisualPattern.length > 0) }
     }
 
     /**
@@ -957,20 +858,7 @@ class Experiment extends Component {
     validateVisualPatternDemo() {
         const { outputVisualPatternDemo } = this.state;
 
-        let data = {
-            isValid: false,
-            textError: constant.TEXT_EMPTY,
-            showError: false
-        }
-
-        if (outputVisualPatternDemo.length > 0) {
-            data.isValid = true;
-        } else {
-            data.textError = "Finish the task first!";
-            data.showError = true;
-        }
-
-        return data;
+        return { isValid: (outputVisualPatternDemo.length > 0) }
     }
 
     /**
@@ -993,63 +881,18 @@ class Experiment extends Component {
             } else if (currentScreen === constant.PSFORM_SCREEN) {
                 let data = this.validatePSForm();
                 if (data.isValid) this._goToNextTaskInInputNavigation();
-                else {
-                    //Show errors!
-                    this.setState({
-                        error: {
-                            showError: data.showError,
-                            textError: data.textError
-                        }
-                    });
-                }
             } else if (currentScreen === constant.AUCTION_TASK_DEMO_SCREEN) {
                 let data = this.validateAuctionDemoTask();
                 if (data.isValid) this._goToNextTaskInInputNavigation();
-                else {
-                    //Show errors!
-                    this.setState({
-                        error: {
-                            showError: data.showError,
-                            textError: data.textError
-                        }
-                    });
-                }
             } else if (currentScreen === constant.AUCTION_TASK_SCREEN) {
                 let data = this.validateAuctionTask();
                 if (data.isValid) this._goToNextTaskInInputNavigation();
-                else {
-                    //Show errors!
-                    this.setState({
-                        error: {
-                            showError: data.showError,
-                            textError: data.textError
-                        }
-                    });
-                }
             } else if (currentScreen === constant.VISUAL_PATTERN_SCREEN) {
                 let data = this.validateVisualPattern();
                 if (data.isValid) this._goToNextTaskInInputNavigation();
-                else {
-                    //Show errors!
-                    this.setState({
-                        error: {
-                            showError: data.showError,
-                            textError: data.textError
-                        }
-                    });
-                }
             } else if (currentScreen === constant.VISUAL_PATTERN_DEMO_SCREEN) {
                 let data = this.validateVisualPatternDemo();
                 if (data.isValid) this._goToNextTaskInInputNavigation();
-                else {
-                    //Show errors!
-                    this.setState({
-                        error: {
-                            showError: data.showError,
-                            textError: data.textError
-                        }
-                    });
-                }
             }
         }
     }
@@ -1072,17 +915,9 @@ class Experiment extends Component {
 
                     this._goToNextTaskInInputNavigation();
                 } else {
-                    if (data.showError) {
-                        //Show errors!
-                        this.setState({
-                            error: {
-                                showError: data.showError,
-                                textError: data.textError
-                            }
-                        });
-                    } else if (data.redirect) {
+                    if (data.redirect) {
                         //we redirect to Ariadna
-                        alert(data.textError);
+                        alert(constant.ERROR_12);
                         this.setState({ showAlertWindowsClosing: false }, () => {
                             window.location.replace(ARIADNA_REDIRECT_REJECT);
                         })
@@ -1177,7 +1012,6 @@ class Experiment extends Component {
         let now = Date.now();
         let screens = logTimestamp.screen;
         let timestamps = logTimestamp.timestamp;
-        let showPagination = false; //default
         let totalLength = inputNavigation.length;
         let page = constant.TEXT_EMPTY;
         let nextScreenNumber = currentScreenNumber + 1;
@@ -1185,7 +1019,6 @@ class Experiment extends Component {
 
         if (nextScreenNumber < totalLength) {
             let nextScreen = inputNavigation[nextScreenNumber].screen;
-            let progressBarNow = ((currentScreenNumber / totalLength) * 100) + 1; //progressBarNow init value is 1, so now we add +1 in order to continue that sequence
 
             screens.push(nextScreen);//set timestamp
             timestamps.push(now);
@@ -1204,15 +1037,9 @@ class Experiment extends Component {
                     screen: screens,
                     timestamp: timestamps
                 },
-                error: {
-                    showError: false,
-                    textError: constant.TEXT_EMPTY
-                },
-                showPagination: showPagination,
                 page: page,
                 loading: loading,
                 modalOpen: false,
-                progressBarNow: progressBarNow
             }, () => {
                 if (DEBUG) console.log(this.state)
 
@@ -1242,9 +1069,10 @@ class Experiment extends Component {
     handleKeyDownEvent = (event) => {
         if (event.keyCode === constant.SPACE_KEY_CODE) { //Transition between screens
             this._validatePressedSpaceKeyToNextPage()
-        } else if (event.keyCode === constant.ENTER_KEY_CODE) {
-            this._validatePressedEnterButtonToNextPage()
         }
+        // else if (event.keyCode === constant.ENTER_KEY_CODE) {
+        //     this._validatePressedEnterButtonToNextPage()
+        // }
     }
 
     /**
@@ -1295,14 +1123,11 @@ class Experiment extends Component {
     }
 
     render() {
-        const { progressBarNow, loading, loadingSyncData, showPagination, page } = this.state;
+        const { loading, loadingSyncData } = this.state;
         const timeout = 1000 * 60 * (60 * 3); //3horas
 
         return (
             <main ref="main">
-                <div>
-                    <Progress value={progressBarNow} />
-                </div>
                 <section className="section-sm">
                     {changePages(this.state, this)}
                 </section>
@@ -1331,7 +1156,6 @@ class Experiment extends Component {
                         loading={loadingSyncData}
                     />
                 </div>
-                {showPagination ? <div className="pagination">{page}</div> : <></>}
                 { isFooterShownInCurrentScreen(this.state)}
             </main>
         )
@@ -1377,7 +1201,6 @@ function changePages(state, context) {
         inputNavigation,
         inputTextInstructions,
         outputFormData,
-        error,
         inputAuctionTask,
         inputAuctionDemoTask,
         outputAuctionTask,
@@ -1393,7 +1216,6 @@ function changePages(state, context) {
             if (currentScreen === constant.USER_FORM_SCREEN) {
                 return <UserForm
                     action={context.formHandler}
-                    error={error}
                 />;
             } else if (currentScreen.includes(constant.INSTRUCTION_SCREEN)) {
                 const text = getTextForCurrentScreen(inputTextInstructions, currentScreen);
