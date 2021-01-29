@@ -112,7 +112,12 @@ class UserForm extends React.Component {
 
     }
 
-    this.setState({ formData: formData })
+    let errorDefault = { //This would clean the previous error message, if it was shown
+      showError: false,
+      textError: constant.TEXT_EMPTY
+    }
+
+    this.setState({ formData: formData, error: errorDefault })
   }
 
   validateNumberFormat = (id, numberFormat) => {

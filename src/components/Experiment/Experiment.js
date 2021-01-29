@@ -1070,9 +1070,6 @@ class Experiment extends Component {
         if (event.keyCode === constant.SPACE_KEY_CODE) { //Transition between screens
             this._validatePressedSpaceKeyToNextPage()
         }
-        // else if (event.keyCode === constant.ENTER_KEY_CODE) {
-        //     this._validatePressedEnterButtonToNextPage()
-        // }
     }
 
     /**

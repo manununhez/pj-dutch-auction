@@ -98,7 +98,7 @@ class PSForm extends React.Component {
 
     validateInput = (id, numberFormat) => {
         const value = numberFormat.formattedValue
-        const error = { showError: false, textError: constant.TEXT_EMPTY }
+        const error = { showError: false, textError: constant.TEXT_EMPTY } //This would clean the previous error message, if it was shown
 
         if (isNaN(value)) return
 
@@ -108,7 +108,7 @@ class PSForm extends React.Component {
     validateMultipleChoicesType = (evt) => {
         const id = evt.target.id
         const value = evt.target.value
-        const error = { showError: false, textError: constant.TEXT_EMPTY }
+        const error = { showError: false, textError: constant.TEXT_EMPTY } //This would clean the previous error message, if it was shown
 
         if (id === undefined || id === constant.TEXT_EMPTY ||
             value === undefined || value === constant.TEXT_EMPTY) return
