@@ -125,14 +125,6 @@ export const USER_GENERAL_DATA_SHEETNAME = "usergeneraldata";
 export const USER_AUCTION_BIDS_SHEETNAME = "auction-bids"
 export const USER_VISUAL_PATTERN_SHEETNAME = "uservisualpattern";
 export const USER_PSFORM_SHEETNAME = "userpsform";
-//-- INPUT
-export const INPUT_PSFORM_MALE_SHEETNAME = "input-psychologyform-male";
-export const INPUT_PSFORM_FEMALE_SHEETNAME = "input-psychologyform-female";
-export const INPUT_APP_TEXT_FEMALE_SHEETNAME = "input-text-female";
-export const INPUT_APP_TEXT_MALE_SHEETNAME = "input-text-male";
-export const INPUT_VERSIONS_SHEETNAME = "input-versions";
-export const INPUT_USER_PARTICIPANTS_COUNTER_SHEETNAME = "input-userexperimentcount";
-
 
 //General App messages KEYS
 export const AUCTION_GAIN_TEXT = "Brawo, udało Ci się zarezerwować ten pokój.<br><br>Zaoszczędziłeś $(value) zł.<br><br> Naciśnij ENTER, aby przejść do następnej aukcji."

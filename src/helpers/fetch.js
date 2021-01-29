@@ -2,11 +2,17 @@
 import * as constant from '../helpers/constants';
 
 const _apiHost = 'https://api.swps-pjatk-experiment.pl/v2';//'http://localhost:5000'; //
-const fetch_sheet_url = '/v4-get';
 const save_sheet_url = '/v4-post';
 const fetch_hotels_url = '/hotels';
 const fetch_hotels_tutorial_url = '/hotels-tutorial';
 const fetch_hotels_rev_url = '/hotels-rev';
+
+const _newApiHost = 'http://localhost:5000/'
+const versions_url = 'versions'
+const psform_url = 'psform'
+const apptext_url = 'apptext'
+const navscreens_url = 'navscreens'
+const userexpcount_url = 'userexpcount'
 
 async function request(url, params, method = 'GET') {
 
@@ -26,7 +32,7 @@ async function request(url, params, method = 'GET') {
         }
     }
 
-    const response = await fetch(_apiHost + url, options);
+    const response = await fetch(url, options);
 
     if (response.status !== 200) {
         return generateErrorResponse('The server responded with an unexpected status.');
@@ -99,7 +105,7 @@ export function fetchAuctionHotels(type, callback) {
             break;
     }
 
-    get(url, {})
+    get(_apiHost + url, {})
         .then((response) => {
             let hotels = [];
 
@@ -117,65 +123,51 @@ export function fetchAuctionHotels(type, callback) {
  * @param {*} callback 
  */
 export function fetchVersions(callback) {
+    let url = _newApiHost + versions_url
 
-    let spreadsheetName = constant.INPUT_VERSIONS_SHEETNAME;
-    let row = "A2";
-    let column = "B";
-
-    get(fetch_sheet_url, { spreadSheetName: spreadsheetName, column: row, row: column })
+    get(url, {})
         .then((response) => {
-            const data = response.rows;
-            let versions = data.map((versions) => {
-                return { version: versions[0], url: versions[1] };
-            });
+            let versions = [];
+
+            for (let value of Object.values(response)) {
+                versions.push({ version: value.name });
+            }
+
+            console.log(versions)
 
             callback({ versions });
         }, (response) => {
             callback(false, response);
         });
 }
-
 /**
  * Load psychology questionaries input data from the spreadsheet
  * @param {*} callback 
  */
 export function fetchPSFormData(sex, callback) {
+    let url = _newApiHost + psform_url + '/' + sex
 
-    let spreadsheetName = sex === constant.FEMALE_VALUE ? constant.INPUT_PSFORM_FEMALE_SHEETNAME : constant.INPUT_PSFORM_MALE_SHEETNAME;
-    let row = "A2";
-    let column = "L";
-
-    get(fetch_sheet_url, { spreadSheetName: spreadsheetName, column: row, row: column })
+    get(url, {})
         .then((response) => {
-            const data = response.rows;
-            let result = data.map((version, i) => {
-                let answersValues = []
+            let result = [];
 
-                const indexMainTitle = 0
-                const indexMainTitleFontSize = 1
-                const indexQuestionCode = 2
-                const indexQuestionTitle = 3
-                const indexQuestionFontSize = 4
-                const indexType = 5
-                const indexAnswerStart = 6
+            for (let value of Object.values(response)) {
+                result.push({
+                    title: value.main_title,
+                    titleFontSize: value.main_title_font_size,
+                    questionCode: value.question_code,
+                    question: value.question,
+                    questionFontSize: value.question_font_size,
+                    type: value.type,
+                    answer: [value.answer_1, value.answer_2, value.answer_3, value.answer_4, value.answer_5, value.answer_6]
+                });
+            }
 
-                for (let i = indexAnswerStart; i < version.length; i++)
-                    answersValues.push(version[i])
-
-                return {
-                    title: version[indexMainTitle],
-                    titleFontSize: version[indexMainTitleFontSize],
-                    questionCode: version[indexQuestionCode],
-                    question: version[indexQuestionTitle],
-                    questionFontSize: version[indexQuestionFontSize],
-                    type: version[indexType],
-                    answer: answersValues
-                };
-            });
+            console.log(result)
 
             callback({ result });
         }, (response) => {
-            callback(false, response.result.error);
+            callback(false, response);
         });
 }
 
@@ -184,21 +176,25 @@ export function fetchPSFormData(sex, callback) {
  * @param {*} callback 
  */
 export function fetchAppText(sex, callback) {
-    let spreadsheetName = sex === constant.FEMALE_VALUE ? constant.INPUT_APP_TEXT_FEMALE_SHEETNAME : constant.INPUT_APP_TEXT_MALE_SHEETNAME;
-    let row = "A2";
-    let column = "C";
+    let url = _newApiHost + apptext_url + '/' + sex
 
-    get(fetch_sheet_url, { spreadSheetName: spreadsheetName, column: row, row: column })
+    get(url, {})
         .then((response) => {
-            const data = response.rows;
+            let appText = [];
 
-            let appText = data.map((version, i) => {
-                return { screen: version[0], size: version[1], text: version[2] };
-            });
+            for (let value of Object.values(response)) {
+                appText.push({
+                    screen: value.name,
+                    size: value.font_size,
+                    text: value.text,
+                });
+            }
+
+            console.log(appText)
 
             callback({ appText });
         }, (response) => {
-            callback(false, response.result.error);
+            callback(false, response);
         });
 }
 
@@ -208,20 +204,23 @@ export function fetchAppText(sex, callback) {
  * @param {*} callback 
  */
 export function fetchNavScreens(spreadsheetName, callback) {
+    let url = _newApiHost + navscreens_url + '/' + spreadsheetName
 
-    let row = "A2";
-    let column = "B";
-
-    get(fetch_sheet_url, { spreadSheetName: spreadsheetName, column: row, row: column })
+    get(url, {})
         .then((response) => {
-            const data = response.rows;
-            let screens = data.map((version, i) => {
-                return { screen: version[0] };
-            });
+            let screens = [];
+
+            for (let value of Object.values(response)) {
+                screens.push({
+                    screen: value.name
+                });
+            }
+
+            console.log(screens)
 
             callback({ screens });
         }, (response) => {
-            callback(false, response.result.error);
+            callback(false, response);
         });
 }
 
@@ -230,31 +229,36 @@ export function fetchNavScreens(spreadsheetName, callback) {
  * @param {*} callback 
  */
 export function fetchParticipantsCounter(callback) {
+    let url = _newApiHost + userexpcount_url
 
-    let spreadsheetName = constant.INPUT_USER_PARTICIPANTS_COUNTER_SHEETNAME;
-    let row = "B2";
-    let column = "D";
-
-    get(fetch_sheet_url, { spreadSheetName: spreadsheetName, column: row, row: column })
+    get(url, {})
         .then((response) => {
-            const data = response.rows;
+            let participants = Array(4);
+            const indexFemale = 0
+            const indexMale = 1
+            const indexScenario1 = 2
+            const indexScenario2 = 3
 
-            let participants = []
-
-            data.forEach(column => {
-                //Participants table from column B to D
-                if (column[0] !== "" && column[1] !== "" && column[2] !== "") {
-                    participants.push([column[0], column[1], column[2]])
+            //TODO MEJORAR ESTO. SE DEBE BUSCAR EL VALOR EN EL ARRAY EN LUGAR DE TENER UN INDEX FIJO
+            for (let value of Object.values(response)) {
+                if (value.category === 'female') {
+                    participants[indexFemale] = [value.group_1, value.group_2, value.group_3]
+                } else if (value.category === 'male') {
+                    participants[indexMale] = [value.group_1, value.group_2, value.group_3]
+                } else if (value.category === 'scenario_1') {
+                    participants[indexScenario1] = [value.group_1, value.group_2, value.group_3]
+                } else if (value.category === 'scenario_2') {
+                    participants[indexScenario2] = [value.group_1, value.group_2, value.group_3]
                 }
-            });
+            }
 
+            console.log(participants)
 
             callback({ participants });
         }, (response) => {
-            callback(false, response.result.error);
+            callback(false, response);
         });
 }
-
 
 /**
  * Write results to GSheets
