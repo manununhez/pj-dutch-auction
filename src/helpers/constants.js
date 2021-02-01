@@ -111,20 +111,10 @@ export const AUCTION_TASK_FINISH_SCREEN = "AuctionTaskFinish";
 export const AUCTION_TASK_DEMO_SCREEN = "AuctionDemoTask";
 export const PSFORM_SCREEN = "PsychologyForm";
 export const VISUAL_PATTERN_SCREEN = "VisualPatternTask";
-export const VISUAL_PATTERN_DEMO_SCREEN = "VisualPatternTask Demo";
+export const VISUAL_PATTERN_DEMO_SCREEN = "VisualPatternTaskDemo";
 export const VISUAL_PATTERN_INSTRUCTION_SCREEN = "VisualPatternInstruction";
 export const VISUAL_PATTERN_DEMO_INSTRUCTION_FINISH_SCREEN = "VisualPatternDemoInstructionFinish";
 export const VISUAL_PATTERN_INSTRUCTION_FINISH_SCREEN = "VisualPatternInstructionFinish";
-
-//Sheetnames
-//-- SAVE
-export const USER_INFO_SHEETNAME = "userinfo";
-export const USER_LOGTIME_SHEETNAME = "userlogtime";
-export const USER_FORM_SHEETNAME = "userform";
-export const USER_GENERAL_DATA_SHEETNAME = "usergeneraldata";
-export const USER_AUCTION_BIDS_SHEETNAME = "auction-bids"
-export const USER_VISUAL_PATTERN_SHEETNAME = "uservisualpattern";
-export const USER_PSFORM_SHEETNAME = "userpsform";
 
 //General App messages KEYS
 export const AUCTION_GAIN_TEXT = "Brawo, udało Ci się zarezerwować ten pokój.<br><br>Zaoszczędziłeś $(value) zł.<br><br> Naciśnij ENTER, aby przejść do następnej aukcji."

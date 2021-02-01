@@ -1,11 +1,7 @@
 // Fetch.js
 import * as constant from '../helpers/constants';
 
-const _apiHost = 'https://api.swps-pjatk-experiment.pl/v2';//'http://localhost:5000'; //
-const save_sheet_url = '/v4-post';
-const fetch_hotels_url = '/hotels';
-const fetch_hotels_tutorial_url = '/hotels-tutorial';
-const fetch_hotels_rev_url = '/hotels-rev';
+// const _apiHost = 'https://api.swps-pjatk-experiment.pl/v2';//'http://localhost:5000'; //
 
 const _newApiHost = 'http://localhost:5000/'
 const versions_url = 'versions'
@@ -13,6 +9,16 @@ const psform_url = 'psform'
 const apptext_url = 'apptext'
 const navscreens_url = 'navscreens'
 const userexpcount_url = 'userexpcount'
+const fetch_hotels_url = 'hotels';
+const fetch_hotels_tutorial_url = 'hotels-tutorial';
+const fetch_hotels_rev_url = 'hotels-rev';
+const save_psform_url = 'savepsform';
+const save_auction_bids_url = 'saveauctionbids';
+const save_visualpattern_url = 'savevisualpattern';
+const save_userform_url = 'saveuserform';
+const save_userinfo_url = 'saveuserinfo';
+const save_userlogtime_url = 'saveuserlogtime';
+const save_usegeneraldata_url = 'saveusergeneraldata';
 
 async function request(url, params, method = 'GET') {
 
@@ -71,17 +77,13 @@ export function create(url, params) {
 //   return request(url, params, 'DELETE');
 // }
 
-function save(spreadSheetName, row, column, data, callback) {
-    create(save_sheet_url, {
-        spreadSheetName: spreadSheetName,
-        column: row,
-        row: column,
-        submissionValues: data
-    }).then((response) => {
-        callback({ response });
-    }, function (reason) {
-        callback(false, reason);
-    });
+function save(url, data, callback) {
+    create(_newApiHost + url, data)
+        .then((response) => {
+            callback({ response });
+        }, function (reason) {
+            callback(false, reason);
+        });
 }
 
 /**
@@ -105,7 +107,7 @@ export function fetchAuctionHotels(type, callback) {
             break;
     }
 
-    get(_apiHost + url, {})
+    get(_newApiHost + url, {})
         .then((response) => {
             let hotels = [];
 
@@ -266,12 +268,7 @@ export function fetchParticipantsCounter(callback) {
  * @param {*} callback 
  */
 export function saveGeneralData(data, ariadnaUserID, callback) {
-    let userdata = usergeneraldata(data, ariadnaUserID);
-    let spreadSheetName = constant.USER_GENERAL_DATA_SHEETNAME;
-    let row = "A2";
-    let column = "Z";
-
-    save(spreadSheetName, row, column, userdata, callback)
+    save(save_usegeneraldata_url, usergeneraldata(data, ariadnaUserID), callback)
 }
 
 /**
@@ -280,12 +277,7 @@ export function saveGeneralData(data, ariadnaUserID, callback) {
  * @param {*} callback 
  */
 export function saveUserPSForm(data, callback) {
-    let userPSForm = userpsform(data);
-    let spreadSheetName = constant.USER_PSFORM_SHEETNAME;
-    let row = "A2";
-    let column = "D";
-
-    save(spreadSheetName, row, column, userPSForm, callback)
+    save(save_psform_url, userpsform(data), callback)
 }
 
 /**
@@ -294,12 +286,7 @@ export function saveUserPSForm(data, callback) {
  * @param {*} callback 
  */
 export function saveAuctionBids(data, callback) {
-    let userData = userauctionbids(data);
-    let spreadSheetName = constant.USER_AUCTION_BIDS_SHEETNAME;
-    let row = "A2";
-    let column = "I";
-
-    save(spreadSheetName, row, column, userData, callback)
+    save(save_auction_bids_url, userauctionbids(data), callback)
 }
 
 /**
@@ -308,12 +295,7 @@ export function saveAuctionBids(data, callback) {
  * @param {*} callback 
  */
 export function saveUserInfo(data, callback) {
-    let userInfo = userinfo(data);
-    let spreadSheetName = constant.USER_INFO_SHEETNAME;
-    let row = "A2";
-    let column = "L";
-
-    save(spreadSheetName, row, column, userInfo, callback)
+    save(save_userinfo_url, userinfo(data), callback)
 }
 
 /**
@@ -322,12 +304,7 @@ export function saveUserInfo(data, callback) {
  * @param {*} callback 
  */
 export function saveUserForm(data, callback) {
-    let userForm = userform(data);
-    let spreadSheetName = constant.USER_FORM_SHEETNAME;
-    let row = "A2";
-    let column = "K";
-
-    save(spreadSheetName, row, column, userForm, callback)
+    save(save_userform_url, userform(data), callback)
 }
 
 /**
@@ -336,12 +313,7 @@ export function saveUserForm(data, callback) {
  * @param {*} callback 
  */
 export function saveUserLogTime(data, callback) {
-    let userLogtime = userlogtime(data);
-    let spreadSheetName = constant.USER_LOGTIME_SHEETNAME;
-    let row = "A2";
-    let column = "F";
-
-    save(spreadSheetName, row, column, userLogtime, callback)
+    save(save_userlogtime_url, userlogtime(data), callback)
 }
 
 /**
@@ -350,12 +322,7 @@ export function saveUserLogTime(data, callback) {
  * @param {*} callback 
  */
 export function saveUserVisualPattern(data, callback) {
-    let userVisualPattern = uservisualpattern(data);
-    let spreadSheetName = constant.USER_VISUAL_PATTERN_SHEETNAME;
-    let row = "A2";
-    let column = "L";
-
-    save(spreadSheetName, row, column, userVisualPattern, callback)
+    save(save_visualpattern_url, uservisualpattern(data), callback)
 }
 
 
@@ -365,7 +332,7 @@ export function saveUserVisualPattern(data, callback) {
  */
 const usergeneraldata = (data, ariadnaUserID) => {
 
-    let result = [];
+    let result = []; //should have exactly 14 columns (Column A to N), thats why we fill empty indexes with ""
     for (let j = 0; j < data.length; j++) {
         let output = data[j];
         if (output.task === constant.USER_FORM_SCREEN) {
@@ -379,7 +346,8 @@ const usergeneraldata = (data, ariadnaUserID) => {
                 output.data.profession,
                 output.data.yearsEduc,
                 output.data.levelEduc,
-                output.data.typeAuction
+                output.data.typeAuction,
+                "", "", "", ""
             ]);
         } else if (output.task === constant.USER_INFO_SCREEN) {
             result.push([
@@ -409,7 +377,8 @@ const usergeneraldata = (data, ariadnaUserID) => {
                 output.data.priceStart,
                 output.data.bid,
                 output.data.bidStartTimestamp,
-                output.data.bidStopTimestamp
+                output.data.bidStopTimestamp,
+                "", "", "", ""
             ]);
         } else if (output.task === constant.PSFORM_SCREEN) {
             result.push([
@@ -418,7 +387,9 @@ const usergeneraldata = (data, ariadnaUserID) => {
                 output.task,
                 output.timestamp, //created
                 output.data.questionCode,
-                output.data.answer
+                output.data.answer,
+                "", "", "", "",
+                "", "", "", ""
             ]);
         } else if (output.task === constant.VISUAL_PATTERN_SCREEN || output.task === constant.VISUAL_PATTERN_DEMO_SCREEN) {
             let vp1 = output.data.map((item) => {
@@ -435,7 +406,8 @@ const usergeneraldata = (data, ariadnaUserID) => {
                     item.matrixCheckResult.filter((element) => element === constant.TILE_ERROR).length, //we get the amount of errors if any
                     item.matrixCheckResult.filter((element) => element === constant.TILE_LEFT).length, //we get the amount of errors if any
                     item.retry,
-                    item.timestamp
+                    item.timestamp,
+                    ""
                 ]
             });
             result = result.concat(vp1);
