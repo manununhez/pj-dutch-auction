@@ -77,29 +77,22 @@ class Experiment extends Component {
             //Variables for input data
             inputNavigation: [],
             inputTextInstructions: [],
-            inputAuctionTask: [],
-            inputAuctionDemoTask: [],
+            inputAuctionTask: { task: [], demo: [] },
             inputParticipants: [],
             inputPSForm: [],
             //Variables for output data (results)
             generalOutput: generalOutputDefault,
             generalOutputIndexes: [],
             outputFormData: userFormDefault,
-            outputAuctionTask: [],
-            outputAuctionDemoTask: [],
+            outputAuctionTask: { task: [], demo: [] },
             outputPSForm: [],
-            outputVisualPattern: [],
-            outputVisualPatternDemo: [],
+            outputVisualPattern: { task: [], demo: [] },
             //utils
-            logTimestamp: {
-                screen: [],
-                timestamp: []
-            },
+            logTimestamp: { screen: [], timestamp: [] },
             currentScreenNumber: 0,
             showAlertWindowsClosing: true,
             loading: false,
-            loadingSyncData: false,
-            page: constant.TEXT_EMPTY
+            loadingSyncData: false
         };
 
         //session timer
@@ -291,10 +284,12 @@ class Experiment extends Component {
      */
     _onLoadAuctionHotelsCallBack(data, error) {
         if (data) {
+            const { inputAuctionTask } = this.state
+            inputAuctionTask.task = data.hotels
+
             //Loggin the first screen of the navigation
             this.setState({
-                // loading: false, //Hide loading
-                inputAuctionTask: data.hotels
+                inputAuctionTask: inputAuctionTask
             })
 
             if (DEBUG) console.log(data)
@@ -315,10 +310,13 @@ class Experiment extends Component {
      */
     _onLoadAuctionHotelsDemoCallBack(data, error) {
         if (data) {
+            const { inputAuctionTask } = this.state
+            inputAuctionTask.demo = data.hotels
+
             //Loggin the first screen of the navigation
             this.setState({
                 loading: false, //Hide loading
-                inputAuctionDemoTask: data.hotels
+                inputAuctionTask: inputAuctionTask
             })
 
             if (DEBUG) console.log(data)
@@ -613,7 +611,7 @@ class Experiment extends Component {
             sync: constant.STATE_NOT_SYNC
         })
 
-        outputAuctionTask.push(results)
+        outputAuctionTask.task.push(results)
 
         //save results
         this.setState({
@@ -633,7 +631,7 @@ class Experiment extends Component {
      */
     auctionTaskDemoHandler = (results) => {
         if (DEBUG) console.log(results)
-        const { generalOutput, userID, outputAuctionDemoTask } = this.state;
+        const { generalOutput, userID, outputAuctionTask } = this.state;
         const now = Date.now();
 
         generalOutput.push({
@@ -644,12 +642,12 @@ class Experiment extends Component {
             sync: constant.STATE_NOT_SYNC
         })
 
-        outputAuctionDemoTask.push(results)
+        outputAuctionTask.demo.push(results)
 
 
         //save results
         this.setState({
-            outputAuctionDemoTask: outputAuctionDemoTask,
+            outputAuctionTask: outputAuctionTask,
             generalOutput: generalOutput
         }, () => {
             this._checkSyncGeneralData()
@@ -666,7 +664,7 @@ class Experiment extends Component {
     visualPatternTaskHandler = (results) => {
         if (DEBUG) console.log(results)
 
-        const { generalOutput, userID } = this.state;
+        const { generalOutput, userID, outputVisualPattern } = this.state;
         const now = Date.now();
 
         generalOutput.push({
@@ -677,9 +675,11 @@ class Experiment extends Component {
             sync: constant.STATE_NOT_SYNC
         })
 
+        outputVisualPattern.task = results
+
         //save results
         this.setState({
-            outputVisualPattern: results,
+            outputVisualPattern: outputVisualPattern,
             generalOutput: generalOutput
         }, () => {
             //we simulate a space btn pressed because VisualPattern already finishes with a space btn pressed
@@ -693,7 +693,7 @@ class Experiment extends Component {
      */
     visualPatternDemoTaskHandler = (results) => {
         if (DEBUG) console.log(results)
-        const { generalOutput, userID } = this.state;
+        const { generalOutput, userID, outputVisualPattern } = this.state;
         const now = Date.now();
 
         generalOutput.push({
@@ -704,9 +704,11 @@ class Experiment extends Component {
             sync: constant.STATE_NOT_SYNC
         })
 
+        outputVisualPattern.demo = results
+
         //save results
         this.setState({
-            outputVisualPatternDemo: results,
+            outputVisualPattern: outputVisualPattern,
             generalOutput: generalOutput
         }, () => {
             //we simulate a space btn pressed because VisualPattern already finishes with a space btn pressed
@@ -781,16 +783,16 @@ class Experiment extends Component {
     validateAuctionTask() {
         const { outputAuctionTask, inputAuctionTask } = this.state;
 
-        return { isValid: (outputAuctionTask.length > 0 && outputAuctionTask.length === inputAuctionTask.length) }
+        return { isValid: (outputAuctionTask.task.length > 0 && outputAuctionTask.task.length === inputAuctionTask.task.length) }
     }
 
     /**
     * Validate Auction task results
     */
     validateAuctionDemoTask() {
-        const { outputAuctionDemoTask, inputAuctionDemoTask } = this.state;
+        const { outputAuctionTask, inputAuctionTask } = this.state;
 
-        return { isValid: (outputAuctionDemoTask.length > 0 && outputAuctionDemoTask.length === inputAuctionDemoTask.length) }
+        return { isValid: (outputAuctionTask.demo.length > 0 && outputAuctionTask.demo.length === inputAuctionTask.demo.length) }
     }
 
     /**
@@ -808,16 +810,16 @@ class Experiment extends Component {
     validateVisualPattern() {
         const { outputVisualPattern } = this.state;
 
-        return { isValid: (outputVisualPattern.length > 0) }
+        return { isValid: (outputVisualPattern.task.length > 0) }
     }
 
     /**
      * Validate Visual Pattern demo task results
      */
     validateVisualPatternDemo() {
-        const { outputVisualPatternDemo } = this.state;
+        const { outputVisualPattern } = this.state;
 
-        return { isValid: (outputVisualPatternDemo.length > 0) }
+        return { isValid: (outputVisualPattern.demo.length > 0) }
     }
 
     /**
@@ -825,31 +827,31 @@ class Experiment extends Component {
      */
     _validatePressedSpaceKeyToNextPage() {
         const { currentScreenNumber, inputNavigation } = this.state;
-        const currentScreen = inputNavigation[currentScreenNumber].screen;
+        const { screen, type } = inputNavigation[currentScreenNumber];
 
         let totalLength = inputNavigation.length;
 
         if (currentScreenNumber < totalLength) { //To prevent keep transition between pages
 
             console.log("Current Screen:")
-            console.log(currentScreen)
-            if (currentScreen.includes(constant.INSTRUCTION_SCREEN) ||
-                currentScreen === constant.REWARD_AUCTION_INFO_SCREEN ||
-                currentScreen === constant.AUCTION_TASK_FINISH_SCREEN) {
+            console.log(screen)
+            if (type === constant.INSTRUCTION_SCREEN ||
+                screen === constant.REWARD_AUCTION_INFO_SCREEN ||
+                screen === constant.AUCTION_TASK_FINISH_SCREEN) {
                 this._goToNextTaskInInputNavigation();
-            } else if (currentScreen === constant.PSFORM_SCREEN) {
+            } else if (screen === constant.PSFORM_SCREEN) {
                 let data = this.validatePSForm();
                 if (data.isValid) this._goToNextTaskInInputNavigation();
-            } else if (currentScreen === constant.AUCTION_TASK_DEMO_SCREEN) {
+            } else if (screen === constant.AUCTION_TASK_DEMO_SCREEN) {
                 let data = this.validateAuctionDemoTask();
                 if (data.isValid) this._goToNextTaskInInputNavigation();
-            } else if (currentScreen === constant.AUCTION_TASK_SCREEN) {
+            } else if (screen === constant.AUCTION_TASK_SCREEN) {
                 let data = this.validateAuctionTask();
                 if (data.isValid) this._goToNextTaskInInputNavigation();
-            } else if (currentScreen === constant.VISUAL_PATTERN_SCREEN) {
+            } else if (screen === constant.VISUAL_PATTERN_SCREEN) {
                 let data = this.validateVisualPattern();
                 if (data.isValid) this._goToNextTaskInInputNavigation();
-            } else if (currentScreen === constant.VISUAL_PATTERN_DEMO_SCREEN) {
+            } else if (screen === constant.VISUAL_PATTERN_DEMO_SCREEN) {
                 let data = this.validateVisualPatternDemo();
                 if (data.isValid) this._goToNextTaskInInputNavigation();
             }
@@ -972,7 +974,6 @@ class Experiment extends Component {
         let screens = logTimestamp.screen;
         let timestamps = logTimestamp.timestamp;
         let totalLength = inputNavigation.length;
-        let page = constant.TEXT_EMPTY;
         let nextScreenNumber = currentScreenNumber + 1;
         let showAlertWindowsClosingTmp = showAlertWindowsClosing;
 
@@ -996,7 +997,6 @@ class Experiment extends Component {
                     screen: screens,
                     timestamp: timestamps
                 },
-                page: page,
                 loading: loading,
                 modalOpen: false,
             }, () => {
@@ -1122,24 +1122,21 @@ function isFooterShownInCurrentScreen(state) {
     const { currentScreenNumber, inputNavigation } = state;
     if (inputNavigation.length === 0) return; //data was not loaded yet
 
-
-    const currentScreen = inputNavigation[currentScreenNumber].screen
+    const { screen, type } = inputNavigation[currentScreenNumber];
     let isFooterShown = false
     let footerText = constant.TEXT_FOOTER
 
-    if (currentScreen.includes(constant.INSTRUCTION_SCREEN)) {
-        if (currentScreen !== constant.VISUAL_PATTERN_INSTRUCTION_SCREEN &&
-            currentScreen !== constant.VISUAL_PATTERN_DEMO_INSTRUCTION_FINISH_SCREEN &&
-            currentScreen !== constant.VISUAL_PATTERN_INSTRUCTION_FINISH_SCREEN) {
+    if (type === constant.INSTRUCTION_SCREEN) {
+        if (screen.includes(constant.VISUAL_PATTERN)) {
             isFooterShown = true;
         }
-    } else if (currentScreen === constant.REWARD_AUCTION_INFO_SCREEN ||
-        currentScreen === constant.USER_FORM_SCREEN ||
-        currentScreen === constant.PSFORM_SCREEN) {
+    } else if (screen === constant.REWARD_AUCTION_INFO_SCREEN ||
+        screen === constant.USER_FORM_SCREEN ||
+        screen === constant.PSFORM_SCREEN) {
         isFooterShown = true;
     }
 
-    if (currentScreen === constant.USER_FORM_SCREEN) {
+    if (screen === constant.USER_FORM_SCREEN) {
         footerText = constant.TEXT_FOOTER_ENTER
     }
 
@@ -1158,58 +1155,57 @@ function changePages(state, context) {
         inputTextInstructions,
         outputFormData,
         inputAuctionTask,
-        inputAuctionDemoTask,
         outputAuctionTask,
         inputPSForm } = state;
     const totalLength = inputNavigation.length;
 
     if (totalLength > 0) { //If input navigation has been called
-        const currentScreen = inputNavigation[currentScreenNumber].screen
-
-        document.body.style.backgroundColor = currentScreen.includes(constant.INSTRUCTION_SCREEN) ? constant.WHITE : constant.LIGHT_GRAY;
+        const { screen, type } = inputNavigation[currentScreenNumber];
+        document.body.style.backgroundColor = (type === constant.INSTRUCTION_SCREEN) ? constant.WHITE : constant.LIGHT_GRAY;
 
         if (currentScreenNumber < totalLength) { //To prevent keep transition between pages
-            if (currentScreen === constant.USER_FORM_SCREEN) {
+
+            if (type === constant.INSTRUCTION_SCREEN) {
+                const text = getTextForCurrentScreen(inputTextInstructions, screen);
+                return <Instruction
+                    text={text}
+                    name={screen}
+                />;
+            } else if (screen === constant.USER_FORM_SCREEN) {
                 return <UserForm
                     action={context.formHandler}
                 />;
-            } else if (currentScreen.includes(constant.INSTRUCTION_SCREEN)) {
-                const text = getTextForCurrentScreen(inputTextInstructions, currentScreen);
-                return <Instruction
-                    text={text}
-                    name={currentScreen}
-                />;
-            } else if (currentScreen === constant.AUCTION_TASK_SCREEN) {
+            } else if (screen === constant.AUCTION_TASK_SCREEN) {
                 return <AuctionTask
                     action={context.auctionTaskHandler}
                     imageIndex={0}
-                    data={inputAuctionTask}
+                    data={inputAuctionTask.task}
                 />;
-            } else if (currentScreen === constant.AUCTION_TASK_DEMO_SCREEN) {
+            } else if (screen === constant.AUCTION_TASK_DEMO_SCREEN) {
                 return <AuctionTask
                     action={context.auctionTaskDemoHandler}
-                    imageIndex={inputAuctionTask.length} //demo image index starts in 30, after the real auctions
-                    data={inputAuctionDemoTask}
+                    imageIndex={inputAuctionTask.task.length} //demo image index starts in 30, after the real auctions
+                    data={inputAuctionTask.demo}
                 />;
-            } else if (currentScreen === constant.REWARD_AUCTION_INFO_SCREEN) {
+            } else if (screen === constant.REWARD_AUCTION_INFO_SCREEN) {
                 return <RewardAuctionInfo
                     sex={outputFormData.sex}
-                    data={outputAuctionTask}
+                    data={outputAuctionTask.task}
                 />;
-            } else if (currentScreen === constant.AUCTION_TASK_FINISH_SCREEN) {
+            } else if (screen === constant.AUCTION_TASK_FINISH_SCREEN) {
                 return <AuctionInfo
                     sex={outputFormData.sex}
-                    data={outputAuctionTask}
+                    data={outputAuctionTask.task}
                 />;
-            } else if (currentScreen === constant.VISUAL_PATTERN_SCREEN) {
+            } else if (screen === constant.VISUAL_PATTERN_SCREEN) {
                 return <VisualPatternTask
                     action={context.visualPatternTaskHandler}
                 />;
-            } else if (currentScreen === constant.VISUAL_PATTERN_DEMO_SCREEN) {
+            } else if (screen === constant.VISUAL_PATTERN_DEMO_SCREEN) {
                 return <VisualPatternDemoTask
                     action={context.visualPatternDemoTaskHandler}
                 />;
-            } else if (currentScreen === constant.PSFORM_SCREEN) {
+            } else if (screen === constant.PSFORM_SCREEN) {
                 if (inputPSForm.length > 0) { //if we have received already the input data for psform
                     return <PSForm
                         action={context.psFormHandler}

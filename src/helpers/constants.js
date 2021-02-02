@@ -16,8 +16,13 @@ export const PARTICIPANTS_GROUPS = [
     { minAge: 42, maxAge: 53 },
     { minAge: 65, maxAge: 76 }
 ]
+//Scenarios
+export const SCENARIO_HOTEL_REV = "hotels-rev"
+export const SCENARIO_HOTEL_NORMAL = "hotels"
+export const SCENARIO_HOTEL_TUTORIAL = "hotels-tutorial"
 
 //Visual Pattern
+export const VISUAL_PATTERN = "VisualPattern"
 export const TILE_SUCCESS = 1;
 export const TILE_EMPTY = 0;
 export const TILE_ERROR = 2;
@@ -83,11 +88,6 @@ export const FONT_SIZE_HEADING4 = "HEADING 4";
 export const FONT_SIZE_HEADING5 = "HEADING 5";
 export const FONT_SIZE_HEADING6 = "HEADING 6";
 
-//Scenarios
-export const SCENARIO_HOTEL_REV = "hotels-rev"
-export const SCENARIO_HOTEL_NORMAL = "hotels"
-export const SCENARIO_HOTEL_TUTORIAL = "hotels-tutorial"
-
 //PSFORM
 export const INPUT_TYPE = "input";
 export const MULTIPLE_CHOICES_TYPE = "multiple_choice";
@@ -112,9 +112,6 @@ export const AUCTION_TASK_DEMO_SCREEN = "AuctionDemoTask";
 export const PSFORM_SCREEN = "PsychologyForm";
 export const VISUAL_PATTERN_SCREEN = "VisualPatternTask";
 export const VISUAL_PATTERN_DEMO_SCREEN = "VisualPatternTaskDemo";
-export const VISUAL_PATTERN_INSTRUCTION_SCREEN = "VisualPatternInstruction";
-export const VISUAL_PATTERN_DEMO_INSTRUCTION_FINISH_SCREEN = "VisualPatternDemoInstructionFinish";
-export const VISUAL_PATTERN_INSTRUCTION_FINISH_SCREEN = "VisualPatternInstructionFinish";
 
 //General App messages KEYS
 export const AUCTION_GAIN_TEXT = "Brawo, udało Ci się zarezerwować ten pokój.<br><br>Zaoszczędziłeś $(value) zł.<br><br> Naciśnij ENTER, aby przejść do następnej aukcji."

@@ -4,6 +4,7 @@ import {
 } from "reactstrap";
 
 import {
+    TEXT_EMPTY,
     SPACE_KEY_CODE,
     ENTER_KEY_CODE,
     EVENT_KEY_DOWN,
@@ -225,10 +226,11 @@ class AuctionTask extends React.Component {
 function getFormattedText(text) { //TODO when FirstTask, we should cache the text so we dont iterate every time
     let children = []
 
-    text.split('<br>').forEach((item, index) => { //replace \n with margin bottom to emulate break line
-        if (item !== "")
+    text.split('<br>')
+        .filter((item) => item !== TEXT_EMPTY)
+        .forEach((item, index) => { //replace \n with margin bottom to emulate break line
             children.push(<><div className="hotel-description" key={"KEY_" + index}>{item}</div></>)
-    });
+        });
 
     return children;
 }
@@ -236,10 +238,11 @@ function getFormattedText(text) { //TODO when FirstTask, we should cache the tex
 function getModalFormattedText(text) { //TODO when FirstTask, we should cache the text so we dont iterate every time
     let children = []
 
-    text.split('<br>').forEach((item, index) => { //replace \n with margin bottom to emulate break line
-        if (item !== "")
+    text.split('<br>')
+        .filter((item) => item !== TEXT_EMPTY)
+        .forEach((item, index) => { //replace \n with margin bottom to emulate break line
             children.push(<><div className="modal-text" key={"KEY_" + index}>{item}</div></>)
-    });
+        });
 
     return children;
 }

@@ -3,6 +3,7 @@ import React from "react";
 import { Container, Row } from "reactstrap";
 
 import {
+    TEXT_EMPTY,
     FEMALE_VALUE,
     AUCTION_BID_RESULT_MESSAGE_MALE,
     AUCTION_BID_RESULT_MESSAGE_FEMALE
@@ -46,10 +47,11 @@ function totalReward(data, sex) {
 function getFormattedText(text) { //TODO when FirstTask, we should cache the text so we dont iterate every time
     let children = []
 
-    text.split('<br>').forEach(item => { //replace \n with <br>
-        if (item !== "")
+    text.split('<br>')
+        .filter((item) => item !== TEXT_EMPTY)
+        .forEach(item => { //replace \n with <br>
             children.push(<><br /><h3>{item}</h3></>)
-    });
+        });
 
     return children;
 }

@@ -130,7 +130,8 @@ export function fetchUserInitialData(typeTask, callback) {
             let screens = [];
             for (let value of Object.values(response.screens)) {
                 screens.push({
-                    screen: value.name
+                    screen: value.name,
+                    type: value.type
                 });
             }
 
@@ -417,19 +418,19 @@ function userinfo(data) {
 function userauctionbids(data) {
     let result = [];
     // let data = this.props.data;
-    const { outputAuctionTask, outputAuctionDemoTask, userID } = data;
+    const { outputAuctionTask, userID } = data;
     const now = Date.now();
 
-    for (let i = 0; i < outputAuctionDemoTask.length; i++) {
+    for (let i = 0; i < outputAuctionTask.demo.length; i++) {
         result.push([
             userID,
             constant.AUCTION_TASK_DEMO_SCREEN,
-            outputAuctionDemoTask[i].hotelId,
-            outputAuctionDemoTask[i].hotelName,
-            outputAuctionDemoTask[i].priceStart,
-            outputAuctionDemoTask[i].bid,
-            outputAuctionDemoTask[i].bidStartTimestamp,
-            outputAuctionDemoTask[i].bidStopTimestamp,
+            outputAuctionTask.demo[i].hotelId,
+            outputAuctionTask.demo[i].hotelName,
+            outputAuctionTask.demo[i].priceStart,
+            outputAuctionTask.demo[i].bid,
+            outputAuctionTask.demo[i].bidStartTimestamp,
+            outputAuctionTask.demo[i].bidStopTimestamp,
             now //created
         ]);
     }
@@ -438,12 +439,12 @@ function userauctionbids(data) {
         result.push([
             userID,
             constant.AUCTION_TASK_SCREEN,
-            outputAuctionTask[i].hotelId,
-            outputAuctionTask[i].hotelName,
-            outputAuctionTask[i].priceStart,
-            outputAuctionTask[i].bid,
-            outputAuctionTask[i].bidStartTimestamp,
-            outputAuctionTask[i].bidStopTimestamp,
+            outputAuctionTask.task[i].hotelId,
+            outputAuctionTask.task[i].hotelName,
+            outputAuctionTask.task[i].priceStart,
+            outputAuctionTask.task[i].bid,
+            outputAuctionTask.task[i].bidStartTimestamp,
+            outputAuctionTask.task[i].bidStopTimestamp,
             now //created
         ]);
     }
@@ -473,10 +474,10 @@ function userlogtime(data) {
 }
 
 function uservisualpattern(data) {
-    const { userID, outputVisualPattern, outputVisualPatternDemo } = data;
+    const { userID, outputVisualPattern } = data;
     const now = Date.now();
 
-    let resultDemo = outputVisualPatternDemo.map((output) => {
+    let resultDemo = outputVisualPattern.demo.map((output) => {
         return [
             userID,
             constant.VISUAL_PATTERN_DEMO_SCREEN,
@@ -494,7 +495,7 @@ function uservisualpattern(data) {
     });
 
 
-    let result = outputVisualPattern.map((output) => {
+    let result = outputVisualPattern.task.map((output) => {
         return [
             userID,
             constant.VISUAL_PATTERN_SCREEN,

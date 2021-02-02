@@ -143,7 +143,7 @@ class UserForm extends React.Component {
             </div>
             <NumberFormat className="form-control"
               id={constant.FORM_AGE}
-              placeholder=""
+              placeholder={constant.TEXT_EMPTY}
               autoFocus={true}
               onValueChange={this.validateNumberFormat.bind(this, constant.FORM_AGE)}
               decimalScale={0} />
@@ -153,7 +153,7 @@ class UserForm extends React.Component {
               <h5>Zawód</h5>
             </div>
             <Input id={constant.FORM_PROFESSION}
-              placeholder=""
+              placeholder={constant.TEXT_EMPTY}
               onChange={this.validateInputForm}
               type="text"
             />
@@ -175,7 +175,7 @@ class UserForm extends React.Component {
             </div>
             <NumberFormat className="form-control"
               id={constant.FORM_YEARS_EDUC}
-              placeholder=""
+              placeholder={constant.TEXT_EMPTY}
               onValueChange={this.validateNumberFormat.bind(this, constant.FORM_YEARS_EDUC)}
               decimalScale={0} />
           </FormGroup>
