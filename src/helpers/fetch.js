@@ -1,7 +1,7 @@
 // Fetch.js
 import * as constant from '../helpers/constants';
 
-// const _apiHost = 'https://api.swps-pjatk-experiment.pl/v2';//'http://localhost:5000'; //
+// const _apiHost = 'https://api.swps-pjatk-experiment.pl/v2';
 
 const _newApiHost = 'http://localhost:5000/'
 const fetch_versions_url = 'versions'
@@ -12,7 +12,7 @@ const fetch_hotels_url = 'hotels';
 const fetch_hotels_tutorial_url = 'hotels-tutorial';
 const fetch_hotels_rev_url = 'hotels-rev';
 const save_auction_bids_url = 'auctionbids';
-const save_visualpattern_url = 'savevisualpattern';
+const save_visualpattern_url = 'visualpattern';
 const save_userinfo_url = 'userinfo';
 const save_userlogtime_url = 'userlogtime';
 const save_usegeneraldata_url = 'usergeneraldata';
@@ -305,7 +305,10 @@ const usergeneraldata = (data, ariadnaUserID) => {
                 output.data.yearsEduc,
                 output.data.levelEduc,
                 output.data.typeAuction,
-                "", "", "", ""
+                constant.TEXT_EMPTY,
+                constant.TEXT_EMPTY,
+                constant.TEXT_EMPTY,
+                constant.TEXT_EMPTY
             ]);
         } else if (output.task === constant.USER_INFO_SCREEN) {
             result.push([
@@ -336,7 +339,10 @@ const usergeneraldata = (data, ariadnaUserID) => {
                 output.data.bid,
                 output.data.bidStartTimestamp,
                 output.data.bidStopTimestamp,
-                "", "", "", ""
+                constant.TEXT_EMPTY,
+                constant.TEXT_EMPTY,
+                constant.TEXT_EMPTY,
+                constant.TEXT_EMPTY
             ]);
         } else if (output.task === constant.PSFORM_SCREEN) {
             result.push([
@@ -346,8 +352,14 @@ const usergeneraldata = (data, ariadnaUserID) => {
                 output.timestamp, //created
                 output.data.questionCode,
                 output.data.answer,
-                "", "", "", "",
-                "", "", "", ""
+                constant.TEXT_EMPTY,
+                constant.TEXT_EMPTY,
+                constant.TEXT_EMPTY,
+                constant.TEXT_EMPTY,
+                constant.TEXT_EMPTY,
+                constant.TEXT_EMPTY,
+                constant.TEXT_EMPTY,
+                constant.TEXT_EMPTY
             ]);
         } else if (output.task === constant.VISUAL_PATTERN_SCREEN || output.task === constant.VISUAL_PATTERN_DEMO_SCREEN) {
             let vp1 = output.data.map((item) => {
@@ -365,7 +377,7 @@ const usergeneraldata = (data, ariadnaUserID) => {
                     item.matrixCheckResult.filter((element) => element === constant.TILE_LEFT).length, //we get the amount of errors if any
                     item.retry,
                     item.timestamp,
-                    ""
+                    constant.TEXT_EMPTY
                 ]
             });
             result = result.concat(vp1);
@@ -435,7 +447,7 @@ function userauctionbids(data) {
         ]);
     }
 
-    for (let i = 0; i < outputAuctionTask.length; i++) {
+    for (let i = 0; i < outputAuctionTask.task.length; i++) {
         result.push([
             userID,
             constant.AUCTION_TASK_SCREEN,
