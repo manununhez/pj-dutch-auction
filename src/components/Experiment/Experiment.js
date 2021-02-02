@@ -138,11 +138,8 @@ class Experiment extends Component {
     * fetchPSForm
      */
     _fetchExperimentInputData() {
-        if (DEBUG) console.log("FETCH hotels tutorial")
-        request.fetchAuctionHotels(constant.SCENARIO_HOTEL_TUTORIAL, this._onLoadAuctionHotelsDemoCallBack.bind(this))
-
         if (DEBUG) console.log("Fetch navigationScreens");
-        request.fetchNavScreens(this.state.typeTask, this._onLoadNavScreenCallBack.bind(this))
+        request.fetchUserInitialData(this.state.typeTask, this._onLoadInitialDataCallBack.bind(this))
     }
 
     /**
@@ -150,7 +147,6 @@ class Experiment extends Component {
     * 
     ** Sequence calling:
     * request.saveUserInfo()
-    * request.saveUserForm()
     * request.saveUserLogTime()
     * request.userVisualPattern()
     * request.saveUserPSForm
@@ -230,7 +226,7 @@ class Experiment extends Component {
      * @param {*} data 
      * @param {*} error 
      */
-    _onLoadNavScreenCallBack(data, error) {
+    _onLoadInitialDataCallBack(data, error) {
         if (data) {
             //Loggin the first screen of the navigation
             let timestamp = [];
@@ -244,37 +240,16 @@ class Experiment extends Component {
                     screen: screenTmp,
                     timestamp: timestamp
                 },
-                inputNavigation: data.screens
+                inputNavigation: data.screens,
+                inputParticipants: data.participants
             })
-            if (DEBUG) console.log(data)
 
-            if (DEBUG) console.log("Fetch participants counter");
-            request.fetchParticipantsCounter(this._onLoadParticipantCountCallBack.bind(this))
+            if (DEBUG) console.log("FETCH hotels tutorial")
+            request.fetchAuctionHotels(constant.SCENARIO_HOTEL_TUTORIAL, this._onLoadAuctionHotelsDemoCallBack.bind(this))
+
+            if (DEBUG) console.log(data)
         }
         else {
-            this.setState({
-                loading: false,
-            }, () => {
-                alert(`${error}. Please refresh page.`)
-                if (DEBUG) console.log(error)
-            })
-        }
-    }
-
-    /**
-     * Once the participant amount have been loaded from the spreadsheet
-     * @param {*} data 
-     * @param {*} error 
-     */
-    _onLoadParticipantCountCallBack(data, error) {
-        if (data) {
-            this.setState({
-                loading: false, //Hide loading
-                inputParticipants: data.participants
-            }, () => {
-                if (DEBUG) console.log(this.state)
-            });
-        } else {
             this.setState({
                 loading: false,
             }, () => {
@@ -342,7 +317,7 @@ class Experiment extends Component {
         if (data) {
             //Loggin the first screen of the navigation
             this.setState({
-                // loading: false, //Hide loading
+                loading: false, //Hide loading
                 inputAuctionDemoTask: data.hotels
             })
 
@@ -395,25 +370,9 @@ class Experiment extends Component {
         if (DEBUG) console.log(data);
         if (data) {
             if (DEBUG) console.log("SaveUserInfo");
-            request.saveUserForm(this.state, this._onSaveUserFormCallBack.bind(this))
-        } else {
-            if (DEBUG) console.log("Error saving user info")
-            this.setState({ loading: false });
-        }
-    }
-
-    /**
-     * Results from saving user form data
-     * @param {*} data 
-     * @param {*} error 
-     */
-    _onSaveUserFormCallBack(data, error) {
-        if (DEBUG) console.log(data);
-        if (data) {
-            if (DEBUG) console.log("SaveUserForm");
             request.saveUserLogTime(this.state, this._onSaveUserLogTimeCallBack.bind(this))
         } else {
-            if (DEBUG) console.log("Error saving user form")
+            if (DEBUG) console.log("Error saving user info")
             this.setState({ loading: false });
         }
     }

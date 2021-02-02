@@ -4,21 +4,18 @@ import * as constant from '../helpers/constants';
 // const _apiHost = 'https://api.swps-pjatk-experiment.pl/v2';//'http://localhost:5000'; //
 
 const _newApiHost = 'http://localhost:5000/'
-const versions_url = 'versions'
-const psform_url = 'psform'
-const apptext_url = 'apptext'
-const navscreens_url = 'navscreens'
-const userexpcount_url = 'userexpcount'
+const fetch_versions_url = 'versions'
+const fetch_psform_url = 'psform'
+const fetch_apptext_url = 'apptext'
+const fetch_inituserdata_url = 'inituserdata'
 const fetch_hotels_url = 'hotels';
 const fetch_hotels_tutorial_url = 'hotels-tutorial';
 const fetch_hotels_rev_url = 'hotels-rev';
-const save_psform_url = 'savepsform';
-const save_auction_bids_url = 'saveauctionbids';
+const save_auction_bids_url = 'auctionbids';
 const save_visualpattern_url = 'savevisualpattern';
-const save_userform_url = 'saveuserform';
-const save_userinfo_url = 'saveuserinfo';
-const save_userlogtime_url = 'saveuserlogtime';
-const save_usegeneraldata_url = 'saveusergeneraldata';
+const save_userinfo_url = 'userinfo';
+const save_userlogtime_url = 'userlogtime';
+const save_usegeneraldata_url = 'usergeneraldata';
 
 async function request(url, params, method = 'GET') {
 
@@ -120,12 +117,49 @@ export function fetchAuctionHotels(type, callback) {
         });
 }
 
-/**
- * Load app versions from the spreadsheet
- * @param {*} callback 
- */
+export function fetchUserInitialData(typeTask, callback) {
+    let url = _newApiHost + fetch_inituserdata_url + '/' + typeTask
+
+    get(url, {})
+        .then((response) => {
+            const indexFemale = 0
+            const indexMale = 1
+            const indexScenario1 = 2
+            const indexScenario2 = 3
+
+            let screens = [];
+            for (let value of Object.values(response.screens)) {
+                screens.push({
+                    screen: value.name
+                });
+            }
+
+            let participants = Array(4);
+            //TODO MEJORAR ESTO. SE DEBE BUSCAR EL VALOR EN EL ARRAY EN LUGAR DE TENER UN INDEX FIJO
+            for (let value of Object.values(response.experimentCount)) {
+                if (value.category === 'female') {
+                    participants[indexFemale] = [value.group_1, value.group_2, value.group_3]
+                } else if (value.category === 'male') {
+                    participants[indexMale] = [value.group_1, value.group_2, value.group_3]
+                } else if (value.category === 'scenario_1') {
+                    participants[indexScenario1] = [value.group_1, value.group_2, value.group_3]
+                } else if (value.category === 'scenario_2') {
+                    participants[indexScenario2] = [value.group_1, value.group_2, value.group_3]
+                }
+            }
+
+            callback({ screens, participants });
+        }, (response) => {
+            callback(false, response);
+        });
+}
+
+// /**
+//  * Load app versions from the spreadsheet
+//  * @param {*} callback 
+//  */
 export function fetchVersions(callback) {
-    let url = _newApiHost + versions_url
+    let url = _newApiHost + fetch_versions_url
 
     get(url, {})
         .then((response) => {
@@ -134,8 +168,6 @@ export function fetchVersions(callback) {
             for (let value of Object.values(response)) {
                 versions.push({ version: value.name });
             }
-
-            console.log(versions)
 
             callback({ versions });
         }, (response) => {
@@ -147,7 +179,7 @@ export function fetchVersions(callback) {
  * @param {*} callback 
  */
 export function fetchPSFormData(sex, callback) {
-    let url = _newApiHost + psform_url + '/' + sex
+    let url = _newApiHost + fetch_psform_url + '/' + sex
 
     get(url, {})
         .then((response) => {
@@ -165,8 +197,6 @@ export function fetchPSFormData(sex, callback) {
                 });
             }
 
-            console.log(result)
-
             callback({ result });
         }, (response) => {
             callback(false, response);
@@ -178,7 +208,7 @@ export function fetchPSFormData(sex, callback) {
  * @param {*} callback 
  */
 export function fetchAppText(sex, callback) {
-    let url = _newApiHost + apptext_url + '/' + sex
+    let url = _newApiHost + fetch_apptext_url + '/' + sex
 
     get(url, {})
         .then((response) => {
@@ -192,71 +222,7 @@ export function fetchAppText(sex, callback) {
                 });
             }
 
-            console.log(appText)
-
             callback({ appText });
-        }, (response) => {
-            callback(false, response);
-        });
-}
-
-/**
- * Load screen navigation structure from the spreadsheet
- * @param {*} spreadsheetName 
- * @param {*} callback 
- */
-export function fetchNavScreens(spreadsheetName, callback) {
-    let url = _newApiHost + navscreens_url + '/' + spreadsheetName
-
-    get(url, {})
-        .then((response) => {
-            let screens = [];
-
-            for (let value of Object.values(response)) {
-                screens.push({
-                    screen: value.name
-                });
-            }
-
-            console.log(screens)
-
-            callback({ screens });
-        }, (response) => {
-            callback(false, response);
-        });
-}
-
-/**
- * Load the current amount of participants of the experiment from the spreadsheet
- * @param {*} callback 
- */
-export function fetchParticipantsCounter(callback) {
-    let url = _newApiHost + userexpcount_url
-
-    get(url, {})
-        .then((response) => {
-            let participants = Array(4);
-            const indexFemale = 0
-            const indexMale = 1
-            const indexScenario1 = 2
-            const indexScenario2 = 3
-
-            //TODO MEJORAR ESTO. SE DEBE BUSCAR EL VALOR EN EL ARRAY EN LUGAR DE TENER UN INDEX FIJO
-            for (let value of Object.values(response)) {
-                if (value.category === 'female') {
-                    participants[indexFemale] = [value.group_1, value.group_2, value.group_3]
-                } else if (value.category === 'male') {
-                    participants[indexMale] = [value.group_1, value.group_2, value.group_3]
-                } else if (value.category === 'scenario_1') {
-                    participants[indexScenario1] = [value.group_1, value.group_2, value.group_3]
-                } else if (value.category === 'scenario_2') {
-                    participants[indexScenario2] = [value.group_1, value.group_2, value.group_3]
-                }
-            }
-
-            console.log(participants)
-
-            callback({ participants });
         }, (response) => {
             callback(false, response);
         });
@@ -277,7 +243,7 @@ export function saveGeneralData(data, ariadnaUserID, callback) {
  * @param {*} callback 
  */
 export function saveUserPSForm(data, callback) {
-    save(save_psform_url, userpsform(data), callback)
+    save(fetch_psform_url, userpsform(data), callback)
 }
 
 /**
@@ -296,15 +262,6 @@ export function saveAuctionBids(data, callback) {
  */
 export function saveUserInfo(data, callback) {
     save(save_userinfo_url, userinfo(data), callback)
-}
-
-/**
- * Write results to GSheets
- * @param {*} data 
- * @param {*} callback 
- */
-export function saveUserForm(data, callback) {
-    save(save_userform_url, userform(data), callback)
 }
 
 /**
@@ -418,12 +375,13 @@ const usergeneraldata = (data, ariadnaUserID) => {
 }
 
 function userinfo(data) {
-    let result = [];
 
-    const { userInfo, userID } = data;
+    const { userID, userInfo, outputFormData, typeTask, ariadnaUserID } = data;
     const now = Date.now();
 
-    result.push([
+    let result = { info: [], form: [] };
+
+    result.info.push([
         userID,
         userInfo.os.name,
         userInfo.os.version,
@@ -438,17 +396,7 @@ function userinfo(data) {
         now //created
     ]);
 
-
-    return result;
-}
-
-function userform(data) {
-    let result = [];
-    // let data = this.props.data;
-    const { userID, outputFormData, typeTask, ariadnaUserID } = data;
-    const now = Date.now();
-
-    result.push([
+    result.form.push([
         userID,
         ariadnaUserID,
         outputFormData.sex,
@@ -461,6 +409,7 @@ function userform(data) {
         true, //experimentCompleted,
         now //created
     ]);
+
 
     return result;
 }
