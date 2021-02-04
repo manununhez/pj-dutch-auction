@@ -188,21 +188,23 @@ function getQuestions(question, validateMultipleChoices, validateInput) {
  * @param {*} selectedAnswer 
  */
 function getMultipleOptions(answers, questionCode, validateMultipleChoices) {
-    let children = answers.map((answer) => {
-        return (
-            <FormGroup check>
-                <Label>
-                    <Input type="radio"
-                        id={questionCode}
-                        name="radio-button-demo"
-                        value={answer}
-                        onChange={validateMultipleChoices}
-                    />{' '}
-                    {answer}
-                </Label>
-            </FormGroup>
-        )
-    });
+    let children = answers
+        .filter((answer) => answer !== '' && answer !== null)
+        .map((answer) => {
+            return (
+                <FormGroup check>
+                    <Label>
+                        <Input type="radio"
+                            id={questionCode}
+                            name="radio-button-demo"
+                            value={answer}
+                            onChange={validateMultipleChoices}
+                        />{' '}
+                        {answer}
+                    </Label>
+                </FormGroup>
+            )
+        });
 
     return (<Col lg="auto" style={{ marginTop: '1.5em' }}>{children}</Col>)
 }

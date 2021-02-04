@@ -55,7 +55,6 @@ class Experiment extends Component {
                 USER_INFO.screen.width,
                 USER_INFO.screen.height
             ],
-            timestamp: Date.now(), //created
             sync: constant.STATE_NOT_SYNC
         }
         const generalOutputDefault = [userGeneralInfo]
@@ -181,7 +180,7 @@ class Experiment extends Component {
             }
         }
 
-        if (DEBUG) console.log("Syncing GeneralData now()")
+        if (DEBUG) console.log("Syncing GeneralData now")
         if (DEBUG) console.log(itemsNotSynced)
 
         for (let i = 0; i < generalOutput.length; i++) {
@@ -485,7 +484,6 @@ class Experiment extends Component {
      */
     formHandler = (formData) => {
         const { generalOutput, userID } = this.state
-        const now = Date.now();
 
         if (DEBUG) console.log(formData)
 
@@ -503,7 +501,6 @@ class Experiment extends Component {
                 userID: userID,
                 task: constant.USER_FORM_SCREEN,
                 data: formData,
-                timestamp: now,
                 sync: constant.STATE_NOT_SYNC
             })
         } else { //we update existing values
@@ -511,7 +508,6 @@ class Experiment extends Component {
                 userID: userID,
                 task: constant.USER_FORM_SCREEN,
                 data: formData,
-                timestamp: now,
                 sync: constant.STATE_NOT_SYNC
             }
         }
@@ -532,7 +528,6 @@ class Experiment extends Component {
      */
     psFormHandler = (result) => {
         const { outputPSForm, generalOutput, userID } = this.state;
-        const now = Date.now();
 
         if (DEBUG) console.log(result.questionCode)
         if (DEBUG) console.log(result.answer)
@@ -568,7 +563,6 @@ class Experiment extends Component {
                 userID: userID,
                 task: constant.PSFORM_SCREEN,
                 data: result,
-                timestamp: now,
                 sync: constant.STATE_NOT_SYNC
             })
         } else {
@@ -576,7 +570,6 @@ class Experiment extends Component {
                 userID: userID,
                 task: constant.PSFORM_SCREEN,
                 data: result,
-                timestamp: now,
                 sync: constant.STATE_NOT_SYNC
             }
         }
@@ -601,13 +594,11 @@ class Experiment extends Component {
     auctionTaskHandler = (results) => {
         if (DEBUG) console.log(results)
         const { generalOutput, userID, outputAuctionTask } = this.state;
-        const now = Date.now();
 
         generalOutput.push({
             userID: userID,
             task: constant.AUCTION_TASK_SCREEN,
             data: results,
-            timestamp: now,
             sync: constant.STATE_NOT_SYNC
         })
 
@@ -632,13 +623,11 @@ class Experiment extends Component {
     auctionTaskDemoHandler = (results) => {
         if (DEBUG) console.log(results)
         const { generalOutput, userID, outputAuctionTask } = this.state;
-        const now = Date.now();
 
         generalOutput.push({
             userID: userID,
             task: constant.AUCTION_TASK_DEMO_SCREEN,
             data: results,
-            timestamp: now,
             sync: constant.STATE_NOT_SYNC
         })
 
@@ -665,13 +654,11 @@ class Experiment extends Component {
         if (DEBUG) console.log(results)
 
         const { generalOutput, userID, outputVisualPattern } = this.state;
-        const now = Date.now();
 
         generalOutput.push({
             userID: userID,
             task: constant.VISUAL_PATTERN_SCREEN,
             data: results,
-            timestamp: now,
             sync: constant.STATE_NOT_SYNC
         })
 
@@ -694,13 +681,11 @@ class Experiment extends Component {
     visualPatternDemoTaskHandler = (results) => {
         if (DEBUG) console.log(results)
         const { generalOutput, userID, outputVisualPattern } = this.state;
-        const now = Date.now();
 
         generalOutput.push({
             userID: userID,
             task: constant.VISUAL_PATTERN_DEMO_SCREEN,
             data: results,
-            timestamp: now,
             sync: constant.STATE_NOT_SYNC
         })
 
@@ -965,14 +950,14 @@ class Experiment extends Component {
      * We move to next page, according to inputNavigation input data
      */
     _goToNextTaskInInputNavigation() {
-        const { currentScreenNumber, inputNavigation, logTimestamp, showAlertWindowsClosing } = this.state;
-
         console.log("_goToNextTaskInInputNavigation")
+
+        const { currentScreenNumber, inputNavigation, logTimestamp, showAlertWindowsClosing } = this.state;
+        const { screen, timestamp } = logTimestamp
+
         let currentScreen = inputNavigation[currentScreenNumber].screen;
         let loading = (currentScreen === constant.USER_FORM_SCREEN); //show loading if we are leaving user form, because text is being call
         let now = Date.now();
-        let screens = logTimestamp.screen;
-        let timestamps = logTimestamp.timestamp;
         let totalLength = inputNavigation.length;
         let nextScreenNumber = currentScreenNumber + 1;
         let showAlertWindowsClosingTmp = showAlertWindowsClosing;
@@ -980,8 +965,8 @@ class Experiment extends Component {
         if (nextScreenNumber < totalLength) {
             let nextScreen = inputNavigation[nextScreenNumber].screen;
 
-            screens.push(nextScreen);//set timestamp
-            timestamps.push(now);
+            screen.push(nextScreen);//set timestamp
+            timestamp.push(now);
 
             if (nextScreenNumber === (totalLength - 1)) { //Last screen!
                 // SYNC DATA
@@ -994,8 +979,8 @@ class Experiment extends Component {
                 showAlertWindowsClosing: showAlertWindowsClosingTmp,
                 currentScreenNumber: nextScreenNumber,
                 logTimestamp: {
-                    screen: screens,
-                    timestamp: timestamps
+                    screen: screen,
+                    timestamp: timestamp
                 },
                 loading: loading,
                 modalOpen: false,

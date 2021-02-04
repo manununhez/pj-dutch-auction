@@ -130,8 +130,8 @@ export function fetchUserInitialData(typeTask, callback) {
             let screens = [];
             for (let value of Object.values(response.screens)) {
                 screens.push({
-                    screen: value.name,
-                    type: value.type
+                    screen: value.screen_name,
+                    type: value.screen_type
                 });
             }
 
@@ -193,7 +193,7 @@ export function fetchPSFormData(sex, callback) {
                     questionCode: value.question_code,
                     question: value.question,
                     questionFontSize: value.question_font_size,
-                    type: value.type,
+                    type: value.question_type,
                     answer: [value.answer_1, value.answer_2, value.answer_3, value.answer_4, value.answer_5, value.answer_6]
                 });
             }
@@ -298,7 +298,6 @@ const usergeneraldata = (data, ariadnaUserID) => {
                 output.userID,
                 ariadnaUserID,
                 output.task,
-                output.timestamp, //created
                 output.data.sex,
                 output.data.age,
                 output.data.profession,
@@ -315,7 +314,6 @@ const usergeneraldata = (data, ariadnaUserID) => {
                 output.userID,
                 ariadnaUserID,
                 output.task,
-                output.timestamp,
                 output.data[0],
                 output.data[1],
                 output.data[2],
@@ -332,7 +330,6 @@ const usergeneraldata = (data, ariadnaUserID) => {
                 output.userID,
                 ariadnaUserID,
                 output.task,
-                output.timestamp, //created
                 output.data.hotelId,
                 output.data.hotelName,
                 output.data.priceStart,
@@ -349,7 +346,6 @@ const usergeneraldata = (data, ariadnaUserID) => {
                 output.userID,
                 ariadnaUserID,
                 output.task,
-                output.timestamp, //created
                 output.data.questionCode,
                 output.data.answer,
                 constant.TEXT_EMPTY,
@@ -367,7 +363,6 @@ const usergeneraldata = (data, ariadnaUserID) => {
                     output.userID,
                     ariadnaUserID,
                     output.task,
-                    output.timestamp, //created
                     (item.level + 1), //+1 to be more idiomatic: starts from level 1 insteado of level 0
                     item.dimention,
                     JSON.stringify(item.matrix),
@@ -390,7 +385,6 @@ const usergeneraldata = (data, ariadnaUserID) => {
 function userinfo(data) {
 
     const { userID, userInfo, outputFormData, typeTask, ariadnaUserID } = data;
-    const now = Date.now();
 
     let result = { info: [], form: [] };
 
@@ -405,8 +399,7 @@ function userinfo(data) {
         userInfo.engine.name,
         userInfo.engine.version,
         userInfo.screen.width,
-        userInfo.screen.height,
-        now //created
+        userInfo.screen.height
     ]);
 
     result.form.push([
@@ -418,9 +411,7 @@ function userinfo(data) {
         outputFormData.yearsEduc,
         outputFormData.levelEduc,
         outputFormData.typeAuction,
-        typeTask,
-        true, //experimentCompleted,
-        now //created
+        typeTask
     ]);
 
 
@@ -431,7 +422,6 @@ function userauctionbids(data) {
     let result = [];
     // let data = this.props.data;
     const { outputAuctionTask, userID } = data;
-    const now = Date.now();
 
     for (let i = 0; i < outputAuctionTask.demo.length; i++) {
         result.push([
@@ -442,8 +432,7 @@ function userauctionbids(data) {
             outputAuctionTask.demo[i].priceStart,
             outputAuctionTask.demo[i].bid,
             outputAuctionTask.demo[i].bidStartTimestamp,
-            outputAuctionTask.demo[i].bidStopTimestamp,
-            now //created
+            outputAuctionTask.demo[i].bidStopTimestamp
         ]);
     }
 
@@ -457,7 +446,6 @@ function userauctionbids(data) {
             outputAuctionTask.task[i].bid,
             outputAuctionTask.task[i].bidStartTimestamp,
             outputAuctionTask.task[i].bidStopTimestamp,
-            now //created
         ]);
     }
 
@@ -470,7 +458,6 @@ function userlogtime(data) {
 
     const { logTimestamp, userID } = data;
     const { screen, timestamp } = logTimestamp;
-    const now = Date.now();
 
     for (let i = 0; i < screen.length; i++) {
         result.push([
@@ -478,7 +465,6 @@ function userlogtime(data) {
             screen[i],
             timestamp[i],
             Math.floor((((i + 1) < screen.length) ? (timestamp[i + 1] - timestamp[i]) : 0) / 1000),
-            now //created
         ]);
     }
 
@@ -487,7 +473,6 @@ function userlogtime(data) {
 
 function uservisualpattern(data) {
     const { userID, outputVisualPattern } = data;
-    const now = Date.now();
 
     let resultDemo = outputVisualPattern.demo.map((output) => {
         return [
@@ -502,7 +487,6 @@ function uservisualpattern(data) {
             output.matrixCheckResult.filter((item) => item === constant.TILE_LEFT).length,
             output.retry,
             output.timestamp,
-            now //created
         ];
     });
 
@@ -520,7 +504,6 @@ function uservisualpattern(data) {
             output.matrixCheckResult.filter((item) => item === constant.TILE_LEFT).length,
             output.retry,
             output.timestamp,
-            now //created
         ];
     });
 
@@ -530,14 +513,12 @@ function uservisualpattern(data) {
 function userpsform(data) {
     let result = [];
     const { outputPSForm, userID } = data;
-    const now = Date.now();
 
     for (let i = 0; i < outputPSForm.length; i++) {
         result.push([
             userID,
             outputPSForm[i].questionCode,
             outputPSForm[i].answer,
-            now //created
         ]);
     }
 
