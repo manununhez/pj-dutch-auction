@@ -1,9 +1,7 @@
 // Fetch.js
 import * as constant from '../helpers/constants';
 
-// const _apiHost = 'https://api.swps-pjatk-experiment.pl/v2';
-
-const _newApiHost = 'http://localhost:5000/'
+const _apiHost = 'https://api.swps-pjatk-experiment.pl/v2/'; //'http://localhost:5000/'
 const fetch_versions_url = 'versions'
 const fetch_psform_url = 'psform'
 const fetch_apptext_url = 'apptext'
@@ -59,11 +57,11 @@ function generateErrorResponse(message) {
 }
 
 export function get(url, params) {
-    return request(url, params);
+    return request(_apiHost + url, params);
 }
 
 export function create(url, params) {
-    return request(url, params, 'POST');
+    return request(_apiHost + url, params, 'POST');
 }
 
 //  function update(url, params) {
@@ -75,7 +73,7 @@ export function create(url, params) {
 // }
 
 function save(url, data, callback) {
-    create(_newApiHost + url, data)
+    create(url, data)
         .then((response) => {
             callback({ response });
         }, function (reason) {
@@ -104,7 +102,7 @@ export function fetchAuctionHotels(type, callback) {
             break;
     }
 
-    get(_newApiHost + url, {})
+    get(url, {})
         .then((response) => {
             let hotels = [];
 
@@ -118,7 +116,7 @@ export function fetchAuctionHotels(type, callback) {
 }
 
 export function fetchUserInitialData(typeTask, callback) {
-    let url = _newApiHost + fetch_inituserdata_url + '/' + typeTask
+    let url = fetch_inituserdata_url + '/' + typeTask
 
     get(url, {})
         .then((response) => {
@@ -160,7 +158,7 @@ export function fetchUserInitialData(typeTask, callback) {
 //  * @param {*} callback 
 //  */
 export function fetchVersions(callback) {
-    let url = _newApiHost + fetch_versions_url
+    let url = fetch_versions_url
 
     get(url, {})
         .then((response) => {
@@ -180,7 +178,7 @@ export function fetchVersions(callback) {
  * @param {*} callback 
  */
 export function fetchPSFormData(sex, callback) {
-    let url = _newApiHost + fetch_psform_url + '/' + sex
+    let url = fetch_psform_url + '/' + sex
 
     get(url, {})
         .then((response) => {
@@ -209,7 +207,7 @@ export function fetchPSFormData(sex, callback) {
  * @param {*} callback 
  */
 export function fetchAppText(sex, callback) {
-    let url = _newApiHost + fetch_apptext_url + '/' + sex
+    let url = fetch_apptext_url + '/' + sex
 
     get(url, {})
         .then((response) => {
