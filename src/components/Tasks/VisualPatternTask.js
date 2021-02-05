@@ -26,11 +26,11 @@ import {
     VISUAL_PATTERN_RESULTS_CORRECT,
     VISUAL_PATTERN_RESULTS_FAILED,
     VISUAL_PATTERN_RESULTS_PRESS_SPACE
-} from '../../../helpers/constants';
+} from '../../helpers/constants';
 
-import { randomNumber } from '../../../helpers/utils';
+import { randomNumber } from '../../helpers/utils';
 
-import './VisualPatternTask.css'
+import './style.css'
 
 const DEBUG = (process.env.REACT_APP_DEBUG_LOG === "true") ? true : false;
 

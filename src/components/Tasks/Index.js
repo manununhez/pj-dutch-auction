@@ -13,16 +13,16 @@ import FadeLoader from "react-spinners/FadeLoader";
 import SyncLoader from "react-spinners/SyncLoader";
 
 // Views
-import FooterV1 from "../Footers/FooterV1.0";
-import RewardAuctionInfo from "../Tasks/RewardAuctionInfo";
-import Instruction from "../Tasks/Instruction/Instruction"
-import UserForm from "../Tasks/UserForm/UserForm";
-import AuctionTask from "../Tasks/AuctionTask/AuctionTask";
-import AuctionInfo from "../Tasks/AuctionTask/AuctionInfo";
-import VisualPatternTask from "../Tasks/VisualPatternTask/VisualPatternTask";
-import VisualPatternDemoTask from "../Tasks/VisualPatternTask/VisualPatternDemoTask";
-import PSForm from "../Tasks/PSForm";
-import "./Experiment.css"
+import Footer from "../Footers/Footer";
+import RewardAuctionInfo from "./RewardAuctionInfo";
+import Instruction from "./Instruction"
+import UserForm from "./UserForm";
+import AuctionTask from "./AuctionTask";
+import AuctionInfo from "./AuctionInfo";
+import VisualPatternTask from "./VisualPatternTask";
+import VisualPatternDemoTask from "./VisualPatternDemoTask";
+import PSForm from "./PSForm";
+import "./style.css"
 
 // helpers
 import * as request from '../../helpers/fetch';
@@ -33,7 +33,7 @@ const DEBUG = (process.env.REACT_APP_DEBUG_LOG === "true") ? true : false;
 const ARIADNA_REDIRECT_REJECT = process.env.REACT_APP_ARIADNA_REDIRECT_REJECT;
 const ARIADNA_REDIRECT_ACCEPTED = process.env.REACT_APP_ARIADNA_REDIRECT_ACCEPTED;
 
-class Experiment extends Component {
+class Index extends Component {
     constructor(props) {
         super(props);
 
@@ -1125,7 +1125,7 @@ function isFooterShownInCurrentScreen(state) {
         footerText = constant.TEXT_FOOTER_ENTER
     }
 
-    return ((isFooterShown) ? <FooterV1 text={footerText} /> : <></>)
+    return ((isFooterShown) ? <Footer text={footerText} /> : <></>)
 }
 
 /**
@@ -1249,4 +1249,4 @@ function getFontSize(item, fontSize, key) {
     }
 }
 
-export default Experiment;
+export default Index;

@@ -6,7 +6,7 @@ import {
   Container
 } from "reactstrap";
 
-import './FooterV1.0.css'
+import './Footer.css'
 
 class SimpleFooter extends React.Component {
   render() {

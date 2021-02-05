@@ -4,7 +4,7 @@ import React from "react";
 import Navbar from "./Navbars/Navbar.js";
 
 // index page sections
-import MainMenu from "./Menu/MainMenu.js";
+import MainMenu from "./Menu/Menu.js";
 //Loader
 import { css } from "@emotion/core";
 import FadeLoader from "react-spinners/FadeLoader";

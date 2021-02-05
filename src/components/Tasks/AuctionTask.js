@@ -19,11 +19,11 @@ import {
     AUCTION_FOOTER_TEXT,
     GREEN,
     RED
-} from '../../../helpers/constants';
+} from '../../helpers/constants';
 
-import "./AuctionTask.css";
+import "./style.css";
 
-import FooterV1 from "../../Footers/FooterV1.0";
+import Footer from "../Footers/Footer";
 
 const DEBUG = (process.env.REACT_APP_DEBUG_LOG === "true") ? true : false;
 
@@ -216,7 +216,7 @@ class AuctionTask extends React.Component {
                     </Col>
                 </Row>
                 <Row>
-                    {(bidState === BID_STATE_NOT_STARTED) ? <FooterV1 text={footerTextMessage} /> : <></>}
+                    {(bidState === BID_STATE_NOT_STARTED) ? <Footer text={footerTextMessage} /> : <></>}
                 </Row>
             </Container>
         );

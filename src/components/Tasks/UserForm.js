@@ -5,9 +5,9 @@ import { FormGroup, Form, Input, Container, Col, Label, Alert } from "reactstrap
 
 import NumberFormat from 'react-number-format';
 
-import * as constant from '../../../helpers/constants';
+import * as constant from '../../helpers/constants';
 
-import "./UserForm.css";
+import "./style.css";
 
 const DEBUG = (process.env.REACT_APP_DEBUG_LOG === "true") ? true : false;
 

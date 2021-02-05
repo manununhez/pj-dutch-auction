@@ -2,13 +2,12 @@ import React from "react";
 
 import { Container, Row } from "reactstrap";
 
-import "./Instruction.css";
-import "../font.css"
+import "./style.css";
 
 import {
     AUCTION_INSTRUCTION_DEMO_SCREEN,
     AUCTION_INSTRUCTION_SCREEN
-} from '../../../helpers/constants';
+} from '../../helpers/constants';
 
 class Instruction extends React.Component {
     render() {

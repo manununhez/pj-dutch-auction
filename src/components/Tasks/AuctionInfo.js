@@ -7,7 +7,7 @@ import {
     FEMALE_VALUE,
     AUCTION_BID_RESULT_MESSAGE_MALE,
     AUCTION_BID_RESULT_MESSAGE_FEMALE
-} from '../../../helpers/constants';
+} from '../../helpers/constants';
 
 class AuctionInfo extends React.Component {
     render() {

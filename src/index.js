@@ -5,7 +5,7 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import Index from "./components/Index.js";
-import Experiment from "./components/Experiment/Experiment";
+import Experiment from "./components/Tasks/Index.js";
 
 
 ReactDOM.render(
