@@ -10,7 +10,10 @@ import {
     EVENT_KEY_DOWN,
     FREQ_CHANGE_MS,
     PRICE_STEP,
-    AUCTION_GAIN_TEXT,
+    FEMALE_VALUE,
+    MALE_VALUE,
+    AUCTION_GAIN_TEXT_MALE,
+    AUCTION_GAIN_TEXT_FEMALE,
     AUCTION_LOSE_TEXT,
     ONE_SECOND_MS,
     BID_STATE_NOT_STARTED,
@@ -31,6 +34,7 @@ class AuctionTask extends React.Component {
     constructor(props) {
         super(props);
 
+        const gainText = this.props.sex === FEMALE_VALUE ? AUCTION_GAIN_TEXT_FEMALE : AUCTION_GAIN_TEXT_MALE
         this.state = {
             counterAuction: 0,
             bid: this.props.data[0].priceStart,
@@ -43,7 +47,7 @@ class AuctionTask extends React.Component {
             bidStartTimestamp: 0,
             bidStopTimestamp: 0,
             footerTextMessage: AUCTION_FOOTER_TEXT,
-            gainText: AUCTION_GAIN_TEXT,
+            gainText: gainText,
             looseText: AUCTION_LOSE_TEXT
         };
 

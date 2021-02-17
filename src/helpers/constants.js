@@ -114,7 +114,8 @@ export const VISUAL_PATTERN_SCREEN = "VisualPatternTask";
 export const VISUAL_PATTERN_DEMO_SCREEN = "VisualPatternTaskDemo";
 
 //General App messages KEYS
-export const AUCTION_GAIN_TEXT = "Brawo, udało Ci się zarezerwować ten pokój.<br><br>Zaoszczędziłeś $(value) zł.<br><br> Naciśnij ENTER, aby przejść do następnej aukcji."
+export const AUCTION_GAIN_TEXT_MALE = "Brawo, udało Ci się zarezerwować ten pokój.<br><br>Zaoszczędziłeś $(value) zł.<br><br> Naciśnij ENTER, aby przejść do następnej aukcji."
+export const AUCTION_GAIN_TEXT_FEMALE = "Brawo, udało Ci się zarezerwować ten pokój.<br><br>Zaoszczędziłaś $(value) zł.<br><br> Naciśnij ENTER, aby przejść do następnej aukcji."
 export const AUCTION_LOSE_TEXT = "Ktoś inny zarezerwował ten pokój. Musisz zapłacić pełną cenę: $(value) zł.<br><br> Naciśnij ENTER, aby przejść do następnej aukcji."
 export const AUCTION_FOOTER_TEXT = "Naciśnij SPACJĘ, aby rozpocząć aukcję."
 export const AUCTION_EXHAUSTED_QUOTA_MESSAGE = "No more space for participants in this scenario!";

@@ -1162,12 +1162,14 @@ function changePages(state, context) {
                 />;
             } else if (screen === constant.AUCTION_TASK_SCREEN) {
                 return <AuctionTask
+                    sex={outputFormData.sex}
                     action={context.auctionTaskHandler}
                     imageIndex={0}
                     data={inputAuctionTask.task}
                 />;
             } else if (screen === constant.AUCTION_TASK_DEMO_SCREEN) {
                 return <AuctionTask
+                    sex={outputFormData.sex}
                     action={context.auctionTaskDemoHandler}
                     imageIndex={inputAuctionTask.task.length} //demo image index starts in 30, after the real auctions
                     data={inputAuctionTask.demo}
