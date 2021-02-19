@@ -466,7 +466,7 @@ class Index extends Component {
             this.setState({
                 loading: false,
             }, () => {
-                alert(`${error}. Please refresh page.`)
+                // alert(`${error}. Please refresh page.`)
                 if (DEBUG) console.log(error)
             })
         }
@@ -990,9 +990,9 @@ class Index extends Component {
                 if (nextScreenNumber === (totalLength - 1)) { //Last screen!
                     // SYNC DATA
                     this._syncData() //call syncdata after the experiment is completed and updated its value to true
-                } else {
-                    this._checkSyncGeneralData()
                 }
+
+                this._checkSyncGeneralData()
             });
         }
     }
@@ -1112,7 +1112,7 @@ function isFooterShownInCurrentScreen(state) {
     let footerText = constant.TEXT_FOOTER
 
     if (type === constant.INSTRUCTION_SCREEN) {
-        if (screen.includes(constant.VISUAL_PATTERN)) {
+        if (screen.includes(constant.VISUAL_PATTERN) || screen.includes("Auction")) {
             isFooterShown = true;
         }
     } else if (screen === constant.REWARD_AUCTION_INFO_SCREEN ||
@@ -1166,6 +1166,7 @@ function changePages(state, context) {
                     action={context.auctionTaskHandler}
                     imageIndex={0}
                     data={inputAuctionTask.task}
+                    demo={false}
                 />;
             } else if (screen === constant.AUCTION_TASK_DEMO_SCREEN) {
                 return <AuctionTask
@@ -1173,6 +1174,7 @@ function changePages(state, context) {
                     action={context.auctionTaskDemoHandler}
                     imageIndex={inputAuctionTask.task.length} //demo image index starts in 30, after the real auctions
                     data={inputAuctionTask.demo}
+                    demo={true}
                 />;
             } else if (screen === constant.REWARD_AUCTION_INFO_SCREEN) {
                 return <RewardAuctionInfo

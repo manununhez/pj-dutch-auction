@@ -11,7 +11,7 @@ import {
     FREQ_CHANGE_MS,
     PRICE_STEP,
     FEMALE_VALUE,
-    MALE_VALUE,
+    AUCTION_TUTORIAL_POPUP_TEXT,
     AUCTION_GAIN_TEXT_MALE,
     AUCTION_GAIN_TEXT_FEMALE,
     AUCTION_LOSE_TEXT,
@@ -19,6 +19,7 @@ import {
     BID_STATE_NOT_STARTED,
     BID_STATE_RUNNING,
     BID_STATE_FINISHED,
+    BID_STATE_DEMO,
     AUCTION_FOOTER_TEXT,
     GREEN,
     RED
@@ -36,19 +37,20 @@ class AuctionTask extends React.Component {
 
         const gainText = this.props.sex === FEMALE_VALUE ? AUCTION_GAIN_TEXT_FEMALE : AUCTION_GAIN_TEXT_MALE
         this.state = {
-            counterAuction: 0,
-            bid: this.props.data[0].priceStart,
-            priceStart: this.props.data[0].priceStart,
             auctionLength: this.props.data[0].auctionLength,
-            timeCount: 0,
-            bidState: BID_STATE_NOT_STARTED,
-            modalOpen: false,
-            isBidGain: false,
+            bid: this.props.data[0].priceStart,
             bidStartTimestamp: 0,
             bidStopTimestamp: 0,
+            bidState: BID_STATE_NOT_STARTED,
+            counterAuction: 0,
+            demoModalOpen: false,
             footerTextMessage: AUCTION_FOOTER_TEXT,
             gainText: gainText,
-            looseText: AUCTION_LOSE_TEXT
+            isBidGain: false,
+            looseText: AUCTION_LOSE_TEXT,
+            modalOpen: false,
+            priceStart: this.props.data[0].priceStart,
+            timeCount: 0
         };
 
         this.handleKeyDownEvent = this._handleKeyDownEvent.bind(this);
@@ -129,12 +131,19 @@ class AuctionTask extends React.Component {
             if (DEBUG) console.log("SPACE_KEY")
 
             if (bidState === BID_STATE_NOT_STARTED) { //bid not started yet
-                this.setState(({
-                    bidState: BID_STATE_RUNNING,
-                    bidStartTimestamp: Date.now()
-                }), () => {
-                    this._initConfig(); //start timer
-                });
+                if (this.props.demo) {
+                    this.setState(({
+                        bidState: BID_STATE_DEMO,
+                        demoModalOpen: true
+                    }))
+                } else {
+                    this.setState(({
+                        bidState: BID_STATE_RUNNING,
+                        bidStartTimestamp: Date.now()
+                    }), () => {
+                        this._initConfig(); //start timer
+                    });
+                }
             } else if (bidState === BID_STATE_RUNNING) { //bid currently running
                 let isBidGain = bid < priceStart
                 this._finishBidAndSaveData(isBidGain)
@@ -168,13 +177,21 @@ class AuctionTask extends React.Component {
                 }
 
                 this.props.action(bidResult)
+            } else if (bidState === BID_STATE_DEMO) {
+                this.setState(({
+                    bidState: BID_STATE_RUNNING,
+                    bidStartTimestamp: Date.now(),
+                    demoModalOpen: false
+                }), () => {
+                    this._initConfig(); //start timer
+                });
             }
 
         }
     }
 
     render() {
-        const { counterAuction, bid, modalOpen, isBidGain, priceStart, bidState, footerTextMessage, gainText, looseText } = this.state
+        const { counterAuction, bid, modalOpen, demoModalOpen, isBidGain, priceStart, bidState, footerTextMessage, gainText, looseText } = this.state
         const counterHotel = counterAuction + 1 + this.props.imageIndex
         const imgA = `http://nielek.home.pl/psychology/pictures/h${counterHotel}a.jpg`
         const imgB = `http://nielek.home.pl/psychology/pictures/h${counterHotel}b.jpg`
@@ -187,10 +204,10 @@ class AuctionTask extends React.Component {
         const AUCTION_LOSE_TEXT_MESSAGE = looseText.replace("$(value)", (priceStart))
 
         const MODAL_BID_TEXT_COLOR = (isBidGain ? GREEN : RED)
-        const AUCTION_AFTER_BID_MESSAGE = isBidGain ? getModalFormattedText(AUCTION_GAIN_TEXT_MESSAGE) : getModalFormattedText(AUCTION_LOSE_TEXT_MESSAGE)
+        const AUCTION_AFTER_BID_MESSAGE = modalOpen ? (isBidGain ? getModalFormattedText(AUCTION_GAIN_TEXT_MESSAGE) : getModalFormattedText(AUCTION_LOSE_TEXT_MESSAGE)) : ""
 
         return (
-            <Container className="themed-container" fluid="xl">
+            <Container className="themed-container container-xxl">
                 <Modal returnFocusAfterClose={modalOpen} isOpen={modalOpen} size="lg" centered={true}>
                     <ModalBody className="modal-body">
                         <div style={{ paddingTop: "25px", color: MODAL_BID_TEXT_COLOR }}>
@@ -198,14 +215,21 @@ class AuctionTask extends React.Component {
                         </div>
                     </ModalBody>
                 </Modal>
+                <Modal returnFocusAfterClose={demoModalOpen} isOpen={demoModalOpen} size="lg" centered={true}>
+                    <ModalBody className="modal-body">
+                        <div style={{ paddingTop: "25px" }}>
+                            {getModalFormattedText(AUCTION_TUTORIAL_POPUP_TEXT)}
+                        </div>
+                    </ModalBody>
+                </Modal>
 
                 <Row className="justify-content-md-left">
-                    <Col xs="3" style={{ textAlign: "center", marginTop: "2em" }}>
+                    <Col xs="3" style={{ textAlign: "center", marginTop: "2em", padding: "0px" }}>
                         <div className="strikethrough">{priceStart}</div>
                         <div className="title">KUP TERAZ ZA</div>
                         <div className="auction-bid">{bid}</div>
                     </Col>
-                    <Col xs="8">
+                    <Col xs="8" style={{ padding: "0px" }}>
                         <Row className="justify-content-md-center">
                             <div className="hotel-name">{hotelName}</div>
                         </Row>

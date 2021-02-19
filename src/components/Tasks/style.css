@@ -22,6 +22,7 @@
     padding-bottom: 2rem;
 }
 
+
 .fade-loader {
     display: block;
     margin: 0 auto;
@@ -46,7 +47,7 @@
 }
 
 .instr {
-    margin-bottom: 25px;
+    margin-bottom: 20px;
   }
 
 /* FONTS */
@@ -120,6 +121,16 @@ form {
 }
 
 /* Auction task */
+
+.container-xxl {
+    max-width: 1350px;
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px; 
+    margin-right: auto; 
+    margin-left: auto;
+}
+
 .strikethrough {
   position: relative;
   font-size: 100pt;
@@ -135,7 +146,7 @@ form {
 }
 
 .img-container{
-  display: contents; 
+  display: flex; 
   margin-top: 1em;
   margin-bottom: 1em;
 }

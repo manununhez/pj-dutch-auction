@@ -48,6 +48,7 @@ export const FREQ_CHANGE_MS = 500;
 export const BID_STATE_NOT_STARTED = 0;
 export const BID_STATE_RUNNING = 1;
 export const BID_STATE_FINISHED = 2;
+export const BID_STATE_DEMO = 3;
 export const BID_THRESHOLD = 2500
 export const BID_BONUS = 50
 
@@ -114,6 +115,7 @@ export const VISUAL_PATTERN_SCREEN = "VisualPatternTask";
 export const VISUAL_PATTERN_DEMO_SCREEN = "VisualPatternTaskDemo";
 
 //General App messages KEYS
+export const AUCTION_TUTORIAL_POPUP_TEXT = "Za chwilę rozpocznie się aukcja. Jeśli chcesz zarezerwować pokój hotelowy w aktualnie wyświetlanej cenie musisz nacisnąć klawisz SPACJI.<br><br>Żeby rozpocząć aukcję naciśnij klawisz ENTER."
 export const AUCTION_GAIN_TEXT_MALE = "Brawo, udało Ci się zarezerwować ten pokój.<br><br>Zaoszczędziłeś $(value) zł.<br><br> Naciśnij ENTER, aby przejść do następnej aukcji."
 export const AUCTION_GAIN_TEXT_FEMALE = "Brawo, udało Ci się zarezerwować ten pokój.<br><br>Zaoszczędziłaś $(value) zł.<br><br> Naciśnij ENTER, aby przejść do następnej aukcji."
 export const AUCTION_LOSE_TEXT = "Ktoś inny zarezerwował ten pokój. Musisz zapłacić pełną cenę: $(value) zł.<br><br> Naciśnij ENTER, aby przejść do następnej aukcji."
