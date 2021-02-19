@@ -1,4 +1,4 @@
-// Fetch.js
+import axios from 'axios';
 import * as constant from '../helpers/constants';
 
 const _apiHost = 'https://api.swps-pjatk-experiment.pl/v2/'; //'http://localhost:5000/'
@@ -29,20 +29,17 @@ async function request(url, params, method = 'GET') {
         if (method === 'GET') {
             url += '?' + objectToQueryString(params);
         } else {
-            options.body = JSON.stringify(params);
+            options.data = JSON.stringify(params);
         }
     }
 
-    const response = await fetch(url, options);
+    const response = await axios(url, options);
 
     if (response.status !== 200) {
         return generateErrorResponse('The server responded with an unexpected status.');
     }
 
-    const result = await response.json();
-
-    return result;
-
+    return response.data;
 }
 
 function objectToQueryString(obj) {
