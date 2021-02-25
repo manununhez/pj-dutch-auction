@@ -1151,9 +1151,8 @@ function changePages(state, context) {
         if (currentScreenNumber < totalLength) { //To prevent keep transition between pages
 
             if (type === constant.INSTRUCTION_SCREEN) {
-                const text = getTextForCurrentScreen(inputTextInstructions, screen);
                 return <Instruction
-                    text={text}
+                    text={inputTextInstructions}
                     name={screen}
                 />;
             } else if (screen === constant.USER_FORM_SCREEN) {
@@ -1202,53 +1201,6 @@ function changePages(state, context) {
                     />;
                 }
             }
-        }
-    }
-}
-
-/**
- * Map the current screen with the correspondent text instruction to display
- * @param {*} inputTextInstructions 
- * @param {*} screen 
- */
-function getTextForCurrentScreen(inputTextInstructions, screen) { //TODO when FirstTask, we should cache the text so we dont iterate every time
-    let children = inputTextInstructions
-        .filter((instruction) => instruction.screen === screen)
-        .map((instruction, index) => {
-            let txtFormatted = instruction.text.split('\\n').map(function (item, key) { //replace \n with margin bottom to emulate break line
-                return (<div className="instr" key={key}>{item}</div>)
-            })
-            let key = "KEY_" + txtFormatted.length + "_" + index
-
-            return getFontSize(txtFormatted, instruction.size, key)
-        });
-
-    return children;
-}
-
-/**
- * Map the correspondent font size for the text instruction
- * @param {*} item 
- * @param {*} fontSize 
- * @param {*} key 
- */
-function getFontSize(item, fontSize, key) {
-    if (item !== constant.TEXT_EMPTY) {
-        switch (fontSize) {
-            case constant.FONT_SIZE_HEADING1:
-                return (<div className="instr-h1" key={key}>{item}</div>)
-            case constant.FONT_SIZE_HEADING2:
-                return (<div className="instr-h2" key={key}>{item}</div>)
-            case constant.FONT_SIZE_HEADING3:
-                return (<div className="instr-h3" key={key}>{item}</div>)
-            case constant.FONT_SIZE_HEADING4:
-                return (<div className="instr-h4" key={key}>{item}</div>)
-            case constant.FONT_SIZE_HEADING5:
-                return (<div className="instr-h5" key={key}>{item}</div>)
-            case constant.FONT_SIZE_HEADING6:
-                return (<div className="instr-h6" key={key}>{item}</div>)
-            default:
-                return (<div className="instr-h3" key={key}>{item}</div>)
         }
     }
 }

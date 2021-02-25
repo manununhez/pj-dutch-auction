@@ -146,25 +146,25 @@ form {
 }
 
 .img-container{
-  display: flex; 
+  display: contents;/*flex;*/ 
   margin-top: 1em;
   margin-bottom: 1em;
 }
 
 .img-left {
-  height: 150px;
+  height: 140px;
   padding-left: 1em;
   padding-right: 0.5em
 }
 
 .img-middle {
-  height: 150px;
+  height: 140px;
   padding-left: 0.5em;
   padding-right: 0.5em
 }
 
 .img-right {
-  height: 150px;
+  height: 140px;
   padding-left: 0.5em;
   padding-right: 1em
 }
