@@ -44,6 +44,7 @@ class AuctionTask extends React.Component {
             bidState: BID_STATE_NOT_STARTED,
             counterAuction: 0,
             demoModalOpen: false,
+            demoModalWasAlreadyOpen: false,
             footerTextMessage: AUCTION_FOOTER_TEXT,
             gainText: gainText,
             isBidGain: false,
@@ -125,16 +126,17 @@ class AuctionTask extends React.Component {
     _handleKeyDownEvent(event) {
         const { bidState, counterAuction,
             isBidGain, bid, priceStart, bidStartTimestamp,
-            bidStopTimestamp } = this.state
+            bidStopTimestamp, demoModalWasAlreadyOpen } = this.state
 
         if (event.keyCode === SPACE_KEY_CODE) { //Transition between screens
             if (DEBUG) console.log("SPACE_KEY")
 
             if (bidState === BID_STATE_NOT_STARTED) { //bid not started yet
-                if (this.props.demo) {
+                if (this.props.demo && !demoModalWasAlreadyOpen) {
                     this.setState(({
                         bidState: BID_STATE_DEMO,
-                        demoModalOpen: true
+                        demoModalOpen: true,
+                        demoModalWasAlreadyOpen: true
                     }))
                 } else {
                     this.setState(({
