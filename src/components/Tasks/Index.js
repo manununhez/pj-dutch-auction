@@ -818,8 +818,8 @@ class Index extends Component {
 
         if (currentScreenNumber < totalLength) { //To prevent keep transition between pages
 
-            console.log("Current Screen:")
-            console.log(screen)
+            if (DEBUG) console.log("Current Screen:")
+            if (DEBUG) console.log(screen)
             if (type === constant.INSTRUCTION_SCREEN ||
                 screen === constant.REWARD_AUCTION_INFO_SCREEN ||
                 screen === constant.AUCTION_TASK_FINISH_SCREEN) {
@@ -950,7 +950,7 @@ class Index extends Component {
      * We move to next page, according to inputNavigation input data
      */
     _goToNextTaskInInputNavigation() {
-        console.log("_goToNextTaskInInputNavigation")
+        if (DEBUG) console.log("_goToNextTaskInInputNavigation")
 
         const { currentScreenNumber, inputNavigation, logTimestamp, showAlertWindowsClosing } = this.state;
         const { screen, timestamp } = logTimestamp
