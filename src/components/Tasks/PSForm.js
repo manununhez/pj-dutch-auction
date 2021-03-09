@@ -96,11 +96,14 @@ class PSForm extends React.Component {
 
     validateInput = (evt) => {
         const { id, value } = evt.target
+        const trimmed = value.trim()
         const error = { showError: false, textError: constant.TEXT_EMPTY } //This would clean the previous error message, if it was shown
 
-        //if (isNaN(value)) return
-
-        this.setState({ currentResult: value, error: error })
+        if (trimmed) {
+            this.setState({ currentResult: trimmed, error: error })
+        } else {
+            this.setState({ currentResult: trimmed })
+        }
     }
 
     validateMultipleChoicesType = (evt) => {
