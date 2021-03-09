@@ -12,8 +12,6 @@ import {
     CardBody
 } from "reactstrap";
 
-import NumberFormat from 'react-number-format';
-
 import * as constant from '../../helpers/constants';
 
 class PSForm extends React.Component {
@@ -96,18 +94,17 @@ class PSForm extends React.Component {
         })
     }
 
-    validateInput = (id, numberFormat) => {
-        const value = numberFormat.formattedValue
+    validateInput = (evt) => {
+        const { id, value } = evt.target
         const error = { showError: false, textError: constant.TEXT_EMPTY } //This would clean the previous error message, if it was shown
 
-        if (isNaN(value)) return
+        //if (isNaN(value)) return
 
         this.setState({ currentResult: value, error: error })
     }
 
     validateMultipleChoicesType = (evt) => {
-        const id = evt.target.id
-        const value = evt.target.value
+        const { id, value } = evt.target
         const error = { showError: false, textError: constant.TEXT_EMPTY } //This would clean the previous error message, if it was shown
 
         if (id === undefined || id === constant.TEXT_EMPTY ||
@@ -164,7 +161,14 @@ function getQuestions(question, validateMultipleChoices, validateInput) {
     if (question.type === constant.INPUT_TYPE) {
         questionScheme.push(
             <div style={{ display: "flex", alignItems: 'center' }}>
-                <NumberFormat id={question.questionCode} autoFocus={true} onValueChange={validateInput.bind(this, question.questionCode)} decimalSeparator="," />
+                <Input
+                    style={{ maxWidth: "fit-content" }}
+                    id={question.questionCode}
+                    autoFocus={true}
+                    placeholder={constant.TEXT_EMPTY}
+                    onChange={validateInput}
+                    type="text"
+                />
                 <pre style={{ margingBottom: '0rem' }}> <h6>{question.answer}</h6></pre>
             </div>
         );
@@ -177,7 +181,7 @@ function getQuestions(question, validateMultipleChoices, validateInput) {
     return (
         <Card>
             <CardBody style={{ padding: '2em' }} key={question.questionCode}>{questionScheme}</CardBody>
-        </Card>);// marginTop: '20px',
+        </Card>);
 }
 
 /**
