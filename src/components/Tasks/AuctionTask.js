@@ -48,7 +48,7 @@ class AuctionTask extends React.Component {
             footerTextMessage: AUCTION_FOOTER_TEXT,
             gainText: gainText,
             isBidGain: false,
-            spceBarPressed: false,
+            spaceBarPressed: false,
             looseText: AUCTION_LOSE_TEXT,
             modalOpen: false,
             priceStart: this.props.data[0].priceStart,
@@ -92,7 +92,7 @@ class AuctionTask extends React.Component {
         }, ONE_SECOND_MS)
     }
 
-    _finishBidAndSaveData(isBidGain, spceBarPressed) {
+    _finishBidAndSaveData(isBidGain, spaceBarPressed) {
         //Aca el usuario para la apuesta. Se guarda el bid actual y se muestra el dialogo
 
         //showModal()
@@ -100,7 +100,7 @@ class AuctionTask extends React.Component {
             bidState: BID_STATE_FINISHED,
             modalOpen: true,
             isBidGain: isBidGain,
-            spceBarPressed: spceBarPressed,
+            spaceBarPressed: spaceBarPressed,
             bidStopTimestamp: Date.now()
         }), () => {
             this._clearTimer(); //stop timer
@@ -150,7 +150,8 @@ class AuctionTask extends React.Component {
                 }
             } else if (bidState === BID_STATE_RUNNING) { //bid currently running
                 let isBidGain = bid < priceStart
-                this._finishBidAndSaveData(isBidGain, true)
+                let spaceBarPressed = true
+                this._finishBidAndSaveData(isBidGain, spaceBarPressed)
             }
 
             if (DEBUG) console.log(this.state)
@@ -176,7 +177,7 @@ class AuctionTask extends React.Component {
                     priceStart: priceStart,
                     bid: bidTmp,
                     spaceBarPressed: spaceBarPressed,
-                    bidOrder: counterAuction,
+                    bidOrder: (counterAuction + 1),
                     hotelId: this.props.data[counterAuction].hotelId,
                     hotelName: this.props.data[counterAuction].hotelName,
                     bidStartTimestamp: bidStartTimestamp,
