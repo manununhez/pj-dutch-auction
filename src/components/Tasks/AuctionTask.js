@@ -48,6 +48,7 @@ class AuctionTask extends React.Component {
             footerTextMessage: AUCTION_FOOTER_TEXT,
             gainText: gainText,
             isBidGain: false,
+            spceBarPressed: false,
             looseText: AUCTION_LOSE_TEXT,
             modalOpen: false,
             priceStart: this.props.data[0].priceStart,
@@ -85,13 +86,13 @@ class AuctionTask extends React.Component {
 
                 if (DEBUG) console.log(`timeCount: ${timeCount}`)
                 if (timeCount >= auctionLength) { //timeout. we finish and save data
-                    this._finishBidAndSaveData(false)
+                    this._finishBidAndSaveData(false, false)
                 }
             })
         }, ONE_SECOND_MS)
     }
 
-    _finishBidAndSaveData(isBidGain) {
+    _finishBidAndSaveData(isBidGain, spceBarPressed) {
         //Aca el usuario para la apuesta. Se guarda el bid actual y se muestra el dialogo
 
         //showModal()
@@ -99,6 +100,7 @@ class AuctionTask extends React.Component {
             bidState: BID_STATE_FINISHED,
             modalOpen: true,
             isBidGain: isBidGain,
+            spceBarPressed: spceBarPressed,
             bidStopTimestamp: Date.now()
         }), () => {
             this._clearTimer(); //stop timer
@@ -125,7 +127,7 @@ class AuctionTask extends React.Component {
 
     _handleKeyDownEvent(event) {
         const { bidState, counterAuction,
-            isBidGain, bid, priceStart, bidStartTimestamp,
+            isBidGain, bid, priceStart, spaceBarPressed, bidStartTimestamp,
             bidStopTimestamp, demoModalWasAlreadyOpen } = this.state
 
         if (event.keyCode === SPACE_KEY_CODE) { //Transition between screens
@@ -148,7 +150,7 @@ class AuctionTask extends React.Component {
                 }
             } else if (bidState === BID_STATE_RUNNING) { //bid currently running
                 let isBidGain = bid < priceStart
-                this._finishBidAndSaveData(isBidGain)
+                this._finishBidAndSaveData(isBidGain, true)
             }
 
             if (DEBUG) console.log(this.state)
@@ -163,6 +165,7 @@ class AuctionTask extends React.Component {
                         bid: this.props.data[counterAuction + 1].priceStart,
                         priceStart: this.props.data[counterAuction + 1].priceStart,
                         auctionLength: this.props.data[counterAuction + 1].auctionLength,
+                        spaceBarPressed: false,
                         timeCount: 0,
                         modalOpen: false
                     }));
@@ -172,6 +175,8 @@ class AuctionTask extends React.Component {
                 let bidResult = {
                     priceStart: priceStart,
                     bid: bidTmp,
+                    spaceBarPressed: spaceBarPressed,
+                    bidOrder: counterAuction,
                     hotelId: this.props.data[counterAuction].hotelId,
                     hotelName: this.props.data[counterAuction].hotelName,
                     bidStartTimestamp: bidStartTimestamp,

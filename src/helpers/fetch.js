@@ -422,12 +422,14 @@ function userauctionbids(data) {
         result.push([
             userID,
             constant.AUCTION_TASK_DEMO_SCREEN,
+            outputAuctionTask.demo[i].bidOrder,
             outputAuctionTask.demo[i].hotelId,
             outputAuctionTask.demo[i].hotelName,
             outputAuctionTask.demo[i].priceStart,
             outputAuctionTask.demo[i].bid,
             outputAuctionTask.demo[i].bidStartTimestamp,
-            outputAuctionTask.demo[i].bidStopTimestamp
+            outputAuctionTask.demo[i].bidStopTimestamp,
+            outputAuctionTask.demo[i].spaceBarPressed,
         ]);
     }
 
@@ -435,12 +437,14 @@ function userauctionbids(data) {
         result.push([
             userID,
             constant.AUCTION_TASK_SCREEN,
+            outputAuctionTask.task[i].bidOrder,
             outputAuctionTask.task[i].hotelId,
             outputAuctionTask.task[i].hotelName,
             outputAuctionTask.task[i].priceStart,
             outputAuctionTask.task[i].bid,
             outputAuctionTask.task[i].bidStartTimestamp,
             outputAuctionTask.task[i].bidStopTimestamp,
+            outputAuctionTask.task[i].spaceBarPressed,
         ]);
     }
 
