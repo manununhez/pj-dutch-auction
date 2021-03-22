@@ -325,14 +325,14 @@ const usergeneraldata = (data, ariadnaUserID) => {
                 output.userID,
                 ariadnaUserID,
                 output.task,
+                output.data.bidOrder,
                 output.data.hotelId,
                 output.data.hotelName,
                 output.data.priceStart,
                 output.data.bid,
                 output.data.bidStartTimestamp,
                 output.data.bidStopTimestamp,
-                constant.TEXT_EMPTY,
-                constant.TEXT_EMPTY,
+                output.data.spaceBarPressed,
                 constant.TEXT_EMPTY,
                 constant.TEXT_EMPTY
             ]);
