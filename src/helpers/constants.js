@@ -7,9 +7,9 @@ export const RED = "red";
 export const TEXT_EMPTY = "";
 
 //General config parameters
-export const PARTICIPANTS_PER_SEX_PER_GROUP_LIMIT = 30;
+export const PARTICIPANTS_PER_SEX_PER_GROUP_LIMIT = 60;
 export const YEARS_EDUCATION_LIMIT = 11;
-export const PARTICIPANTS_PER_SCENARIO_PER_GROUP_LIMIT = 30;
+export const PARTICIPANTS_PER_SCENARIO_PER_GROUP_LIMIT = 60;
 export const SCENARIOS = ["hotels", "hotels-rev"]
 export const PARTICIPANTS_GROUPS = [
     { minAge: 19, maxAge: 30 },
