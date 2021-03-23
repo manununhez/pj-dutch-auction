@@ -30,8 +30,9 @@ import * as constant from '../../helpers/constants';
 import { USER_INFO, randomNumber } from '../../helpers/utils';
 
 const DEBUG = (process.env.REACT_APP_DEBUG_LOG === "true") ? true : false;
-const ARIADNA_REDIRECT_REJECT = process.env.REACT_APP_ARIADNA_REDIRECT_REJECT;
-const ARIADNA_REDIRECT_ACCEPTED = process.env.REACT_APP_ARIADNA_REDIRECT_ACCEPTED;
+const ARIADNA_REDIRECT_QUOTA_FULL = process.env.REACT_APP_ARIADNA_REDIRECT_QUOTA_FULL;
+const ARIADNA_REDIRECT_FINISHED = process.env.REACT_APP_ARIADNA_REDIRECT_FINISHED
+const ARIADNA_REDIRECT_FINISHED_BONUS = process.env.REACT_APP_ARIADNA_REDIRECT_FINISHED_BONUS
 
 class Index extends Component {
     constructor(props) {
@@ -86,6 +87,7 @@ class Index extends Component {
             outputAuctionTask: { task: [], demo: [] },
             outputPSForm: [],
             outputVisualPattern: { task: [], demo: [] },
+            rewardAuctionInfo: { isRewardObtained: false, updated: false },
             //utils
             logTimestamp: { screen: [], timestamp: [] },
             currentScreenNumber: 0,
@@ -97,9 +99,10 @@ class Index extends Component {
         //session timer
         this.idleTimer = null
 
-        if (DEBUG) console.log(`ARIADNA_REDIRECT_REJECT:${ARIADNA_REDIRECT_REJECT}`);
-        if (DEBUG) console.log(`ARIADNA_REDIRECT_ACCEPTED:${ARIADNA_REDIRECT_ACCEPTED}`);
-        if (DEBUG) console.log(`Debug:${DEBUG}`);
+        if (DEBUG) console.log(`ARIADNA_REDIRECT_QUOTA_FULL:${ARIADNA_REDIRECT_QUOTA_FULL}`)
+        if (DEBUG) console.log(`ARIADNA_REDIRECT_FINISHED:${ARIADNA_REDIRECT_FINISHED}`)
+        if (DEBUG) console.log(`ARIADNA_REDIRECT_FINISHED_BONUS:${ARIADNA_REDIRECT_FINISHED_BONUS}`)
+        if (DEBUG) console.log(`Debug:${DEBUG}`)
     }
 
     onAction = (e) => {
@@ -433,7 +436,10 @@ class Index extends Component {
             if (DEBUG) console.log("SaveUserPSForm");
 
             //redirect to ARIADNA
-            window.location.replace(ARIADNA_REDIRECT_ACCEPTED);
+            if (this.state.rewardAuctionInfo.isRewardObtained)
+                window.location.replace(ARIADNA_REDIRECT_FINISHED_BONUS)
+            else
+                window.location.replace(ARIADNA_REDIRECT_FINISHED)
 
         } else {
             if (DEBUG) console.log("Error saving user psform")
@@ -647,6 +653,22 @@ class Index extends Component {
     }
 
     /**
+     * 
+     * @param {*} isBonusAvailable 
+     */
+    rewardAuctionInfoHandler = (isBonusAvailable) => {
+        if (DEBUG) console.log(`Is reward obtained:=> ${isBonusAvailable}`)
+
+        //save results
+        this.setState({
+            rewardAuctionInfo: { isRewardObtained: isBonusAvailable, updated: true }
+        }, () => {
+            //we simulate a space btn pressed because Reward already finishes with a space btn pressed
+            this._validatePressedSpaceKeyToNextPage()
+        })
+    }
+
+    /**
      * Manage results comming from VisualPattern component (VisualPatternTask.js)
      * @param {*} results 
      */
@@ -807,6 +829,12 @@ class Index extends Component {
         return { isValid: (outputVisualPattern.demo.length > 0) }
     }
 
+    validateRewardAuction() {
+        const { rewardAuctionInfo } = this.state;
+
+        return { isValid: rewardAuctionInfo.updated }
+    }
+
     /**
      * Validate components before navigating between pages. Space key pressed
      */
@@ -821,7 +849,6 @@ class Index extends Component {
             if (DEBUG) console.log("Current Screen:")
             if (DEBUG) console.log(screen)
             if (type === constant.INSTRUCTION_SCREEN ||
-                screen === constant.REWARD_AUCTION_INFO_SCREEN ||
                 screen === constant.AUCTION_TASK_FINISH_SCREEN) {
                 this._goToNextTaskInInputNavigation();
             } else if (screen === constant.PSFORM_SCREEN) {
@@ -838,6 +865,9 @@ class Index extends Component {
                 if (data.isValid) this._goToNextTaskInInputNavigation();
             } else if (screen === constant.VISUAL_PATTERN_DEMO_SCREEN) {
                 let data = this.validateVisualPatternDemo();
+                if (data.isValid) this._goToNextTaskInInputNavigation();
+            } else if (screen === constant.REWARD_AUCTION_INFO_SCREEN) {
+                let data = this.validateRewardAuction();
                 if (data.isValid) this._goToNextTaskInInputNavigation();
             }
         }
@@ -865,7 +895,7 @@ class Index extends Component {
                         //we redirect to Ariadna
                         alert(constant.ERROR_12);
                         this.setState({ showAlertWindowsClosing: false }, () => {
-                            window.location.replace(ARIADNA_REDIRECT_REJECT);
+                            window.location.replace(ARIADNA_REDIRECT_QUOTA_FULL)
                         })
                     }
                 }
@@ -918,7 +948,7 @@ class Index extends Component {
                 if (randomNumberGenerated.length === scenarios.length) {
                     alert(constant.AUCTION_EXHAUSTED_QUOTA_MESSAGE);
                     this.setState({ showAlertWindowsClosing: false }, () => {
-                        window.location.replace(ARIADNA_REDIRECT_REJECT);
+                        window.location.replace(ARIADNA_REDIRECT_QUOTA_FULL)
                     })
                     break;
                 }
@@ -1179,6 +1209,7 @@ function changePages(state, context) {
                 return <RewardAuctionInfo
                     sex={outputFormData.sex}
                     data={outputAuctionTask.task}
+                    action={context.rewardAuctionInfoHandler}
                 />;
             } else if (screen === constant.AUCTION_TASK_FINISH_SCREEN) {
                 return <AuctionInfo
